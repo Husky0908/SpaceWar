@@ -6,6 +6,8 @@ class Player:
         self.x = x
         self.y = y
         self.health = 5
+        self.width = 20
+        self.height = 40
 
 
 class Runner:
@@ -26,33 +28,54 @@ class Bullet:
         self.speed = 3
 
 
-class PygameContex:
+class PygameContext:
     def __init__(self, width: int, height: int):
         pygame.init()
 
-        self.screen = pygame.display.set_mode((width, height))
+        self.width = width
+        self.height = height
+        self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
+        self.delta_time = 0
 
 
-def draw_player(contex: PygameContex, player: Player):
-    r = pygame.Rect(player.x - 10, player.y - 20, 20, 40)
-    pygame.draw.rect(contex.screen, (255, 255, 255), r)
+def control_player(context: PygameContext, player: Player):
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        player.y -= 300 * context.delta_time
+    if keys[pygame.K_s]:
+        player.y += 300 * context.delta_time
+    if keys[pygame.K_a]:
+        player.x -= 300 * context.delta_time
+    if keys[pygame.K_d]:
+        player.x += 300 * context.delta_time
+
+    if player.y - player.height / 2 < 0:
+        player.y = player.height / 2
+    if player.y + player.height / 2 > context.height:
+        player.y = context.height - player.height / 2
+    if player.x - player.width / 2 < 0:
+        player.x = player.width / 2
+    if player.x + player.width / 2 > context.width:
+        player.x = context.width - player.width / 2
 
 
-def draw(contex: PygameContex, player: Player):
-    contex.screen.fill((0, 0, 0))
+def draw_player(context: PygameContext, player: Player):
+    r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
+    pygame.draw.rect(context.screen, (255, 255, 255), r)
 
-    draw_player(contex, player)
+
+def draw(context: PygameContext, player: Player):
+    context.screen.fill((0, 0, 0))
+
+    draw_player(context, player)
 
     pygame.display.flip()
 
 
 def main():
-    width = 1280
-    height = 720
-
-    contex = PygameContex(width, height)
-    player = Player(width // 2, height // 2)
+    context = PygameContext(1280, 720)
+    player = Player(context.width // 2, context.height // 2)
 
     running = True
 
@@ -61,11 +84,12 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        draw(contex, player)
+        control_player(context, player)
+        draw(context, player)
 
-        contex.clock.tick(60)  # limits FPS to 60
-
+        context.delta_time = context.clock.tick(60) / 1000
 
     pygame.quit()
+
 
 main()
