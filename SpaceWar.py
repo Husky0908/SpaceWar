@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class Player:
@@ -15,6 +16,14 @@ class Runner:
         self.x = x
         self.y = y
         self.health = 5
+        self.height = 60
+        self.wight = 100
+
+
+class Runners:
+    def __init__(self):
+        self.last_spawn = 0
+        self.elements = []
 
 
 class Bullet:
@@ -37,6 +46,7 @@ class PygameContext:
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
         self.delta_time = 0
+        self.time = 0
 
 
 def control_player(context: PygameContext, player: Player):
@@ -60,15 +70,37 @@ def control_player(context: PygameContext, player: Player):
         player.x = context.width - player.width / 2
 
 
+def spawn_runners(context: PygameContext, runners: Runners):
+    if context.time - runners.last_spawn >= 5:
+        runners.last_spawn = context.time
+        runners.elements.append(Runner(random.randint(0, context.width), random.randint(0, context.height)))
+
+
+def control_runners(context: PygameContext, player: Player, runners: Runners):
+    pass
+
+
+def control(context: PygameContext, player: Player, runners: Runners):
+    spawn_runners(context, runners)
+    control_runners(context, player, runners)
+
+
 def draw_player(context: PygameContext, player: Player):
     r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
     pygame.draw.rect(context.screen, (255, 255, 255), r)
 
 
-def draw(context: PygameContext, player: Player):
+def draw_runners(context: PygameContext, runners: Runners):
+    for runner in runners.elements:
+        r = pygame.Rect(runner.x - runner.wight / 2, runner.y - runner.height / 2, runner.wight, runner.height)
+        pygame.draw.rect(context.screen, (0, 255, 0), r)
+
+
+def draw(context: PygameContext, player: Player, runners: Runners):
     context.screen.fill((0, 0, 0))
 
     draw_player(context, player)
+    draw_runners(context, runners)
 
     pygame.display.flip()
 
@@ -76,6 +108,8 @@ def draw(context: PygameContext, player: Player):
 def main():
     context = PygameContext(1280, 720)
     player = Player(context.width // 2, context.height // 2)
+
+    runners = Runners()
 
     running = True
 
@@ -85,9 +119,11 @@ def main():
                 running = False
 
         control_player(context, player)
-        draw(context, player)
+        control(context, player, runners)
+        draw(context, player, runners)
 
         context.delta_time = context.clock.tick(60) / 1000
+        context.time = context.time + context.delta_time
 
     pygame.quit()
 
