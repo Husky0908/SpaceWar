@@ -16,9 +16,23 @@ class Runner:
         self.x = x
         self.y = y
         self.health = 5
-        self.height = 60
-        self.wight = 100
+        self.state = Runner.STATE_INIT
+        self.x_0 = 0
+        self.y_0 = 0
+        self.dir_x = 0
+        self.dir_y = 0
+        self.start_time = 0
 
+    height = 60
+    width = 100
+    STATE_INIT = 0
+    STATE_SLOW_MOVE = 1
+    STATE_FIRST_STOP = 2
+    STATE_FAST_MOVE = 3
+    STATE_SECOND_STOP = 4
+    STATE_KILLED = 5
+
+    SLOW_SPEED = 40
 
 class Runners:
     def __init__(self):
@@ -49,13 +63,20 @@ class PygameContext:
         self.time = 0
 
 
-
-def lenght(x: int, x_2: int, y: int, y_2: int) -> float:
+def length(x: int, x_2: int, y: int, y_2: int) -> float:
     e_x = x_2 - x
     e_y = y_2 - y
     leng = (e_x ** 2 + e_y ** 2) ** 0.5
     return leng
 
+
+def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]:
+    leng = length(x_1, x_2, y_1, y_2)
+    return (x_2- x_1) / leng, (y_2 - y_1) / leng
+
+
+def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
+    return pygame.Rect(player.x - width // 2, player.y - height // 2, width, height)
 
 def control_player(context: PygameContext, player: Player):
     keys = pygame.key.get_pressed()
@@ -83,16 +104,31 @@ def spawn_runners(context: PygameContext, player: Player, runners: Runners):
         runners.last_spawn = context.time
         trying = True
         while trying:
-            x = random.randint(0, context.width)
-            y = random.randint(0, context.height)
-            leng = lenght(player.x, x, player.y, y)
+            x = random.randint((0 + Runner.width // 2), context.width - Runner.width // 2)
+            y = random.randint(0 + Runner.height // 2, context.height - Runner.height // 2)
+            leng = length(player.x, x, player.y, y)
             if leng >= 600:
                 trying = False
                 runners.elements.append(Runner(x, y))
 
 
 def control_runners(context: PygameContext, player: Player, runners: Runners):
-    pass
+    for runner in runners.elements:
+        if runner.state == Runner.STATE_INIT:
+            runner.state = Runner.STATE_SLOW_MOVE
+            rect = get_rectangle_around_player(player, 100, 100)
+            dest_x = random.randint(rect.left, rect.right)
+            dest_y = random.randint(rect.top, rect.bottom)
+            runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
+            runner.start_time = context.time
+            runner.x_0, runner.y_0 = runner.x, runner.y
+        elif runner.state == Runner.STATE_SLOW_MOVE:
+            d_t = context.time - runner.start_time
+            if d_t < 5:
+                runner.x = runner.x_0 + runner.dir_x * d_t * Runner.SLOW_SPEED
+                runner.y = runner.y_0 + runner.dir_y * d_t * Runner.SLOW_SPEED
+            else:
+                runner.state = Runner.STATE_FIRST_STOP
 
 
 def control(context: PygameContext, player: Player, runners: Runners):
@@ -107,7 +143,7 @@ def draw_player(context: PygameContext, player: Player):
 
 def draw_runners(context: PygameContext, runners: Runners):
     for runner in runners.elements:
-        r = pygame.Rect(runner.x - runner.wight / 2, runner.y - runner.height / 2, runner.wight, runner.height)
+        r = pygame.Rect(runner.x - runner.width / 2, runner.y - runner.height / 2, runner.width, runner.height)
         pygame.draw.rect(context.screen, (0, 255, 0), r)
 
 
