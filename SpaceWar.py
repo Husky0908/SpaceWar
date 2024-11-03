@@ -49,6 +49,14 @@ class PygameContext:
         self.time = 0
 
 
+
+def lenght(x: int, x_2: int, y: int, y_2: int) -> float:
+    e_x = x_2 - x
+    e_y = y_2 - y
+    leng = (e_x ** 2 + e_y ** 2) ** 0.5
+    return leng
+
+
 def control_player(context: PygameContext, player: Player):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
@@ -70,10 +78,17 @@ def control_player(context: PygameContext, player: Player):
         player.x = context.width - player.width / 2
 
 
-def spawn_runners(context: PygameContext, runners: Runners):
+def spawn_runners(context: PygameContext, player: Player, runners: Runners):
     if context.time - runners.last_spawn >= 5:
         runners.last_spawn = context.time
-        runners.elements.append(Runner(random.randint(0, context.width), random.randint(0, context.height)))
+        trying = True
+        while trying:
+            x = random.randint(0, context.width)
+            y = random.randint(0, context.height)
+            leng = lenght(player.x, x, player.y, y)
+            if leng >= 600:
+                trying = False
+                runners.elements.append(Runner(x, y))
 
 
 def control_runners(context: PygameContext, player: Player, runners: Runners):
@@ -81,7 +96,7 @@ def control_runners(context: PygameContext, player: Player, runners: Runners):
 
 
 def control(context: PygameContext, player: Player, runners: Runners):
-    spawn_runners(context, runners)
+    spawn_runners(context, player, runners)
     control_runners(context, player, runners)
 
 
