@@ -32,7 +32,8 @@ class Runner:
     STATE_SECOND_STOP = 4
     STATE_KILLED = 5
 
-    SLOW_SPEED = 40
+    SLOW_SPEED = 80
+    FAST_SPEED = 650
 
 class Runners:
     def __init__(self):
@@ -112,13 +113,17 @@ def spawn_runners(context: PygameContext, player: Player, runners: Runners):
                 runners.elements.append(Runner(x, y))
 
 
+def destination_runner(player: Player, widht, height):
+    rect = get_rectangle_around_player(player, widht, height)
+    dest_x = random.randint(rect.left, rect.right)
+    dest_y = random.randint(rect.top, rect.bottom)
+    return dest_x, dest_y
+
 def control_runners(context: PygameContext, player: Player, runners: Runners):
     for runner in runners.elements:
         if runner.state == Runner.STATE_INIT:
             runner.state = Runner.STATE_SLOW_MOVE
-            rect = get_rectangle_around_player(player, 100, 100)
-            dest_x = random.randint(rect.left, rect.right)
-            dest_y = random.randint(rect.top, rect.bottom)
+            dest_x, dest_y = destination_runner(player, 100, 100)
             runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
             runner.start_time = context.time
             runner.x_0, runner.y_0 = runner.x, runner.y
@@ -129,6 +134,24 @@ def control_runners(context: PygameContext, player: Player, runners: Runners):
                 runner.y = runner.y_0 + runner.dir_y * d_t * Runner.SLOW_SPEED
             else:
                 runner.state = Runner.STATE_FIRST_STOP
+                runner.start_time = context.time
+        if runner.state == Runner.STATE_FIRST_STOP:
+            if context.time - runner.start_time >= 3:
+                runner.state = Runner.STATE_FAST_MOVE
+                dest_x, dest_y = destination_runner(player, 0, 0)
+                runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
+                runner.start_time = context.time
+                runner.x_0, runner.y_0 = runner.x, runner.y
+        if runner.state == Runner.STATE_FAST_MOVE:
+            d_t = context.time - runner.start_time
+            runner.x = runner.x_0 + runner.dir_x * d_t * Runner.FAST_SPEED
+            runner.y = runner.y_0 + runner.dir_y * d_t * Runner.FAST_SPEED
+            if runner.x > context.width - runner.width / 2 or runner.x < runner.width / 2 or runner.y > context.height - runner.height / 2 or runner.y < runner.height / 2:
+                runner.state = Runner.STATE_SECOND_STOP
+                runner.start_time = context.time
+        if runner.state == Runner.STATE_SECOND_STOP:
+            if context.time - runner.start_time >= 3:
+                runner.state = Runner.STATE_INIT
 
 
 def control(context: PygameContext, player: Player, runners: Runners):
