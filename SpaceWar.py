@@ -12,13 +12,13 @@ class Player:
         self.form = None
 
 
-class Bullet_shooter:
+class BulletShooter:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.health = 2
         self.form = None
-        self.STATE = Bullet_shooter.STATE_INIT
+        self.STATE = BulletShooter.STATE_INIT
 
     height = 45
     width = 30
@@ -30,6 +30,12 @@ class Bullet_shooter:
     STATE_THIRD_MOVE = 5
     STATE_THIRD_WAIT = 6
     STATE_KILLED = 7
+
+
+class BulletShooters:
+    def __init__(self):
+        self.last_spawn = 0
+        self.elements = []
 
 
 class Runner:
@@ -182,6 +188,19 @@ def spawn_runners(context: PygameContext, player: Player, runners: Runners):
                 runners.elements.append(Runner(x, y))
 
 
+def spawn_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
+    if context.time - bullet_shooters.last_spawn >= 5:
+        bullet_shooters.last_spawn = context.time
+        trying = True
+        while trying:
+            x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
+            y = random.randint(0 + BulletShooter.height // 2, context.height - BulletShooter.height // 2)
+            leng = length(player.x, x, player.y, y)
+            if leng >= 600:
+                trying = False
+                bullet_shooters.elements.append(BulletShooter(x, y))
+
+
 def destination_runner(player: Player, widht, height):
     rect = get_rectangle_around_player(player, widht, height)
     dest_x = random.randint(rect.left, rect.right)
@@ -235,9 +254,15 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
         #         runner.health = runner.health - 1
 
 
-def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
+def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
+    pass
+
+
+def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters):
     spawn_runners(context, player, runners)
+    spawn_bullet_shooters(context, player, bullet_shooters)
     control_runners(context, player, runners, bullets)
+    control_bullet_shooters(context, player, bullet_shooters)
     control_bullets(bullets, context, runners)
 
 
@@ -262,12 +287,19 @@ def draw_runners(context: PygameContext, runners: Runners):
         runner.form = pygame.draw.rect(context.screen, (0, 255, 0), r)
 
 
-def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
+def draw_bullet_shooters(context: PygameContext, bullet_shooters: BulletShooters):
+    for bullet_shooter in bullet_shooters.elements:
+        r = pygame.Rect(bullet_shooter.x - bullet_shooter.width / 2, bullet_shooter.y - bullet_shooter.height / 2, bullet_shooter.width, bullet_shooter.height)
+        bullet_shooter.form = pygame.draw.rect(context.screen, (0, 0, 255), r)
+
+
+def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters):
     context.screen.fill((0, 0, 0))
 
     draw_player(context, player)
     draw_mouse(context)
     draw_bullets(context, bullets)
+    draw_bullet_shooters(context, bullet_shooters)
     draw_runners(context, runners)
 
     pygame.display.flip()
@@ -279,6 +311,7 @@ def main():
 
     bullets = Bullets()
     runners = Runners()
+    bullet_shooters = BulletShooters()
 
     pygame.mouse.set_visible(False)
     pygame.display.set_caption("Space War")
@@ -293,8 +326,8 @@ def main():
                 press_mouse(running, bullets, player, context)
 
         running = control_player(context, player, running)
-        control(context, player, runners, bullets)
-        draw(context, player, runners, bullets)
+        control(context, player, runners, bullets, bullet_shooters)
+        draw(context, player, runners, bullets, bullet_shooters)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
