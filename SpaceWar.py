@@ -35,6 +35,7 @@ class Runner:
     SLOW_SPEED = 80
     FAST_SPEED = 650
 
+
 class Runners:
     def __init__(self):
         self.last_spawn = 0
@@ -47,9 +48,19 @@ class Bullet:
         self.y_0 = y_0
         self.x = x_0
         self.y = y_0
-        self.dir_x = direction_x
-        self.dir_y = direction_y
-        self.speed = 3
+        self.dest_x = direction_x
+        self.dest_y = direction_y
+        self.dir_x = None
+        self.dir_y = None
+        self.speed = 300
+        self.start_time = 0
+        self.sharp = False
+
+
+class Bullets:
+    def __init__(self):
+        self.last_spawn = 0
+        self.elements = []
 
 
 class PygameContext:
@@ -73,11 +84,34 @@ def length(x: int, x_2: int, y: int, y_2: int) -> float:
 
 def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]:
     leng = length(x_1, x_2, y_1, y_2)
-    return (x_2- x_1) / leng, (y_2 - y_1) / leng
+    return (x_2 - x_1) / leng, (y_2 - y_1) / leng
+
+
+def shoot_bullet(bullets: Bullets, player: Player):
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y))
+
+
+def control_bullets(bullets: Bullets, context: PygameContext):
+    for bullet in bullets.elements:
+        if bullet.sharp:
+            d_t = context.time - bullet.start_time
+            bullet.x = bullet.x_0 + bullet.dir_x * d_t * bullet.speed
+            bullet.y = bullet.y_0 + bullet.dir_y * d_t * bullet.speed
+        else:
+            bullet.dir_x, bullet.dir_y = get_direction(bullet.x, bullet.y, bullet.dest_x, bullet.dest_y)
+            bullet.start_time = context.time
+            bullet.sharp = True
+
+
+def press_mouse(running, bullets: Bullets, player: Player, context: PygameContext):
+    if running:
+        shoot_bullet(bullets, player)
 
 
 def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
     return pygame.Rect(player.x - width // 2, player.y - height // 2, width, height)
+
 
 def control_player(context: PygameContext, player: Player):
     keys = pygame.key.get_pressed()
@@ -119,6 +153,7 @@ def destination_runner(player: Player, widht, height):
     dest_y = random.randint(rect.top, rect.bottom)
     return dest_x, dest_y
 
+
 def control_runners(context: PygameContext, player: Player, runners: Runners):
     for runner in runners.elements:
         if runner.state == Runner.STATE_INIT:
@@ -154,14 +189,25 @@ def control_runners(context: PygameContext, player: Player, runners: Runners):
                 runner.state = Runner.STATE_INIT
 
 
-def control(context: PygameContext, player: Player, runners: Runners):
+def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
     spawn_runners(context, player, runners)
     control_runners(context, player, runners)
+    control_bullets(bullets, context)
 
 
 def draw_player(context: PygameContext, player: Player):
     r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
     pygame.draw.rect(context.screen, (255, 255, 255), r)
+
+
+def draw_bullets(context: PygameContext, bullets: Bullets):
+    for bullet in bullets.elements:
+        pygame.draw.circle(context.screen, (255, 0, 0), (bullet.x, bullet.y), 10)
+
+
+def draw_mouse(context: PygameContext):
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
 
 
 def draw_runners(context: PygameContext, runners: Runners):
@@ -170,10 +216,12 @@ def draw_runners(context: PygameContext, runners: Runners):
         pygame.draw.rect(context.screen, (0, 255, 0), r)
 
 
-def draw(context: PygameContext, player: Player, runners: Runners):
+def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
     context.screen.fill((0, 0, 0))
 
     draw_player(context, player)
+    draw_mouse(context)
+    draw_bullets(context, bullets)
     draw_runners(context, runners)
 
     pygame.display.flip()
@@ -183,7 +231,11 @@ def main():
     context = PygameContext(1280, 720)
     player = Player(context.width // 2, context.height // 2)
 
+    bullets = Bullets()
     runners = Runners()
+
+    pygame.mouse.set_visible(False)
+    pygame.display.set_caption("Space War")
 
     running = True
 
@@ -191,10 +243,12 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                press_mouse(running, bullets, player, context)
 
         control_player(context, player)
-        control(context, player, runners)
-        draw(context, player, runners)
+        control(context, player, runners, bullets)
+        draw(context, player, runners, bullets)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
