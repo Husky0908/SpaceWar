@@ -247,7 +247,9 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
 
 
 def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
-    pass
+    for bullet_shooter in bullet_shooters.elements:
+        if bullet_shooter.health <= 0:
+            bullet_shooter.STATE = BulletShooter.STATE_KILLED
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters):
@@ -273,6 +275,18 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
             if x.state != Runner.STATE_KILLED:
                 tmp_list.append(x)
         runners.elements = tmp_list
+
+    for bullet_shooter in bullet_shooters.elements:
+        for bullet in bullets.elements:
+            if bullet_shooter.form.colliderect(bullet.form):
+                bullet_shooter.health = bullet_shooter.health - 1
+                bullet.sharp = False
+
+        tmp_list = []
+        for x in bullet_shooters.elements:
+            if not x.STATE == BulletShooter.STATE_KILLED:
+                tmp_list.append(x)
+        bullet_shooters.elements = tmp_list
 
     for bullet in bullets.elements:
         tmp_list = []
