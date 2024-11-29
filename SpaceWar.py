@@ -133,7 +133,7 @@ def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
             bullet.x = bullet.x_0 + bullet.dir_x * d_t * bullet.speed
             bullet.y = bullet.y_0 + bullet.dir_y * d_t * bullet.speed
             if bullet.x >= context.width or bullet.x <= 0 or bullet.y >= context.height or bullet.y <= 0:
-                del bullet
+                bullet.sharp = False
         else:
             bullet.dir_x, bullet.dir_y = get_direction(bullet.x, bullet.y, bullet.dest_x, bullet.dest_y)
             bullet.start_time = context.time
@@ -236,9 +236,6 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
             d_t = context.time - runner.start_time
             runner.x = runner.x_0 + runner.dir_x * d_t * Runner.FAST_SPEED
             runner.y = runner.y_0 + runner.dir_y * d_t * Runner.FAST_SPEED
-            if runner.form.colliderect(player.form) and not runner.wounded:
-                player.health = player.health - 1
-                runner.wounded = True
             if runner.x > context.width - runner.width / 2 or runner.x < runner.width / 2 or runner.y > context.height - runner.height / 2 or runner.y < runner.height / 2:
                 runner.state = Runner.STATE_SECOND_STOP
                 runner.start_time = context.time
@@ -247,11 +244,6 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
                 runner.state = Runner.STATE_INIT
         if runner.health <= 0:
             runner.state = Runner.STATE_KILLED
-        if runner.state == Runner.STATE_KILLED:
-            del runner
-        # for bullet in bullets.elements:
-        #     if runner.form.colliderect(bullet.form):
-        #         runner.health = runner.health - 1
 
 
 def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
@@ -264,6 +256,30 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     control_runners(context, player, runners, bullets)
     control_bullet_shooters(context, player, bullet_shooters)
     control_bullets(bullets, context, runners)
+
+
+def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters):
+    for runner in runners.elements:
+        if runner.form.colliderect(player.form) and not runner.wounded:
+            player.health = player.health - 1
+            runner.wounded = True
+        for bullet in bullets.elements:
+            if runner.form.colliderect(bullet.form):
+                runner.health = runner.health - 1
+                bullet.sharp = False
+
+        tmp_list = []
+        for x in runners.elements:
+            if x.state != Runner.STATE_KILLED:
+                tmp_list.append(x)
+        runners.elements = tmp_list
+
+    for bullet in bullets.elements:
+        tmp_list = []
+        for x in bullets.elements:
+            if not x.sharp == False:
+                tmp_list.append(x)
+        bullets.elements = tmp_list
 
 
 def draw_player(context: PygameContext, player: Player):
@@ -328,6 +344,7 @@ def main():
         running = control_player(context, player, running)
         control(context, player, runners, bullets, bullet_shooters)
         draw(context, player, runners, bullets, bullet_shooters)
+        contacts(context, player, runners, bullets, bullet_shooters)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
