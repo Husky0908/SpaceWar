@@ -19,16 +19,17 @@ class BulletShooter:
         self.health = 2
         self.form = None
         self.STATE = BulletShooter.STATE_INIT
+        self.how_many_pixel = None
 
     height = 45
     width = 30
     STATE_INIT = 0
-    STATE_FIRST_MOVE = 1
-    STATE_FIRST_WAIT = 2
-    STATE_SECOND_MOVE = 3
-    STATE_SECOND_WAIT = 4
-    STATE_THIRD_MOVE = 5
-    STATE_THIRD_WAIT = 6
+    STATE_MOVE_RIGHT = 1
+    STATE_MOVE_LEFT = 2
+    STATE_MOVE_DOWN = 3
+    STATE_MOVE_UP = 4
+    STATE_WAIT = 5
+    STATE_NEXT = 6
     STATE_KILLED = 7
 
 
@@ -194,7 +195,7 @@ def spawn_bullet_shooters(context: PygameContext, player: Player, bullet_shooter
         trying = True
         while trying:
             x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
-            y = random.randint(0 + BulletShooter.height // 2, context.height - BulletShooter.height // 2)
+            y = 0 - BulletShooter.height
             leng = length(player.x, x, player.y, y)
             if leng >= 600:
                 trying = False
@@ -248,6 +249,42 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
 
 def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
     for bullet_shooter in bullet_shooters.elements:
+        if bullet_shooter.STATE == BulletShooter.STATE_INIT:
+            bullet_shooter.y = bullet_shooter.y + 1
+            if bullet_shooter.y >= 60:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT:
+            bullet_shooter.x = bullet_shooter.x + 1
+            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+            if bullet_shooter.how_many_pixel <= 0:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT:
+            bullet_shooter.x = bullet_shooter.x - 1
+            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+            if bullet_shooter.how_many_pixel <= 0:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN:
+            bullet_shooter.y = bullet_shooter.y + 1
+            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+            if bullet_shooter.how_many_pixel <= 0:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
+            bullet_shooter.y = bullet_shooter.y - 1
+            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+            if bullet_shooter.how_many_pixel <= 0:
+                bullet_shooter.STATE = BaaaaaulletShooter.STATE_NEXT
+        if bullet_shooter.STATE == BulletShooter.STATE_NEXT:
+            next_state = random.randint(1, 4)
+            bullet_shooter.how_many_pixel = random.randint(50, 200)
+            bullet_shooter.STATE = next_state
+            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT and bullet_shooter.x >= (context.width - 200):
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT and bullet_shooter.x <= 200:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN and bullet_shooter.y >= (context.height - 200):
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP and bullet_shooter.y <= 200:
+                bullet_shooter.STATE = BulletShooter.STATE_NEXT
         if bullet_shooter.health <= 0:
             bullet_shooter.STATE = BulletShooter.STATE_KILLED
 
