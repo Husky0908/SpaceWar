@@ -9,7 +9,8 @@ class Player:
         self.health = 5
         self.width = 20
         self.height = 40
-        self.form = None
+        self.form = pygame.image.load("Pictures/player_ship_5_hp.png").convert_alpha()
+        self.r = None
 
 
 class BulletShooter:
@@ -56,6 +57,7 @@ class Runner:
         self.start_time = 0
         self.form = None
         self.wounded = False
+        self.r = None
 
     height = 60
     width = 100
@@ -126,7 +128,7 @@ def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]
 def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext):
     if bullets.last_spawn - context.time >= 30:
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y))
+        bullets.elements.append(Bullet((player.x + 50), (player.y + 40), mouse_x, mouse_y))
         bullets.last_spawn = context.time
 
 
@@ -309,11 +311,11 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters):
     for runner in runners.elements:
-        if runner.form.colliderect(player.form) and not runner.wounded:
+        if runner.r.colliderect(player.r) and not runner.wounded:
             player.health = player.health - 1
             runner.wounded = True
         for bullet in bullets.elements:
-            if runner.form.colliderect(bullet.form):
+            if runner.r.colliderect(bullet.form):
                 runner.health = runner.health - 1
                 bullet.sharp = False
 
@@ -344,8 +346,9 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
 
 
 def draw_player(context: PygameContext, player: Player):
-    r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
-    player.form = pygame.draw.rect(context.screen, (255, 255, 255), r)
+    player.r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
+    #player.form = pygame.draw.rect(context.screen, (255, 255, 255), r)
+    context.screen.blit(player.form, player.r)
 
 
 def draw_bullets(context: PygameContext, bullets: Bullets):
@@ -360,8 +363,8 @@ def draw_mouse(context: PygameContext):
 
 def draw_runners(context: PygameContext, runners: Runners):
     for runner in runners.elements:
-        r = pygame.Rect(runner.x - runner.width / 2, runner.y - runner.height / 2, runner.width, runner.height)
-        runner.form = pygame.draw.rect(context.screen, (0, 255, 0), r)
+        runner.r = pygame.Rect(runner.x - runner.width / 2, runner.y - runner.height / 2, runner.width, runner.height)
+        runner.form = pygame.draw.rect(context.screen, (0, 255, 0), runner.r)
 
 
 def draw_bullet_shooters(context: PygameContext, bullet_shooters: BulletShooters):
