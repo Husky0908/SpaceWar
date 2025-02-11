@@ -9,7 +9,8 @@ class Player:
         self.health = 5
         self.width = 20
         self.height = 40
-        self.form = pygame.image.load("Pictures/player_ship_5_hp.png").convert_alpha()
+        self.form = None
+        self.pictures = [pygame.image.load("Pictures/player_ship_1_hp.png").convert_alpha(), pygame.image.load("Pictures/player_ship_2_hp.png").convert_alpha(), pygame.image.load("Pictures/player_ship_3_hp.png").convert_alpha(), pygame.image.load("Pictures/player_ship_4_hp.png").convert_alpha(), pygame.image.load("Pictures/player_ship_5_hp.png").convert_alpha()]
         self.r = None
 
 
@@ -345,10 +346,15 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
         bullets.elements = tmp_list
 
 
+def player_picture(player: Player, context: PygameContext):
+    player.form = player.pictures[player.health - 1]
+    context.screen.blit(player.form, player.r)
+
+
 def draw_player(context: PygameContext, player: Player):
     player.r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
     #player.form = pygame.draw.rect(context.screen, (255, 255, 255), r)
-    context.screen.blit(player.form, player.r)
+    player_picture(player, context)
 
 
 def draw_bullets(context: PygameContext, bullets: Bullets):
