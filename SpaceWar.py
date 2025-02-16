@@ -26,6 +26,7 @@ class BulletShooter:
         self.how_many_stop_time = 120
         self.how_many_pixel_min = 50
         self.how_many_pixel_max = 200
+        self.shoot_time = 0
 
     height = 45
     width = 30
@@ -80,7 +81,7 @@ class Runners:
 
 
 class Bullet:
-    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float):
+    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float, attacker: str):
         self.x_0 = x_0
         self.y_0 = y_0
         self.x = x_0
@@ -94,6 +95,7 @@ class Bullet:
         self.sharp = False
         self.form = None
         self.r = 10
+        self.attacker = attacker
 
 
 class Bullets:
@@ -126,11 +128,14 @@ def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]
     return (x_2 - x_1) / leng, (y_2 - y_1) / leng
 
 
-def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext):
-    if bullets.last_spawn - context.time >= 30:
+def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext, attacker, bullet_shooters: BulletShooters):
+    if bullets.last_spawn - context.time >= 30 and attacker == "friend":
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        bullets.elements.append(Bullet((player.x + 50), (player.y + 40), mouse_x, mouse_y))
+        bullets.elements.append(Bullet((player.x + 50), (player.y + 40), mouse_x, mouse_y, attacker))
         bullets.last_spawn = context.time
+    for bullet_shooter in bullet_shooters.elements:
+        if attacker == "enemy":
+            bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, (player.x + 50), (player.y + 40), attacker))
 
 
 def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
@@ -148,9 +153,9 @@ def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
             bullet.sharp = True
 
 
-def press_mouse(running, bullets: Bullets, player: Player, context: PygameContext):
+def press_mouse(running, bullets: Bullets, player: Player, context: PygameContext, bullet_shooters: BulletShooters):
     if running:
-        shoot_bullet(bullets, player, context)
+        shoot_bullet(bullets, player, context, "friend", bullet_shooters)
 
 
 def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
@@ -237,6 +242,8 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
                 runner.state = Runner.STATE_FAST_MOVE
                 runner.wounded = False
                 dest_x, dest_y = destination_runner(player, 0, 0)
+                dest_x = dest_x + 50
+                dest_y =dest_y + 40
                 runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
                 runner.start_time = context.time
                 runner.x_0, runner.y_0 = runner.x, runner.y
@@ -254,7 +261,7 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
             runner.state = Runner.STATE_KILLED
 
 
-def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
+def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters, bullets: Bullets):
     for bullet_shooter in bullet_shooters.elements:
         if bullet_shooter.STATE == BulletShooter.STATE_INIT:
             bullet_shooter.y = bullet_shooter.y + 1
@@ -298,6 +305,10 @@ def control_bullet_shooters(context: PygameContext, player: Player, bullet_shoot
                 bullet_shooter.STATE = BulletShooter.STATE_NEXT
             if bullet_shooter.STATE == BulletShooter.STATE_WAIT:
                 bullet_shooter.wait_time = context.time
+        bullet_shooter.shoot_time = bullet_shooter.shoot_time + 1
+        if bullet_shooter.shoot_time == 120:
+            shoot_bullet(bullets, player, context, "enemy", bullet_shooters)
+            bullet_shooter.shoot_time = 0
         if bullet_shooter.health <= 0:
             bullet_shooter.STATE = BulletShooter.STATE_KILLED
 
@@ -306,7 +317,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     spawn_runners(context, player, runners)
     spawn_bullet_shooters(context, player, bullet_shooters)
     control_runners(context, player, runners, bullets)
-    control_bullet_shooters(context, player, bullet_shooters)
+    control_bullet_shooters(context, player, bullet_shooters, bullets)
     control_bullets(bullets, context, runners)
 
 
@@ -328,7 +339,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
 
     for bullet_shooter in bullet_shooters.elements:
         for bullet in bullets.elements:
-            if bullet_shooter.form.colliderect(bullet.form):
+            if bullet_shooter.form.colliderect(bullet.form) and bullet.attacker == "friend":
                 bullet_shooter.health = bullet_shooter.health - 1
                 bullet.sharp = False
 
@@ -337,6 +348,11 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
             if not x.STATE == BulletShooter.STATE_KILLED:
                 tmp_list.append(x)
         bullet_shooters.elements = tmp_list
+
+    for bullet in bullets.elements:
+        if bullet.form.colliderect(player.r) and bullet.attacker == "enemy":
+            player.health = player.health - 1
+            bullet.sharp = False
 
     for bullet in bullets.elements:
         tmp_list = []
@@ -409,7 +425,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                press_mouse(running, bullets, player, context)
+                press_mouse(running, bullets, player, context, bullet_shooters)
 
         running = control_player(context, player, running)
         control(context, player, runners, bullets, bullet_shooters)
