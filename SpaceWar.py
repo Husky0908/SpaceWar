@@ -86,13 +86,15 @@ class RocketLauncher:
         self.y = y
         self.x_0 = x
         self.y_0 = y
+        self.dest_x = None
+        self.dest_y = None
         self.dir_x = None
         self.dir_y = None
         self.health = 4
         self.STATE = RocketLauncher.STATE_INIT
         self.form = None
         self.start_time = 0
-        self.speed = 0.5
+        self.speed = 75
 
     height = 50
     width = 50
@@ -383,34 +385,36 @@ def control_bullet_shooters(context: PygameContext, player: Player, bullet_shoot
 def control_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers, rockets: Rockets):
     for rocket_launcher in rocket_launchers.elements:
         if rocket_launcher.STATE == RocketLauncher.STATE_INIT:
-            rocket_launcher.y = rocket_launcher.y + 2
+            rocket_launcher.y = rocket_launcher.y + rocket_launcher.speed / 40
             if rocket_launcher.y >= 50:
                 rocket_launcher.STATE = RocketLauncher.STATE_MOVE
                 trying = True
                 while trying:
-                    rocket_launcher.dir_x = random.randint((0 + RocketLauncher.width // 2), context.width - RocketLauncher.width // 2)
-                    rocket_launcher.dir_y = random.randint(0 + RocketLauncher.height // 2, context.height - RocketLauncher.height // 2)
-                    leng = length(player.x, rocket_launcher.dir_x, player.y, rocket_launcher.dir_y)
+                    rocket_launcher.dest_x = random.randint((0 + RocketLauncher.width // 2), context.width - RocketLauncher.width // 2)
+                    rocket_launcher.dest_y = random.randint(0 + RocketLauncher.height // 2, context.height - RocketLauncher.height // 2)
+                    leng = length(player.x, rocket_launcher.dest_x, player.y, rocket_launcher.dest_y)
                     #dest_x, dest_y = destination_runner(player, context.width, context.height)
                     #rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x, rocket_launcher.y, dest_x, dest_y)
-                    if leng <= 600:
+                    if leng >= 600:
                         trying = False
+                        print(rocket_launcher.dest_x, rocket_launcher.dest_y)
                         rocket_launcher.start_time = context.time
                         rocket_launcher.x_0, rocket_launcher.y_0 = rocket_launcher.x, rocket_launcher.y
+                        rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x_0, rocket_launcher.y_0, rocket_launcher.dest_x, rocket_launcher.dest_y)
         if rocket_launcher.STATE == RocketLauncher.STATE_MOVE:
             d_t = context.time - rocket_launcher.start_time
-            if d_t < 0.5:
+            if d_t < 2:
                 rocket_launcher.x = rocket_launcher.x_0 + rocket_launcher.dir_x * d_t * rocket_launcher.speed
                 rocket_launcher.y = rocket_launcher.y_0 + rocket_launcher.dir_y * d_t * rocket_launcher.speed
             else:
                 rocket_launcher.STATE = RocketLauncher.STATE_WAIT
                 rocket_launcher.start_time = context.time
         if rocket_launcher.STATE == RocketLauncher.STATE_WAIT:
-            if context.time - rocket_launcher.start_time >= 10:
+            if context.time - rocket_launcher.start_time >= 2:
                 rocket_launcher.STATE = RocketLauncher.STATE_SHOOT
         if rocket_launcher.STATE == RocketLauncher.STATE_SHOOT:
             spawn_rockets(rockets, rocket_launcher.x, rocket_launcher.y, "enemy")
-            rocket_launcher.STATE = RocketLauncher.STATE_MOVE
+            rocket_launcher.STATE = RocketLauncher.STATE_INIT
 
 
 def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
@@ -469,7 +473,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
             player.health = player.health - 1
             bullet.sharp = False
         for rocket in rockets.elements:
-            if bullet.form.colliderect(rocket.form) and bullet.attacker == "friendw":
+            if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 rocket.health = rocket.health - 1
 
