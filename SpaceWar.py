@@ -102,6 +102,7 @@ class RocketLauncher:
     STATE_MOVE = 1
     STATE_WAIT = 2
     STATE_SHOOT = 3
+    STATE_KILL = 4
 
 
 class RocketLaunchers:
@@ -415,6 +416,8 @@ def control_rocket_launchers(context: PygameContext, player: Player, rocket_laun
         if rocket_launcher.STATE == RocketLauncher.STATE_SHOOT:
             spawn_rockets(rockets, rocket_launcher.x, rocket_launcher.y, "enemy")
             rocket_launcher.STATE = RocketLauncher.STATE_INIT
+        if rocket_launcher.health <= 0:
+            rocket_launcher.STATE = RocketLauncher.STATE_KILL
 
 
 def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
@@ -440,7 +443,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     control_rockets(rockets, context, player)
 
 
-def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets):
+def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
     for runner in runners.elements:
         if runner.r.colliderect(player.r) and not runner.wounded:
             player.health = player.health - 1
@@ -476,6 +479,17 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
             if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 rocket.health = rocket.health - 1
+        for rocket_launcher in rocket_launchers.elements:
+            if bullet.form.colliderect(rocket_launcher.form) and bullet.attacker == "friend":
+                bullet.sharp = False
+                rocket_launcher.health = rocket_launcher.health - 1
+
+    for rocket_launcher in rocket_launchers.elements:
+        tmp_list = []
+        for x in rocket_launchers.elements:
+            if not x.STATE == RocketLauncher.STATE_KILL:
+                tmp_list.append(x)
+        rocket_launchers.elements = tmp_list
 
     for rocket in rockets.elements:
         if rocket.form.colliderect(player.r):
@@ -581,7 +595,7 @@ def main():
         running = control_player(context, player, running)
         control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
         draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
-        contacts(context, player, runners, bullets, bullet_shooters, rockets)
+        contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
