@@ -398,7 +398,6 @@ def control_rocket_launchers(context: PygameContext, player: Player, rocket_laun
                     #rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x, rocket_launcher.y, dest_x, dest_y)
                     if leng >= 600:
                         trying = False
-                        print(rocket_launcher.dest_x, rocket_launcher.dest_y)
                         rocket_launcher.start_time = context.time
                         rocket_launcher.x_0, rocket_launcher.y_0 = rocket_launcher.x, rocket_launcher.y
                         rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x_0, rocket_launcher.y_0, rocket_launcher.dest_x, rocket_launcher.dest_y)
