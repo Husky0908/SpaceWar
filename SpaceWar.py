@@ -582,6 +582,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             spawn_bullet_shooters(context, player, bullet_shooters)
     if len(bullet_shooters.elements) == 0 and game_logic_parameters.wave == 1:
         game_logic_parameters.wave_time = 1200
+
     if game_logic_parameters.wave_time == 1200:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(6):
@@ -590,6 +591,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             spawn_runners(context, player, runners)
     if len(bullet_shooters.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 2:
         game_logic_parameters.wave_time = 3600
+
     if game_logic_parameters.wave_time == 3600:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(4):
@@ -597,18 +599,41 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             spawn_runners(context, player, runners)
     if len(bullet_shooters.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 3:
         game_logic_parameters.wave_time = 6000
+
     if game_logic_parameters.wave_time == 6000:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(8):
             spawn_runners(context, player, runners)
     if len(runners.elements) == 0 and game_logic_parameters.wave == 4:
         game_logic_parameters.wave_time = 9000
+
     if game_logic_parameters.wave_time == 9000:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(4):
             spawn_bullet_shooters(context, player, bullet_shooters)
         for i in range(2):
             spawn_rocket_launchers(context, player, rocket_launchers)
+    if len(bullet_shooters.elements) == 0 and len(rocket_launchers.elements) == 0 and game_logic_parameters.wave == 5:
+        game_logic_parameters.wave_time = 11000
+
+    if game_logic_parameters.wave_time == 11000:
+        game_logic_parameters.wave = game_logic_parameters.wave + 1
+        for i in range(3):
+            spawn_bullet_shooters(context, player, bullet_shooters)
+            spawn_rocket_launchers(context, player, rocket_launchers)
+        for i in range(2):
+            spawn_runners(context, player, runners)
+    if len(bullet_shooters.elements) == 0 and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 6:
+        game_logic_parameters.wave_time = 14000
+
+    if game_logic_parameters.wave_time == 14000:
+        game_logic_parameters.wave = game_logic_parameters.wave + 1
+        for i in range(3):
+            spawn_rocket_launchers(context, player, rocket_launchers)
+            spawn_runners(context, player, runners)
+        for i in range(4):
+            spawn_bullet_shooters(context, player, bullet_shooters)
+
     game_logic_parameters.wave_time = game_logic_parameters.wave_time + 1
 
 
