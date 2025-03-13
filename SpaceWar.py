@@ -34,6 +34,7 @@ class BulletShooter:
         self.how_many_pixel_min = 50
         self.how_many_pixel_max = 200
         self.shoot_time = 0
+        self.shoot_time_end = 0
 
     height = 45
     width = 30
@@ -67,6 +68,7 @@ class Runner:
         self.form = None
         self.wounded = False
         self.r = None
+        self.run_time = 0
 
     height = 60
     width = 100
@@ -132,6 +134,7 @@ class Rocket:
         self.r = 10
         self.attacker = attacker
         self.state = Rocket.STATE_MOVE
+        self.time = 0
 
     height = 25
     width = 25
@@ -254,37 +257,25 @@ def control_player(context: PygameContext, player: Player, running):
 
 
 def spawn_runners(context: PygameContext, player: Player, runners: Runners):
-    #if context.time - runners.last_spawn >= 5:
-        #runners.last_spawn = context.time
-        trying = True
-        while trying:
-            x = random.randint((0 + Runner.width // 2), context.width - Runner.width // 2)
-            y = random.randint(0 + Runner.height // 2, context.height - Runner.height // 2)
-            leng = length(player.x, x, player.y, y)
-            if leng >= 600:
-                trying = False
-                runners.elements.append(Runner(x, y))
+        p_o_n = random.randint(1, 2)
+        if p_o_n == 1:
+            x = 0 - Runner.width
+        else:
+            x = context.width + Runner.width
+        y = random.randint((0 - Runner.height), (context.height + Runner.height))
+        runners.elements.append(Runner(x, y))
 
 
 def spawn_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
-    #if context.time - bullet_shooters.last_spawn >= 5:
-        #bullet_shooters.last_spawn = context.time
-        trying = True
-        while trying:
-            x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
-            y = 0 - BulletShooter.height
-            leng = length(player.x, x, player.y, y)
-            if leng >= 600:
-                trying = False
-                bullet_shooters.elements.append(BulletShooter(x, y))
+    x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
+    y = 0 - BulletShooter.height
+    bullet_shooters.elements.append(BulletShooter(x, y))
 
 
 def spawn_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers):
-    #if context.time - rocket_launchers.last_spawn >= 5:
-        #rocket_launchers.last_spawn = context.time
-        x = random.randint(0, context.width)
-        y = -RocketLauncher.height
-        rocket_launchers.elements.append(RocketLauncher(x, y))
+    x = random.randint(0, context.width)
+    y = -RocketLauncher.height
+    rocket_launchers.elements.append(RocketLauncher(x, y))
 
 
 def spawn_rockets(rockets: Rockets, x, y, attacker):
@@ -301,6 +292,7 @@ def destination_runner(player: Player, width, height):
 def control_runners(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
     for runner in runners.elements:
         if runner.state == Runner.STATE_INIT:
+            runner.run_time = random.randint(3, 6)
             runner.state = Runner.STATE_SLOW_MOVE
             dest_x, dest_y = destination_runner(player, 100, 100)
             runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
@@ -308,7 +300,7 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
             runner.x_0, runner.y_0 = runner.x, runner.y
         elif runner.state == Runner.STATE_SLOW_MOVE:
             d_t = context.time - runner.start_time
-            if d_t < 5:
+            if d_t < runner.run_time:
                 runner.x = runner.x_0 + runner.dir_x * d_t * Runner.SLOW_SPEED
                 runner.y = runner.y_0 + runner.dir_y * d_t * Runner.SLOW_SPEED
             else:
@@ -344,6 +336,7 @@ def control_bullet_shooters(context: PygameContext, player: Player, bullet_shoot
             bullet_shooter.y = bullet_shooter.y + 1
             if bullet_shooter.y >= 60:
                 bullet_shooter.STATE = BulletShooter.STATE_NEXT
+                bullet_shooter.shoot_time_end = random.randint(80, 150)
         if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT:
             bullet_shooter.x = bullet_shooter.x + 1
             bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
@@ -383,9 +376,10 @@ def control_bullet_shooters(context: PygameContext, player: Player, bullet_shoot
             if bullet_shooter.STATE == BulletShooter.STATE_WAIT:
                 bullet_shooter.wait_time = context.time
         bullet_shooter.shoot_time = bullet_shooter.shoot_time + 1
-        if bullet_shooter.shoot_time == 120:
+        if bullet_shooter.shoot_time == bullet_shooter.shoot_time_end:
             shoot_bullet(bullets, player, context, "enemy", bullet_shooters)
             bullet_shooter.shoot_time = 0
+            bullet_shooter.shoot_time_end = random.randint(80, 150)
         if bullet_shooter.health <= 0:
             bullet_shooter.STATE = BulletShooter.STATE_KILLED
 
@@ -401,23 +395,23 @@ def control_rocket_launchers(context: PygameContext, player: Player, rocket_laun
                     rocket_launcher.dest_x = random.randint((0 + RocketLauncher.width // 2), context.width - RocketLauncher.width // 2)
                     rocket_launcher.dest_y = random.randint(0 + RocketLauncher.height // 2, context.height - RocketLauncher.height // 2)
                     leng = length(player.x, rocket_launcher.dest_x, player.y, rocket_launcher.dest_y)
-                    #dest_x, dest_y = destination_runner(player, context.width, context.height)
-                    #rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x, rocket_launcher.y, dest_x, dest_y)
                     if leng >= 600:
                         trying = False
                         rocket_launcher.start_time = context.time
                         rocket_launcher.x_0, rocket_launcher.y_0 = rocket_launcher.x, rocket_launcher.y
                         rocket_launcher.dir_x, rocket_launcher.dir_y = get_direction(rocket_launcher.x_0, rocket_launcher.y_0, rocket_launcher.dest_x, rocket_launcher.dest_y)
+                        rocket_launcher.time = random.randint(1, 4)
         if rocket_launcher.STATE == RocketLauncher.STATE_MOVE:
             d_t = context.time - rocket_launcher.start_time
-            if d_t < 2:
+            if d_t < rocket_launcher.time:
                 rocket_launcher.x = rocket_launcher.x_0 + rocket_launcher.dir_x * d_t * rocket_launcher.speed
                 rocket_launcher.y = rocket_launcher.y_0 + rocket_launcher.dir_y * d_t * rocket_launcher.speed
             else:
                 rocket_launcher.STATE = RocketLauncher.STATE_WAIT
                 rocket_launcher.start_time = context.time
+                rocket_launcher.time = random.randint(1, 4)
         if rocket_launcher.STATE == RocketLauncher.STATE_WAIT:
-            if context.time - rocket_launcher.start_time >= 2:
+            if context.time - rocket_launcher.start_time >= rocket_launcher.time:
                 rocket_launcher.STATE = RocketLauncher.STATE_SHOOT
         if rocket_launcher.STATE == RocketLauncher.STATE_SHOOT:
             spawn_rockets(rockets, rocket_launcher.x, rocket_launcher.y, "enemy")
@@ -439,9 +433,6 @@ def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
-    #spawn_runners(context, player, runners)
-    #spawn_bullet_shooters(context, player, bullet_shooters)
-    #spawn_rocket_launchers(context, player, rocket_launchers)
     control_runners(context, player, runners, bullets)
     control_bullet_shooters(context, player, bullet_shooters, bullets)
     control_rocket_launchers(context, player, rocket_launchers, rockets)
