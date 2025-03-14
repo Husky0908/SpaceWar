@@ -166,6 +166,7 @@ class Bullet:
         self.start_time = 0
         self.sharp = False
         self.form = None
+        self.forms = [pygame.image.load("Pictures/players_pictures/player_bullet.png")]
         self.r = 10
         self.attacker = attacker
 
@@ -525,7 +526,10 @@ def draw_player(context: PygameContext, player: Player):
 
 def draw_bullets(context: PygameContext, bullets: Bullets):
     for bullet in bullets.elements:
-        bullet.form = pygame.draw.circle(context.screen, (255, 0, 0), (bullet.x, bullet.y), bullet.r)
+        if bullet.attacker == "friend":
+            bullet.form = context.screen.blit(bullet.forms[0], (bullet.x, bullet.y))
+        else:
+            bullet.form = pygame.draw.circle(context.screen, (255, 0, 0), (bullet.x, bullet.y), bullet.r)
 
 
 def draw_mouse(context: PygameContext):
