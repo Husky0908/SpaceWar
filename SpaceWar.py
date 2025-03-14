@@ -652,6 +652,10 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 press_mouse(running, bullets, player, context, bullet_shooters)
 
+        #keys = pygame.key.get_pressed()
+        #if keys[pygame.K_ESCAPE]:
+        #    menu(True)
+
         running = control_player(context, player, running)
         control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
         draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
@@ -662,6 +666,3 @@ def main():
         context.time = context.time + context.delta_time
 
     pygame.quit()
-
-
-main()
