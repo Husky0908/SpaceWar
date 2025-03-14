@@ -17,7 +17,11 @@ class Player:
         self.width = 20
         self.height = 40
         self.form = None
-        self.pictures = [pygame.image.load("Pictures/player_ship_1_hp_j.png").convert_alpha(), pygame.image.load("Pictures/player_ship_2_hp_j.png").convert_alpha(), pygame.image.load("Pictures/player_ship_3_hp_j.png").convert_alpha(), pygame.image.load("Pictures/player_ship_4_hp_j.png").convert_alpha(), pygame.image.load("Pictures/player_ship_5_hp_j.png").convert_alpha()]
+        self.pictures = [pygame.image.load("Pictures/players_pictures/player_ship_1_hp_j.png").convert_alpha(), pygame.image.load(
+            "Pictures/players_pictures/player_ship_2_hp_j.png").convert_alpha(), pygame.image.load(
+            "Pictures/players_pictures/player_ship_3_hp_j.png").convert_alpha(), pygame.image.load(
+            "Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha(), pygame.image.load(
+            "Pictures/players_pictures/player_ship_5_hp_j.png").convert_alpha()]
         self.r = None
 
 
@@ -664,5 +668,3 @@ def main():
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
-
-    pygame.quit()
