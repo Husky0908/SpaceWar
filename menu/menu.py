@@ -1,7 +1,10 @@
 import pygame
-from SpaceWar import main
 
-def menu(esc):
+from base.context import PygameContext
+
+def menu(context: PygameContext) -> bool:
+    ## TODO: context-et hasznalni menu_screen helyett
+    ## meg a clock helyett is
     menu_screen = pygame.display.set_mode((1280, 720))
     menu_clock = pygame.time.Clock()
 
@@ -18,18 +21,20 @@ def menu(esc):
     back_button = pygame.image.load("Pictures/menu_pictures/backbutton.png").convert_alpha()
 
     running = True
+    must_quit = False
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                must_quit = True
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_click = True
             else:
                 mouse_click = False
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE] and esc:
-            return None
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_ESCAPE] and esc:
+        #     return None
 
         menu_screen.fill((0, 0, 0))
 
@@ -46,11 +51,12 @@ def menu(esc):
             if game_quit.colliderect(mouse_form):
                 menu_screen.blit(ship, ((1280 / 2 - 165), 450))
             if play_game.colliderect(mouse_form) and mouse_click:
-                main()
+                running = False
             if options.colliderect(mouse_form) and mouse_click:
                 which_menu = "options"
             if game_quit.colliderect(mouse_form) and mouse_click:
                 running = False
+                must_quit = True
 
         if which_menu == "options":
             menu_screen.blit(options_controls, (330, 100))
@@ -64,6 +70,6 @@ def menu(esc):
         pygame.display.flip()
         menu_clock.tick(60)
 
-    pygame.quit()
+    return must_quit
 
-menu(False)
+#menu(False)
