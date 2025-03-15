@@ -27,6 +27,8 @@ class Player:
 
 class BulletShooter:
     def __init__(self, x: int, y: int):
+        self.id = BulletShooter.next_id
+        BulletShooter.next_id = BulletShooter.next_id + 1
         self.x = x
         self.y = y
         self.health = 2
@@ -50,6 +52,8 @@ class BulletShooter:
     STATE_WAIT = 5
     STATE_NEXT = 6
     STATE_KILLED = 7
+
+    next_id = 0
 
 
 class BulletShooters:
@@ -201,14 +205,15 @@ def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]
     return (x_2 - x_1) / leng, (y_2 - y_1) / leng
 
 
-def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext, attacker, bullet_shooters: BulletShooters):
-    if bullets.last_spawn - context.time >= 30 and attacker == "friend":
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, attacker))
-        bullets.last_spawn = context.time
-    for bullet_shooter in bullet_shooters.elements:
-        if attacker == "enemy":
-            bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, player.x, player.y, attacker))
+# def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext, attacker, bullet_shooter: BulletShooter):
+#     if bullets.last_spawn - context.time >= 30 and attacker == "friend":
+#         mouse_x, mouse_y = pygame.mouse.get_pos()
+#         bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, attacker))
+#         bullets.last_spawn = context.time
+#     if attacker == "enemy":
+#         bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, player.x, player.y, attacker))
+
+# def shoot_bullet(bullets: Bullets, attacker: str, 
 
 
 def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
@@ -228,7 +233,10 @@ def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
 
 def press_mouse(running, bullets: Bullets, player: Player, context: PygameContext, bullet_shooters: BulletShooters):
     if running:
-        shoot_bullet(bullets, player, context, "friend", bullet_shooters)
+        if bullets.last_spawn - context.time >= 30:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, "friend"))
+            bullets.last_spawn = context.time
 
 
 def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
@@ -335,56 +343,72 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
             runner.state = Runner.STATE_KILLED
 
 
+def control_bullet_shooter_handle_init(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
+    bullet_shooter.y = bullet_shooter.y + 1
+    if bullet_shooter.y >= 60:
+        bullet_shooter.shoot_time_end = random.randint(80, 150)
+        bullet_shooter.STATE = BulletShooter.STATE_NEXT
+
+
+def control_bullet_shooter_handle_moves(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
+    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT:
+        bullet_shooter.x = bullet_shooter.x + 1
+        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.x >= context.width - BulletShooter.width / 2:
+            bullet_shooter.STATE = BulletShooter.STATE_NEXT
+    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT:
+        bullet_shooter.x = bullet_shooter.x - 1
+        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.x <= BulletShooter.width / 2:
+            bullet_shooter.STATE = BulletShooter.STATE_NEXT
+    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN:
+        bullet_shooter.y = bullet_shooter.y + 1
+        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.y >= context.height - BulletShooter.height / 2:
+            bullet_shooter.STATE = BulletShooter.STATE_NEXT
+    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
+        bullet_shooter.y = bullet_shooter.y - 1
+        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
+        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.y <= BulletShooter.height / 2:
+            bullet_shooter.STATE = BulletShooter.STATE_NEXT
+    
+
+def control_bullet_shooter_handle_wait(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
+    bullet_shooter.wait_time = bullet_shooter.wait_time - 1
+    if bullet_shooter.wait_time == 0:
+        bullet_shooter.STATE = BulletShooter.STATE_NEXT
+
+        
+def control_bullet_shooter_handle_next_action(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
+    next_state = random.randint(1, 5)
+    bullet_shooter.how_many_pixel = random.randint(bullet_shooter.how_many_pixel_min, bullet_shooter.how_many_pixel_max)
+    bullet_shooter.wait_time = random.randint(1 * 60, 3 * 60)
+    bullet_shooter.STATE = next_state
+
+
+def control_bullet_shooter_handle_shoot(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
+    bullet_shooter.shoot_time = bullet_shooter.shoot_time + 1
+    if bullet_shooter.shoot_time == bullet_shooter.shoot_time_end:
+        bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, player.x, player.y, "enemy"))
+        bullet_shooter.shoot_time = 0
+        bullet_shooter.shoot_time_end = random.randint(80, 150)
+    
+
 def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters, bullets: Bullets):
     for bullet_shooter in bullet_shooters.elements:
         if bullet_shooter.STATE == BulletShooter.STATE_INIT:
-            bullet_shooter.y = bullet_shooter.y + 1
-            if bullet_shooter.y >= 60:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-                bullet_shooter.shoot_time_end = random.randint(80, 150)
-        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT:
-            bullet_shooter.x = bullet_shooter.x + 1
-            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-            if bullet_shooter.how_many_pixel <= 0:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT:
-            bullet_shooter.x = bullet_shooter.x - 1
-            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-            if bullet_shooter.how_many_pixel <= 0:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN:
-            bullet_shooter.y = bullet_shooter.y + 1
-            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-            if bullet_shooter.how_many_pixel <= 0:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
-            bullet_shooter.y = bullet_shooter.y - 1
-            bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-            if bullet_shooter.how_many_pixel <= 0:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+            control_bullet_shooter_handle_init(context, player, bullet_shooter, bullets)
+        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT or bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT or \
+           bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN or bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
+            control_bullet_shooter_handle_moves(context, player, bullet_shooter, bullets)
         if bullet_shooter.STATE == BulletShooter.STATE_WAIT:
-            bullet_shooter.wait_time = bullet_shooter.wait_time - 1
-            if context.time - bullet_shooter.wait_time >= 120:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
+            control_bullet_shooter_handle_wait(context, player, bullet_shooter, bullets)
         if bullet_shooter.STATE == BulletShooter.STATE_NEXT:
-            next_state = random.randint(1, 5)
-            bullet_shooter.how_many_pixel = random.randint(bullet_shooter.how_many_pixel_min, bullet_shooter.how_many_pixel_max)
-            bullet_shooter.STATE = next_state
-            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT and bullet_shooter.x >= (context.width - bullet_shooter.how_many_pixel_max):
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT and bullet_shooter.x <= bullet_shooter.how_many_pixel_max:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN and bullet_shooter.y >= (context.height - bullet_shooter.how_many_pixel_max):
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-            if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP and bullet_shooter.y <= bullet_shooter.how_many_pixel_max:
-                bullet_shooter.STATE = BulletShooter.STATE_NEXT
-            if bullet_shooter.STATE == BulletShooter.STATE_WAIT:
-                bullet_shooter.wait_time = context.time
-        bullet_shooter.shoot_time = bullet_shooter.shoot_time + 1
-        if bullet_shooter.shoot_time == bullet_shooter.shoot_time_end:
-            shoot_bullet(bullets, player, context, "enemy", bullet_shooters)
-            bullet_shooter.shoot_time = 0
-            bullet_shooter.shoot_time_end = random.randint(80, 150)
+            control_bullet_shooter_handle_next_action(context, player, bullet_shooter, bullets)
+
+        if bullet_shooter.STATE != BulletShooter.STATE_INIT:
+            control_bullet_shooter_handle_shoot(context, player, bullet_shooter, bullets)
+
         if bullet_shooter.health <= 0:
             bullet_shooter.STATE = BulletShooter.STATE_KILLED
 
