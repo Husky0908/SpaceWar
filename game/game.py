@@ -482,9 +482,6 @@ def game(context: PygameContext):
     bullet_shooters = BulletShooters()
     rocket_launchers = RocketLaunchers()
 
-    pygame.mouse.set_visible(False)
-    pygame.display.set_caption("Space War")
-
     running = True
 
     while running:

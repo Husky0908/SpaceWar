@@ -4,6 +4,8 @@ import pygame
 class PygameContext:
     def __init__(self, width: int, height: int):
         pygame.init()
+        pygame.mouse.set_visible(False)
+        pygame.display.set_caption("Space War")
 
         self.width = width
         self.height = height
