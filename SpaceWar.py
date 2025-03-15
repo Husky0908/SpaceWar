@@ -2,6 +2,42 @@ import pygame
 import random
 
 
+class PygameContext:
+    def __init__(self, width: int, height: int):
+        pygame.init()
+
+        self.width = width
+        self.height = height
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.clock = pygame.time.Clock()
+        self.delta_time = 0
+        self.time = 0
+
+class Bullet:
+    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float, attacker: str):
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.x = x_0
+        self.y = y_0
+        self.dest_x = destination_x
+        self.dest_y = destination_y
+        self.dir_x = None
+        self.dir_y = None
+        self.speed = 400
+        self.start_time = 0
+        self.sharp = False
+        self.form = None
+        self.forms = [pygame.image.load("Pictures/players_pictures/player_bullet.png")]
+        self.r = 10
+        self.attacker = attacker
+
+
+class Bullets:
+    def __init__(self):
+        self.last_spawn = 100
+        self.elements = []
+
+
 class GameLogic:
     def __init__(self):
         self.level = 1
@@ -26,22 +62,6 @@ class Player:
 
 
 class BulletShooter:
-    def __init__(self, x: int, y: int):
-        self.id = BulletShooter.next_id
-        BulletShooter.next_id = BulletShooter.next_id + 1
-        self.x = x
-        self.y = y
-        self.health = 2
-        self.form = None
-        self.STATE = BulletShooter.STATE_INIT
-        self.how_many_pixel = None
-        self.wait_time = 0
-        self.how_many_stop_time = 120
-        self.how_many_pixel_min = 50
-        self.how_many_pixel_max = 200
-        self.shoot_time = 0
-        self.shoot_time_end = 0
-
     height = 45
     width = 30
     STATE_INIT = 0
@@ -55,12 +75,139 @@ class BulletShooter:
 
     next_id = 0
 
+    def __init__(self, x: int, y: int):
+        self._id = BulletShooter.next_id
+        BulletShooter.next_id = BulletShooter.next_id + 1
+        self._x = x
+        self._y = y
+        self._health = 2
+        self._form = None
+        self._STATE = BulletShooter.STATE_INIT
+        self._how_many_pixel = None
+        self._wait_time = 0
+        self._how_many_stop_time = 120
+        self._how_many_pixel_min = 50
+        self._how_many_pixel_max = 200
+        self._shoot_time = 0
+        self._shoot_time_end = 0
+
+
+    def control(self, context: PygameContext, player: Player, bullets: Bullets):
+        if self._STATE == BulletShooter.STATE_INIT:
+            self._handle_init()
+        if self._STATE == BulletShooter.STATE_MOVE_RIGHT or self._STATE == BulletShooter.STATE_MOVE_LEFT or \
+           self._STATE == BulletShooter.STATE_MOVE_DOWN or self._STATE == BulletShooter.STATE_MOVE_UP:
+            self._handle_moves(context)
+        if self._STATE == BulletShooter.STATE_WAIT:
+            self._handle_wait()
+        if self._STATE == BulletShooter.STATE_NEXT:
+            self._handle_next_action()
+
+        if self._STATE != BulletShooter.STATE_INIT:
+            self._handle_shoot(player, bullets)
+
+        if self._health <= 0:
+            self._STATE = BulletShooter.STATE_KILLED
+
+
+    def contacts(self, context: PygameContext, bullets: Bullets):
+        for bullet in bullets.elements:
+            if self._form.colliderect(bullet.form) and bullet.attacker == "friend":
+                self._health = self._health - 1
+                bullet.sharp = False
+
+
+    def draw(self, context: PygameContext):
+        r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
+        self._form = pygame.draw.rect(context.screen, (0, 0, 255), r)
+
+
+    def is_killed(self) -> bool:
+        return self._STATE == BulletShooter.STATE_KILLED
+
+    def _handle_init(self):
+        self._y = self._y + 1
+        if self._y >= 60:
+            self._shoot_time_end = random.randint(80, 150)
+            self._STATE = BulletShooter.STATE_NEXT
+
+
+    def _handle_moves(self, context: PygameContext):
+        if self._STATE == BulletShooter.STATE_MOVE_RIGHT:
+            self._x = self._x + 1
+            self._how_many_pixel = self._how_many_pixel - 1
+            if self._how_many_pixel <= 0 or self._x >= context.width - BulletShooter.width / 2:
+                self._STATE = BulletShooter.STATE_NEXT
+        if self._STATE == BulletShooter.STATE_MOVE_LEFT:
+            self._x = self._x - 1
+            self._how_many_pixel = self._how_many_pixel - 1
+            if self._how_many_pixel <= 0 or self._x <= BulletShooter.width / 2:
+                self._STATE = BulletShooter.STATE_NEXT
+        if self._STATE == BulletShooter.STATE_MOVE_DOWN:
+            self._y = self._y + 1
+            self._how_many_pixel = self._how_many_pixel - 1
+            if self._how_many_pixel <= 0 or self._y >= context.height - BulletShooter.height / 2:
+                self._STATE = BulletShooter.STATE_NEXT
+        if self._STATE == BulletShooter.STATE_MOVE_UP:
+            self._y = self._y - 1
+            self._how_many_pixel = self._how_many_pixel - 1
+            if self._how_many_pixel <= 0 or self._y <= BulletShooter.height / 2:
+                self._STATE = BulletShooter.STATE_NEXT
+    
+
+    def _handle_wait(self):
+        self._wait_time = self._wait_time - 1
+        if self._wait_time == 0:
+            self._STATE = BulletShooter.STATE_NEXT
+
+        
+    def _handle_next_action(self):
+        next_state = random.randint(1, 5)
+        self._how_many_pixel = random.randint(self._how_many_pixel_min, self._how_many_pixel_max)
+        self._wait_time = random.randint(1 * 60, 3 * 60)
+        self._STATE = next_state
+
+
+    def _handle_shoot(self, player: Player, bullets: Bullets):
+        self._shoot_time = self._shoot_time + 1
+        if self._shoot_time == self._shoot_time_end:
+            bullets.elements.append(Bullet(self._x, self._y, player.x, player.y, "enemy"))
+            self._shoot_time = 0
+            self._shoot_time_end = random.randint(80, 150)
+
+
 
 class BulletShooters:
     def __init__(self):
-        self.last_spawn = 0
-        self.elements = []
+        self._elements = []
 
+    def spawn(self, context: PygameContext):
+        x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
+        y = 0 - BulletShooter.height
+        self._elements.append(BulletShooter(x, y))
+
+    def empty(self) -> bool:
+        return len(self._elements) == 0
+
+    def control(self, context: PygameContext, player: Player, bullets: Bullets):
+        for bullet_shooter in self._elements:
+            bullet_shooter.control(context, player, bullets)
+
+
+    def contacts(self, context: PygameContext, bullets: Bullets):
+        for bullet_shooter in self._elements:
+            bullet_shooter.contacts(context, bullets)
+
+        tmp_list = []
+        for x in self._elements:
+            if not x.is_killed():
+                tmp_list.append(x)
+        self._elements = tmp_list
+
+
+    def draw(self, context: PygameContext):
+        for bullet_shooter in self._elements:
+            bullet_shooter.draw(context)
 
 class Runner:
     def __init__(self, x: int, y: int):
@@ -156,42 +303,6 @@ class Rockets:
         self.elements = []
 
 
-class Bullet:
-    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float, attacker: str):
-        self.x_0 = x_0
-        self.y_0 = y_0
-        self.x = x_0
-        self.y = y_0
-        self.dest_x = destination_x
-        self.dest_y = destination_y
-        self.dir_x = None
-        self.dir_y = None
-        self.speed = 400
-        self.start_time = 0
-        self.sharp = False
-        self.form = None
-        self.forms = [pygame.image.load("Pictures/players_pictures/player_bullet.png")]
-        self.r = 10
-        self.attacker = attacker
-
-
-class Bullets:
-    def __init__(self):
-        self.last_spawn = 100
-        self.elements = []
-
-
-class PygameContext:
-    def __init__(self, width: int, height: int):
-        pygame.init()
-
-        self.width = width
-        self.height = height
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        self.clock = pygame.time.Clock()
-        self.delta_time = 0
-        self.time = 0
-
 
 def length(x: int, x_2: int, y: int, y_2: int) -> float:
     e_x = x_2 - x
@@ -203,17 +314,6 @@ def length(x: int, x_2: int, y: int, y_2: int) -> float:
 def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]:
     leng = length(x_1, x_2, y_1, y_2)
     return (x_2 - x_1) / leng, (y_2 - y_1) / leng
-
-
-# def shoot_bullet(bullets: Bullets, player: Player, context: PygameContext, attacker, bullet_shooter: BulletShooter):
-#     if bullets.last_spawn - context.time >= 30 and attacker == "friend":
-#         mouse_x, mouse_y = pygame.mouse.get_pos()
-#         bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, attacker))
-#         bullets.last_spawn = context.time
-#     if attacker == "enemy":
-#         bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, player.x, player.y, attacker))
-
-# def shoot_bullet(bullets: Bullets, attacker: str, 
 
 
 def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
@@ -279,12 +379,6 @@ def spawn_runners(context: PygameContext, player: Player, runners: Runners):
         runners.elements.append(Runner(x, y))
 
 
-def spawn_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters):
-    x = random.randint((0 + BulletShooter.width // 2), context.width - BulletShooter.width // 2)
-    y = 0 - BulletShooter.height
-    bullet_shooters.elements.append(BulletShooter(x, y))
-
-
 def spawn_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers):
     x = random.randint(0, context.width)
     y = -RocketLauncher.height
@@ -343,76 +437,6 @@ def control_runners(context: PygameContext, player: Player, runners: Runners, bu
             runner.state = Runner.STATE_KILLED
 
 
-def control_bullet_shooter_handle_init(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
-    bullet_shooter.y = bullet_shooter.y + 1
-    if bullet_shooter.y >= 60:
-        bullet_shooter.shoot_time_end = random.randint(80, 150)
-        bullet_shooter.STATE = BulletShooter.STATE_NEXT
-
-
-def control_bullet_shooter_handle_moves(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
-    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT:
-        bullet_shooter.x = bullet_shooter.x + 1
-        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.x >= context.width - BulletShooter.width / 2:
-            bullet_shooter.STATE = BulletShooter.STATE_NEXT
-    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT:
-        bullet_shooter.x = bullet_shooter.x - 1
-        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.x <= BulletShooter.width / 2:
-            bullet_shooter.STATE = BulletShooter.STATE_NEXT
-    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN:
-        bullet_shooter.y = bullet_shooter.y + 1
-        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.y >= context.height - BulletShooter.height / 2:
-            bullet_shooter.STATE = BulletShooter.STATE_NEXT
-    if bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
-        bullet_shooter.y = bullet_shooter.y - 1
-        bullet_shooter.how_many_pixel = bullet_shooter.how_many_pixel - 1
-        if bullet_shooter.how_many_pixel <= 0 or bullet_shooter.y <= BulletShooter.height / 2:
-            bullet_shooter.STATE = BulletShooter.STATE_NEXT
-    
-
-def control_bullet_shooter_handle_wait(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
-    bullet_shooter.wait_time = bullet_shooter.wait_time - 1
-    if bullet_shooter.wait_time == 0:
-        bullet_shooter.STATE = BulletShooter.STATE_NEXT
-
-        
-def control_bullet_shooter_handle_next_action(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
-    next_state = random.randint(1, 5)
-    bullet_shooter.how_many_pixel = random.randint(bullet_shooter.how_many_pixel_min, bullet_shooter.how_many_pixel_max)
-    bullet_shooter.wait_time = random.randint(1 * 60, 3 * 60)
-    bullet_shooter.STATE = next_state
-
-
-def control_bullet_shooter_handle_shoot(context: PygameContext, player: Player, bullet_shooter: BulletShooter, bullets: Bullets):
-    bullet_shooter.shoot_time = bullet_shooter.shoot_time + 1
-    if bullet_shooter.shoot_time == bullet_shooter.shoot_time_end:
-        bullets.elements.append(Bullet(bullet_shooter.x, bullet_shooter.y, player.x, player.y, "enemy"))
-        bullet_shooter.shoot_time = 0
-        bullet_shooter.shoot_time_end = random.randint(80, 150)
-    
-
-def control_bullet_shooters(context: PygameContext, player: Player, bullet_shooters: BulletShooters, bullets: Bullets):
-    for bullet_shooter in bullet_shooters.elements:
-        if bullet_shooter.STATE == BulletShooter.STATE_INIT:
-            control_bullet_shooter_handle_init(context, player, bullet_shooter, bullets)
-        if bullet_shooter.STATE == BulletShooter.STATE_MOVE_RIGHT or bullet_shooter.STATE == BulletShooter.STATE_MOVE_LEFT or \
-           bullet_shooter.STATE == BulletShooter.STATE_MOVE_DOWN or bullet_shooter.STATE == BulletShooter.STATE_MOVE_UP:
-            control_bullet_shooter_handle_moves(context, player, bullet_shooter, bullets)
-        if bullet_shooter.STATE == BulletShooter.STATE_WAIT:
-            control_bullet_shooter_handle_wait(context, player, bullet_shooter, bullets)
-        if bullet_shooter.STATE == BulletShooter.STATE_NEXT:
-            control_bullet_shooter_handle_next_action(context, player, bullet_shooter, bullets)
-
-        if bullet_shooter.STATE != BulletShooter.STATE_INIT:
-            control_bullet_shooter_handle_shoot(context, player, bullet_shooter, bullets)
-
-        if bullet_shooter.health <= 0:
-            bullet_shooter.STATE = BulletShooter.STATE_KILLED
-
-
 def control_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers, rockets: Rockets):
     for rocket_launcher in rocket_launchers.elements:
         if rocket_launcher.STATE == RocketLauncher.STATE_INIT:
@@ -463,7 +487,7 @@ def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
     control_runners(context, player, runners, bullets)
-    control_bullet_shooters(context, player, bullet_shooters, bullets)
+    bullet_shooters.control(context, player, bullets)
     control_rocket_launchers(context, player, rocket_launchers, rockets)
     control_bullets(bullets, context, runners)
     control_rockets(rockets, context, player)
@@ -485,17 +509,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
                 tmp_list.append(x)
         runners.elements = tmp_list
 
-    for bullet_shooter in bullet_shooters.elements:
-        for bullet in bullets.elements:
-            if bullet_shooter.form.colliderect(bullet.form) and bullet.attacker == "friend":
-                bullet_shooter.health = bullet_shooter.health - 1
-                bullet.sharp = False
-
-        tmp_list = []
-        for x in bullet_shooters.elements:
-            if not x.STATE == BulletShooter.STATE_KILLED:
-                tmp_list.append(x)
-        bullet_shooters.elements = tmp_list
+    bullet_shooters.contacts(context, bullets)
 
     for bullet in bullets.elements:
         if bullet.form.colliderect(player.r) and bullet.attacker == "enemy":
@@ -567,12 +581,6 @@ def draw_runners(context: PygameContext, runners: Runners):
         runner.form = pygame.draw.rect(context.screen, (0, 255, 0), runner.r)
 
 
-def draw_bullet_shooters(context: PygameContext, bullet_shooters: BulletShooters):
-    for bullet_shooter in bullet_shooters.elements:
-        r = pygame.Rect(bullet_shooter.x - bullet_shooter.width / 2, bullet_shooter.y - bullet_shooter.height / 2, bullet_shooter.width, bullet_shooter.height)
-        bullet_shooter.form = pygame.draw.rect(context.screen, (0, 0, 255), r)
-
-
 def draw_rocket_launchers(context: PygameContext, rocket_launchers: RocketLaunchers):
     for rocket_launcher in rocket_launchers.elements:
         r = pygame.Rect(rocket_launcher.x - rocket_launcher.width / 2, rocket_launcher.y - rocket_launcher.height / 2, rocket_launcher.width, rocket_launcher.height)
@@ -591,7 +599,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     draw_player(context, player)
     draw_mouse(context)
     draw_bullets(context, bullets)
-    draw_bullet_shooters(context, bullet_shooters)
+    bullet_shooters.draw(context)
     draw_runners(context, runners)
     draw_rocket_launchers(context, rocket_launchers)
     draw_rockets(context, rockets)
@@ -602,25 +610,25 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
 def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers):
     if game_logic_parameters.wave_time == 0:
         for i in range(4):
-            spawn_bullet_shooters(context, player, bullet_shooters)
-    if len(bullet_shooters.elements) == 0 and game_logic_parameters.wave == 1:
+            bullet_shooters.spawn(context)
+    if bullet_shooters.empty() and game_logic_parameters.wave == 1:
         game_logic_parameters.wave_time = 1200
 
     if game_logic_parameters.wave_time == 1200:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(6):
-            spawn_bullet_shooters(context, player, bullet_shooters)
+            bullet_shooters.spawn(context)
         for i in range(2):
             spawn_runners(context, player, runners)
-    if len(bullet_shooters.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 2:
+    if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 2:
         game_logic_parameters.wave_time = 3600
 
     if game_logic_parameters.wave_time == 3600:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(4):
-            spawn_bullet_shooters(context, player, bullet_shooters)
+            bullet_shooters.spawn(context)
             spawn_runners(context, player, runners)
-    if len(bullet_shooters.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 3:
+    if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 3:
         game_logic_parameters.wave_time = 6000
 
     if game_logic_parameters.wave_time == 6000:
@@ -633,20 +641,20 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
     if game_logic_parameters.wave_time == 9000:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(4):
-            spawn_bullet_shooters(context, player, bullet_shooters)
+            bullet_shooters.spawn(context)
         for i in range(2):
             spawn_rocket_launchers(context, player, rocket_launchers)
-    if len(bullet_shooters.elements) == 0 and len(rocket_launchers.elements) == 0 and game_logic_parameters.wave == 5:
+    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and game_logic_parameters.wave == 5:
         game_logic_parameters.wave_time = 11000
 
     if game_logic_parameters.wave_time == 11000:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(3):
-            spawn_bullet_shooters(context, player, bullet_shooters)
+            bullet_shooters.spawn(context)
             spawn_rocket_launchers(context, player, rocket_launchers)
         for i in range(2):
             spawn_runners(context, player, runners)
-    if len(bullet_shooters.elements) == 0 and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 6:
+    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 6:
         game_logic_parameters.wave_time = 14000
 
     if game_logic_parameters.wave_time == 14000:
@@ -655,7 +663,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             spawn_rocket_launchers(context, player, rocket_launchers)
             spawn_runners(context, player, runners)
         for i in range(4):
-            spawn_bullet_shooters(context, player, bullet_shooters)
+            bullet_shooters.spawn(context)
 
     game_logic_parameters.wave_time = game_logic_parameters.wave_time + 1
 
