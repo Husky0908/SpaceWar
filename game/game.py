@@ -5,40 +5,8 @@ from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from base.player import Player
 from enemies.bullet_shooters import BulletShooters
-
-class Runner:
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
-        self.health = 5
-        self.state = Runner.STATE_INIT
-        self.x_0 = 0
-        self.y_0 = 0
-        self.dir_x = 0
-        self.dir_y = 0
-        self.start_time = 0
-        self.form = None
-        self.wounded = False
-        self.r = None
-        self.run_time = 0
-
-    height = 60
-    width = 100
-    STATE_INIT = 0
-    STATE_SLOW_MOVE = 1
-    STATE_FIRST_STOP = 2
-    STATE_FAST_MOVE = 3
-    STATE_SECOND_STOP = 4
-    STATE_KILLED = 5
-
-    SLOW_SPEED = 80
-    FAST_SPEED = 650
-
-
-class Runners:
-    def __init__(self):
-        self.last_spawn = 0
-        self.elements = []
+from enemies.runners import Runners
+from base.directions import get_direction, get_rectangle_around_player
 
 
 class RocketLauncher:
@@ -107,18 +75,6 @@ class GameLogic:
         self.wave = 1
 
 
-def length(x: int, x_2: int, y: int, y_2: int) -> float:
-    e_x = x_2 - x
-    e_y = y_2 - y
-    leng = (e_x ** 2 + e_y ** 2) ** 0.5
-    return leng
-
-
-def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]:
-    leng = length(x_1, x_2, y_1, y_2)
-    return (x_2 - x_1) / leng, (y_2 - y_1) / leng
-
-
 def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
     bullets.last_spawn = bullets.last_spawn + 1
     for bullet in bullets.elements:
@@ -140,10 +96,6 @@ def press_mouse(running, bullets: Bullets, player: Player, context: PygameContex
             mouse_x, mouse_y = pygame.mouse.get_pos()
             bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, "friend"))
             bullets.last_spawn = context.time
-
-
-def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
-    return pygame.Rect(player.x - width // 2, player.y - height // 2, width, height)
 
 
 def control_player(context: PygameContext, player: Player, running):
@@ -172,16 +124,6 @@ def control_player(context: PygameContext, player: Player, running):
     return running
 
 
-def spawn_runners(context: PygameContext, player: Player, runners: Runners):
-        p_o_n = random.randint(1, 2)
-        if p_o_n == 1:
-            x = 0 - Runner.width
-        else:
-            x = context.width + Runner.width
-        y = random.randint((0 - Runner.height), (context.height + Runner.height))
-        runners.elements.append(Runner(x, y))
-
-
 def spawn_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers):
     x = random.randint(0, context.width)
     y = -RocketLauncher.height
@@ -190,54 +132,6 @@ def spawn_rocket_launchers(context: PygameContext, player: Player, rocket_launch
 
 def spawn_rockets(rockets: Rockets, x, y, attacker):
     rockets.elements.append(Rocket(x, y, attacker))
-
-
-def destination_runner(player: Player, width, height):
-    rect = get_rectangle_around_player(player, width, height)
-    dest_x = random.randint(rect.left, rect.right)
-    dest_y = random.randint(rect.top, rect.bottom)
-    return dest_x, dest_y
-
-
-def control_runners(context: PygameContext, player: Player, runners: Runners, bullets: Bullets):
-    for runner in runners.elements:
-        if runner.state == Runner.STATE_INIT:
-            runner.run_time = random.randint(3, 6)
-            runner.state = Runner.STATE_SLOW_MOVE
-            dest_x, dest_y = destination_runner(player, 100, 100)
-            runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
-            runner.start_time = context.time
-            runner.x_0, runner.y_0 = runner.x, runner.y
-        elif runner.state == Runner.STATE_SLOW_MOVE:
-            d_t = context.time - runner.start_time
-            if d_t < runner.run_time:
-                runner.x = runner.x_0 + runner.dir_x * d_t * Runner.SLOW_SPEED
-                runner.y = runner.y_0 + runner.dir_y * d_t * Runner.SLOW_SPEED
-            else:
-                runner.state = Runner.STATE_FIRST_STOP
-                runner.start_time = context.time
-        if runner.state == Runner.STATE_FIRST_STOP:
-            if context.time - runner.start_time >= 3:
-                runner.state = Runner.STATE_FAST_MOVE
-                runner.wounded = False
-                dest_x, dest_y = destination_runner(player, 0, 0)
-                dest_x = dest_x
-                dest_y =dest_y
-                runner.dir_x, runner.dir_y = get_direction(runner.x, runner.y, dest_x, dest_y)
-                runner.start_time = context.time
-                runner.x_0, runner.y_0 = runner.x, runner.y
-        if runner.state == Runner.STATE_FAST_MOVE:
-            d_t = context.time - runner.start_time
-            runner.x = runner.x_0 + runner.dir_x * d_t * Runner.FAST_SPEED
-            runner.y = runner.y_0 + runner.dir_y * d_t * Runner.FAST_SPEED
-            if runner.x > context.width - runner.width / 2 or runner.x < runner.width / 2 or runner.y > context.height - runner.height / 2 or runner.y < runner.height / 2:
-                runner.state = Runner.STATE_SECOND_STOP
-                runner.start_time = context.time
-        if runner.state == Runner.STATE_SECOND_STOP:
-            if context.time - runner.start_time >= 3:
-                runner.state = Runner.STATE_INIT
-        if runner.health <= 0:
-            runner.state = Runner.STATE_KILLED
 
 
 def control_rocket_launchers(context: PygameContext, player: Player, rocket_launchers: RocketLaunchers, rockets: Rockets):
@@ -289,7 +183,7 @@ def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
-    control_runners(context, player, runners, bullets)
+    runners.control(context, player)
     bullet_shooters.control(context, player, bullets)
     control_rocket_launchers(context, player, rocket_launchers, rockets)
     control_bullets(bullets, context, runners)
@@ -297,20 +191,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
 
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
-    for runner in runners.elements:
-        if runner.r.colliderect(player.r) and not runner.wounded:
-            player.health = player.health - 1
-            runner.wounded = True
-        for bullet in bullets.elements:
-            if runner.r.colliderect(bullet.form) and bullet.attacker == "friend":
-                runner.health = runner.health - 1
-                bullet.sharp = False
 
-        tmp_list = []
-        for x in runners.elements:
-            if x.state != Runner.STATE_KILLED:
-                tmp_list.append(x)
-        runners.elements = tmp_list
 
     bullet_shooters.contacts(context, bullets)
 
@@ -378,12 +259,6 @@ def draw_mouse(context: PygameContext):
     pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
 
 
-def draw_runners(context: PygameContext, runners: Runners):
-    for runner in runners.elements:
-        runner.r = pygame.Rect(runner.x - runner.width / 2, runner.y - runner.height / 2, runner.width, runner.height)
-        runner.form = pygame.draw.rect(context.screen, (0, 255, 0), runner.r)
-
-
 def draw_rocket_launchers(context: PygameContext, rocket_launchers: RocketLaunchers):
     for rocket_launcher in rocket_launchers.elements:
         r = pygame.Rect(rocket_launcher.x - rocket_launcher.width / 2, rocket_launcher.y - rocket_launcher.height / 2, rocket_launcher.width, rocket_launcher.height)
@@ -403,7 +278,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     draw_mouse(context)
     draw_bullets(context, bullets)
     bullet_shooters.draw(context)
-    draw_runners(context, runners)
+    runners.draw(context)
     draw_rocket_launchers(context, rocket_launchers)
     draw_rockets(context, rockets)
 
@@ -419,10 +294,10 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
 
     if game_logic_parameters.wave_time == 1200:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(6):
+        for i in range(4):
             bullet_shooters.spawn(context)
         for i in range(2):
-            spawn_runners(context, player, runners)
+            runners.spawn(context)
     if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 2:
         game_logic_parameters.wave_time = 3600
 
@@ -430,14 +305,14 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(4):
             bullet_shooters.spawn(context)
-            spawn_runners(context, player, runners)
+            runners.spawn(context)
     if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 3:
         game_logic_parameters.wave_time = 6000
 
     if game_logic_parameters.wave_time == 6000:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(8):
-            spawn_runners(context, player, runners)
+            runners.spawn(context)
     if len(runners.elements) == 0 and game_logic_parameters.wave == 4:
         game_logic_parameters.wave_time = 9000
 
@@ -456,7 +331,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             bullet_shooters.spawn(context)
             spawn_rocket_launchers(context, player, rocket_launchers)
         for i in range(2):
-            spawn_runners(context, player, runners)
+            runners.spawn(context)
     if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 6:
         game_logic_parameters.wave_time = 14000
 
@@ -464,7 +339,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
         game_logic_parameters.wave = game_logic_parameters.wave + 1
         for i in range(3):
             spawn_rocket_launchers(context, player, rocket_launchers)
-            spawn_runners(context, player, runners)
+            runners.spawn(context)
         for i in range(4):
             bullet_shooters.spawn(context)
 

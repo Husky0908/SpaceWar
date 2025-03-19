@@ -13,4 +13,3 @@ class PygameContext:
         self.clock = pygame.time.Clock()
         self.delta_time = 0
         self.time = 0
-
