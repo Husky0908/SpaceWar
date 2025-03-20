@@ -31,40 +31,6 @@ def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
             bullet.sharp = True
 
 
-def press_mouse(running, bullets: Bullets, player: Player, context: PygameContext, bullet_shooters: BulletShooters):
-    if running:
-        if bullets.last_spawn - context.time >= 30:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            bullets.elements.append(Bullet(player.x, player.y, mouse_x, mouse_y, "friend"))
-            bullets.last_spawn = context.time
-
-
-def control_player(context: PygameContext, player: Player, running):
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player.y -= 300 * context.delta_time
-    if keys[pygame.K_s]:
-        player.y += 300 * context.delta_time
-    if keys[pygame.K_a]:
-        player.x -= 300 * context.delta_time
-    if keys[pygame.K_d]:
-        player.x += 300 * context.delta_time
-
-    if player.y - player.height / 2 < 0:
-        player.y = player.height / 2
-    if player.y + player.height / 2 > context.height:
-        player.y = context.height - player.height / 2
-    if player.x - player.width / 2 < 0:
-        player.x = player.width / 2
-    if player.x + player.width / 2 > context.width:
-        player.x = context.width - player.width / 2
-
-    if player.health <= 0:
-        running = False
-
-    return running
-
-
 def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
     for rocket in rockets.elements:
         if rocket.state == Rocket.STATE_MOVE:
@@ -89,21 +55,14 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
 
     runners.contacts(player, bullets)
     bullet_shooters.contacts(context, bullets)
+    player.contacts(bullets, rockets)
 
     for bullet in bullets.elements:
-        if bullet.form.colliderect(player.r) and bullet.attacker == "enemy":
-            player.health = player.health - 1
-            bullet.sharp = False
         for rocket in rockets.elements:
             if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 rocket.health = rocket.health - 1
         rocket_launchers.contacts(bullet)
-
-    for rocket in rockets.elements:
-        if rocket.form.colliderect(player.r):
-            rocket.state = Rocket.STATE_DESTROY
-            player.health = player.health - 1
 
     for rocket in rockets.elements:
         tmp_list = []
@@ -118,16 +77,6 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
             if not x.sharp == False:
                 tmp_list.append(x)
         bullets.elements = tmp_list
-
-
-def player_picture(player: Player, context: PygameContext):
-    player.form = player.pictures[player.health - 1]
-    context.screen.blit(player.form, player.r)
-
-
-def draw_player(context: PygameContext, player: Player):
-    player.r = pygame.Rect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height)
-    player_picture(player, context)
 
 
 def draw_bullets(context: PygameContext, bullets: Bullets):
@@ -152,7 +101,7 @@ def draw_rockets(context: PygameContext, rockets: Rockets):
 def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
     context.screen.fill((0, 0, 0))
 
-    draw_player(context, player)
+    player.draw(context)
     draw_mouse(context)
     draw_bullets(context, bullets)
     bullet_shooters.draw(context)
@@ -242,13 +191,13 @@ def game(context: PygameContext):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                press_mouse(running, bullets, player, context, bullet_shooters)
+                player.press_mouse(running, bullets, context)
 
         #keys = pygame.key.get_pressed()
         #if keys[pygame.K_ESCAPE]:
         #    menu(True)
 
-        running = control_player(context, player, running)
+        running = player.control(context, running)
         control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
         draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
         contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers)
