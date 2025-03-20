@@ -1,7 +1,6 @@
 import pygame
 from base.context import PygameContext
 from base.directions import get_direction
-from base.rockets import Rockets, Rocket
 
 
 class Bullet:
@@ -34,11 +33,6 @@ class Bullet:
             self.start_time = context.time
             self.sharp = True
 
-    def contacts(self, rockets: Rockets):
-        for rocket in rockets.elements:
-            if self.form.colliderect(rocket.form) and self.attacker == "friend":
-                self.sharp = False
-                rocket.health = rocket.health - 1
 
     def draw(self, context: PygameContext):
         if self.attacker == "friend":
@@ -57,10 +51,7 @@ class Bullets:
         for bullet in self.elements:
             bullet.control(context)
 
-    def contacts(self, rockets: Rockets):
-        for bullet in self.elements:
-            bullet.contacts(rockets)
-
+    def contacts(self):
         for bullet in self.elements:
             tmp_list = []
             for x in self.elements:

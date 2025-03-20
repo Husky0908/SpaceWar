@@ -1,7 +1,6 @@
 import pygame
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
-from base.rockets import Rockets, Rocket
 
 
 class Player:
@@ -27,16 +26,12 @@ class Player:
         self.picture(context)
         context.screen.blit(self.form, self.r)
 
-    def contacts(self, bullets: Bullets, rockets: Rockets):
+    def contacts(self, bullets: Bullets):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.r) and bullet.attacker == "enemy":
                 self.health = self.health - 1
                 bullet.sharp = False
 
-        for rocket in rockets.elements:
-            if rocket.form.colliderect(self.r):
-                rocket.state = Rocket.STATE_DESTROY
-                self.health = self.health - 1
 
     def control(self, context: PygameContext, running):
         keys = pygame.key.get_pressed()

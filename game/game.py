@@ -4,7 +4,6 @@ from base.bullets import Bullets, Bullet
 from base.player import Player
 from enemies.bullet_shooters import BulletShooters
 from enemies.runners import Runners
-from base.directions import get_direction, length
 from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 
@@ -16,34 +15,28 @@ class GameLogic:
         self.wave = 1
 
 
-def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
-    for rocket in rockets.elements:
-        if rocket.state == Rocket.STATE_MOVE:
-            rocket.dest_x = player.x
-            rocket.dest_y = player.y
-            rocket.dir_x, rocket.dir_y = get_direction(rocket.x, rocket.y, rocket.dest_x, rocket.dest_y)
-            rocket.x = rocket.x + rocket.dir_x * rocket.speed
-            rocket.y = rocket.y + rocket.dir_y * rocket.speed
-        if rocket.health <= 0:
-            rocket.state = Rocket.STATE_DESTROY
-
-
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
     runners.control(context, player)
     bullet_shooters.control(context, player, bullets)
     rocket_launchers.control(context, player, rockets)
     bullets.control(context)
-    control_rockets(rockets, context, player)
+    rockets.control(player)
 
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
 
     runners.contacts(player, bullets)
     bullet_shooters.contacts(context, bullets)
-    player.contacts(bullets, rockets)
+    player.contacts(bullets)
 
     for bullet in bullets.elements:
+
         rocket_launchers.contacts(bullet)
+
+        for rocket in rockets.elements:
+            if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
+                bullet.sharp = False
+                rocket.health = rocket.health - 1
 
     for rocket in rockets.elements:
         tmp_list = []
@@ -52,7 +45,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
                 tmp_list.append(x)
         rockets.elements = tmp_list
 
-    bullets.contacts(rockets)
+    bullets.contacts()
 
 
 def draw_mouse(context: PygameContext):
