@@ -192,7 +192,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
 
-
+    runners.contacts(player, bullets)
     bullet_shooters.contacts(context, bullets)
 
     for bullet in bullets.elements:
