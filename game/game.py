@@ -16,21 +16,6 @@ class GameLogic:
         self.wave = 1
 
 
-def control_bullets(bullets: Bullets, context: PygameContext, runners: Runners):
-    bullets.last_spawn = bullets.last_spawn + 1
-    for bullet in bullets.elements:
-        if bullet.sharp:
-            d_t = context.time - bullet.start_time
-            bullet.x = bullet.x_0 + bullet.dir_x * d_t * bullet.speed
-            bullet.y = bullet.y_0 + bullet.dir_y * d_t * bullet.speed
-            if bullet.x >= context.width or bullet.x <= 0 or bullet.y >= context.height or bullet.y <= 0:
-                bullet.sharp = False
-        else:
-            bullet.dir_x, bullet.dir_y = get_direction(bullet.x, bullet.y, bullet.dest_x, bullet.dest_y)
-            bullet.start_time = context.time
-            bullet.sharp = True
-
-
 def control_rockets(rockets: Rockets, context: PygameContext, player: Player):
     for rocket in rockets.elements:
         if rocket.state == Rocket.STATE_MOVE:
@@ -47,7 +32,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     runners.control(context, player)
     bullet_shooters.control(context, player, bullets)
     rocket_launchers.control(context, player, rockets)
-    control_bullets(bullets, context, runners)
+    bullets.control(context)
     control_rockets(rockets, context, player)
 
 
