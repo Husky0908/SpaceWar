@@ -1,11 +1,3 @@
-import pygame
-from base.player import Player
-
-
-def get_rectangle_around_player(player: Player, width: int, height: int) -> pygame.Rect:
-    return pygame.Rect(player.x - width // 2, player.y - height // 2, width, height)
-
-
 def get_direction(x_1: int, y_1: int, x_2: int, y_2: int) -> tuple[float, float]:
     leng = length(x_1, x_2, y_1, y_2)
     return (x_2 - x_1) / leng, (y_2 - y_1) / leng

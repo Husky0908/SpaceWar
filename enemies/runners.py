@@ -3,7 +3,7 @@ import random
 from base.context import PygameContext
 from base.player import Player
 from base.bullets import Bullets, Bullet
-from base.directions import get_direction, get_rectangle_around_player
+from base.directions import get_direction
 
 
 class Runner:
@@ -81,7 +81,7 @@ class Runner:
 
 
     def destination(self, player: Player, width, height):
-        rect = get_rectangle_around_player(player, width, height)
+        rect = player.get_rectangle_around_player(width, height)
         dest_x = random.randint(rect.left, rect.right)
         dest_y = random.randint(rect.top, rect.bottom)
         return dest_x, dest_y

@@ -43,10 +43,6 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
     player.contacts(bullets, rockets)
 
     for bullet in bullets.elements:
-        for rocket in rockets.elements:
-            if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
-                bullet.sharp = False
-                rocket.health = rocket.health - 1
         rocket_launchers.contacts(bullet)
 
     for rocket in rockets.elements:
@@ -56,20 +52,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
                 tmp_list.append(x)
         rockets.elements = tmp_list
 
-    for bullet in bullets.elements:
-        tmp_list = []
-        for x in bullets.elements:
-            if not x.sharp == False:
-                tmp_list.append(x)
-        bullets.elements = tmp_list
-
-
-def draw_bullets(context: PygameContext, bullets: Bullets):
-    for bullet in bullets.elements:
-        if bullet.attacker == "friend":
-            bullet.form = context.screen.blit(bullet.forms[0], (bullet.x, bullet.y))
-        else:
-            bullet.form = pygame.draw.circle(context.screen, (255, 0, 0), (bullet.x, bullet.y), bullet.r)
+    bullets.contacts(rockets)
 
 
 def draw_mouse(context: PygameContext):
@@ -88,7 +71,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
 
     player.draw(context)
     draw_mouse(context)
-    draw_bullets(context, bullets)
+    bullets.draw(context)
     bullet_shooters.draw(context)
     runners.draw(context)
     rocket_launchers.draw(context)

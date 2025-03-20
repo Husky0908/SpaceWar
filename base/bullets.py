@@ -1,6 +1,7 @@
 import pygame
 from base.context import PygameContext
 from base.directions import get_direction
+from base.rockets import Rockets, Rocket
 
 
 class Bullet:
@@ -33,6 +34,19 @@ class Bullet:
             self.start_time = context.time
             self.sharp = True
 
+    def contacts(self, rockets: Rockets):
+        for rocket in rockets.elements:
+            if self.form.colliderect(rocket.form) and self.attacker == "friend":
+                self.sharp = False
+                rocket.health = rocket.health - 1
+
+    def draw(self, context: PygameContext):
+        if self.attacker == "friend":
+            self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+        else:
+            self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), self.r)
+
+
 class Bullets:
     def __init__(self):
         self.last_spawn = 100
@@ -42,3 +56,18 @@ class Bullets:
         self.last_spawn = self.last_spawn + 1
         for bullet in self.elements:
             bullet.control(context)
+
+    def contacts(self, rockets: Rockets):
+        for bullet in self.elements:
+            bullet.contacts(rockets)
+
+        for bullet in self.elements:
+            tmp_list = []
+            for x in self.elements:
+                if not x.sharp == False:
+                    tmp_list.append(x)
+            self.elements = tmp_list
+
+    def draw(self, context: PygameContext):
+        for bullet in self.elements:
+            bullet.draw(context)

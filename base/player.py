@@ -69,3 +69,6 @@ class Player:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))
                 bullets.last_spawn = context.time
+
+    def get_rectangle_around_player(self, width: int, height: int) -> pygame.Rect:
+        return pygame.Rect(self.x - width // 2, self.y - height // 2, width, height)
