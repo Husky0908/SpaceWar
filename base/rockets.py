@@ -1,3 +1,5 @@
+import pygame
+from base.context import PygameContext
 from base.player import Player
 from base.directions import get_direction
 
@@ -36,9 +38,14 @@ class Rocket:
 
 
     def contacts(self, player: Player):
-            if self.form.colliderect(self.r):
-                self.state = Rocket.STATE_DESTROY
-                player.health = player.health - 1
+        if self.form.colliderect(player.r):
+            self.state = Rocket.STATE_DESTROY
+            player.health = player.health - 1
+
+
+    def draw(self, context: PygameContext):
+        r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
+        self.form = pygame.draw.rect(context.screen, (230, 0, 100), r)
 
 
 class Rockets:
@@ -53,3 +60,18 @@ class Rockets:
     def control(self, player: Player):
         for rocket in self.elements:
             rocket.control(player)
+
+    def contacts(self, player: Player):
+        for rocket in self.elements:
+            rocket.contacts(player)
+
+        for rocket in self.elements:
+            tmp_list = []
+            for x in self.elements:
+                if not x.state == Rocket.STATE_DESTROY:
+                    tmp_list.append(x)
+            self.elements = tmp_list
+
+    def draw(self, context: PygameContext):
+        for rocket in self.elements:
+            rocket.draw(context)

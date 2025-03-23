@@ -11,8 +11,8 @@ from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 class GameLogic:
     def __init__(self):
         self.level = 1
-        self.wave_time = 0
-        self.wave = 1
+        self.wave_time = 9000
+        self.wave = 4
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
@@ -38,25 +38,13 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
                 bullet.sharp = False
                 rocket.health = rocket.health - 1
 
-    for rocket in rockets.elements:
-        tmp_list = []
-        for x in rockets.elements:
-            if not x.state == Rocket.STATE_DESTROY:
-                tmp_list.append(x)
-        rockets.elements = tmp_list
-
+    rockets.contacts(player)
     bullets.contacts()
 
 
 def draw_mouse(context: PygameContext):
     mouse_x, mouse_y = pygame.mouse.get_pos()
     pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
-
-
-def draw_rockets(context: PygameContext, rockets: Rockets):
-    for rocket in rockets.elements:
-        r = pygame.Rect(rocket.x - rocket.width / 2, rocket.y - rocket.height / 2, rocket.width, rocket.height)
-        rocket.form = pygame.draw.rect(context.screen, (230, 0, 100), r)
 
 
 def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
@@ -68,7 +56,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     bullet_shooters.draw(context)
     runners.draw(context)
     rocket_launchers.draw(context)
-    draw_rockets(context, rockets)
+    rockets.draw(context)
 
     pygame.display.flip()
 
