@@ -6,6 +6,7 @@ from enemies.bullet_shooters import BulletShooters
 from enemies.runners import Runners
 from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
+from enemies.first_boss import FirstBoss
 from texts.inputs import TextInput
 
 
@@ -16,12 +17,13 @@ class GameLogic:
         self.wave = 1
 
 
-def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
+def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
     runners.control(context, player)
     bullet_shooters.control(context, player, bullets)
     rocket_launchers.control(context, player, rockets)
     bullets.control(context)
     rockets.control(player)
+    first_boss.control(context)
 
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
@@ -48,7 +50,7 @@ def draw_mouse(context: PygameContext):
     pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
 
 
-def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
+def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
     context.screen.fill((0, 0, 0))
 
     player.draw(context)
@@ -58,11 +60,12 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     runners.draw(context)
     rocket_launchers.draw(context)
     rockets.draw(context)
+    first_boss.draw(context)
 
     pygame.display.flip()
 
 
-def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers):
+def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
     if game_logic_parameters.wave_time == 0:
         for i in range(4):
             bullet_shooters.spawn(context)
@@ -119,12 +122,18 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
             runners.spawn(context)
         for i in range(4):
             bullet_shooters.spawn(context)
+    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 7:
+        game_logic_parameters.wave = game_logic_parameters.wave + 1
+
+    if game_logic_parameters.wave == 8:
+        first_boss.spawn()
 
     game_logic_parameters.wave_time = game_logic_parameters.wave_time + 1
 
 
 def game(context: PygameContext):
     player = Player(context.width // 2, context.height // 2)
+    first_boss = FirstBoss(0, -350)
 
     t_input = TextInput()
 
@@ -152,10 +161,10 @@ def game(context: PygameContext):
         #    menu(True)
 
         running = player.control(context, running)
-        control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
-        draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets)
+        control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+        draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
         contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers)
-        game_logic(game_logic_parameters, context, player, bullet_shooters, runners, rocket_launchers)
+        game_logic(game_logic_parameters, context, player, bullet_shooters, runners, rocket_launchers, first_boss)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
