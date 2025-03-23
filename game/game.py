@@ -6,13 +6,14 @@ from enemies.bullet_shooters import BulletShooters
 from enemies.runners import Runners
 from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
+from texts.inputs import TextInput
 
 
 class GameLogic:
     def __init__(self):
         self.level = 1
-        self.wave_time = 9000
-        self.wave = 4
+        self.wave_time = 0
+        self.wave = 1
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets):
@@ -125,6 +126,8 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
 def game(context: PygameContext):
     player = Player(context.width // 2, context.height // 2)
 
+    t_input = TextInput()
+
     game_logic_parameters = GameLogic()
 
     bullets = Bullets()
@@ -142,7 +145,9 @@ def game(context: PygameContext):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 player.press_mouse(running, bullets, context)
 
-        #keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_m]:
+            t_input.input_player(context)
         #if keys[pygame.K_ESCAPE]:
         #    menu(True)
 
