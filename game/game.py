@@ -53,7 +53,6 @@ def draw_mouse(context: PygameContext):
 def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
     context.screen.fill((0, 0, 0))
 
-    player.draw(context)
     draw_mouse(context)
     bullets.draw(context)
     bullet_shooters.draw(context)
@@ -61,6 +60,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     rocket_launchers.draw(context)
     rockets.draw(context)
     first_boss.draw(context)
+    player.draw(context)
 
     pygame.display.flip()
 

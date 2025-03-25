@@ -11,7 +11,8 @@ class FirstBoss:
     STATE_MOVE = 2
     STATE_SHOOT_BULLETS = 3
     STATE_SHOOT_ROCKETS = 4
-    STATE_KILL = 5
+    STATE_SECOND_MOVE = 5
+    STATE_KILL = 6
 
     def __init__(self, x: int, y: int):
         self.health = 100
@@ -24,6 +25,7 @@ class FirstBoss:
         self.run_dest = None
         self.start_time = 0
         self.run_number = 0
+        self.side = None
         self.form = None
         self.live = False
         self.state = FirstBoss.STATE_INIT
@@ -51,13 +53,13 @@ class FirstBoss:
                 d_t = context.time - self.start_time
                 if self.run_number == 0:
                     self.run(d_t)
-                    if not self.x <= (self.run_dest[self.run_number])[0]:
+                    if not self.x <= (context.width - self.width):
                         self.run_dest_reset(1, context)
                         self.run_number = self.run_number + 1
                         d_t = context.time - self.start_time
-                if self.run_number == 1 and (self.y <= -500 or self.y >= 0):
+                if self.run_number == 1:
                     self.run(d_t)
-                    if self.y <= 0 and self.y >= -10:
+                    if self.y <= 0:
                         self.run_dest_reset(2, context)
                         self.run_number = self.run_number + 1
                         d_t = context.time - self.start_time
@@ -71,6 +73,23 @@ class FirstBoss:
                     self.run(d_t)
                     if self.y <= -self.height:
                         self.state = FirstBoss.STATE_MOVE
+                        self.side = random.randint(1, 2)
+                        if self.side == 1:
+                            self.x = 0 - self.width
+                        else:
+                            self.x = context.width
+                        self.y = (context.height / 2) - (self.height / 2)
+            if self.state == FirstBoss.STATE_MOVE:
+                if self.side == 1:
+                    self.x = self.x + 5
+                else:
+                    self.x = self.x - 5
+                if (context.width - self.width) >= self.x >= 0:
+                    self.side = random.randint(1, 2)
+                    if self.side == 1:
+                        self.state = FirstBoss.STATE_SHOOT_BULLETS
+                    else:
+                        self.state = FirstBoss.STATE_SHOOT_ROCKETS
 
 
     def run(self, d_t):
