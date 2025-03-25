@@ -27,6 +27,8 @@ class FirstBoss:
         self.run_number = 0
         self.side = None
         self.form = None
+        self.bullet_shooter_form = None
+        self.bullet_shooter_live = False
         self.live = False
         self.state = FirstBoss.STATE_INIT
         self.width = 370
@@ -40,6 +42,12 @@ class FirstBoss:
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
             self.form = pygame.draw.rect(context.screen, (255, 0, 255), r)
+            if self.bullet_shooter_live:
+                if self.side == 2:
+                    r = pygame.Rect((self.x - 60), ((self.y + (self.height / 2)) - 30), 60, 60)
+                else:
+                    r = pygame.Rect((self.x + self.width), ((self.y + (self.height / 2)) - 30), 60, 60)
+                self.bullet_shooter_form = pygame.draw.rect(context.screen, (0, 0, 255), r)
 
     def control(self, context: PygameContext):
         if self.live:
@@ -85,11 +93,28 @@ class FirstBoss:
                 else:
                     self.x = self.x - 5
                 if (context.width - self.width) >= self.x >= 0:
-                    self.side = random.randint(1, 2)
-                    if self.side == 1:
+                    shoot = random.randint(1, 2)
+                    shoot = 1
+                    if shoot == 1:
                         self.state = FirstBoss.STATE_SHOOT_BULLETS
+                        self.bullet_shooter_live = True
                     else:
                         self.state = FirstBoss.STATE_SHOOT_ROCKETS
+                    self.start_time = context.time
+            if self.state == FirstBoss.STATE_SHOOT_BULLETS:
+                d_t = context.time - self.start_time
+                if d_t >= 4:
+                    self.state = FirstBoss.STATE_SECOND_MOVE
+                    self.bullet_shooter_live = False
+            if self.state == FirstBoss.STATE_SECOND_MOVE:
+                if self.side == 1:
+                    self.x = self.x + 8
+                else:
+                    self.x = self.x - 8
+                if self.x >= (context.width + self.width) or self.x <= (0 - self.width):
+                    self.state = FirstBoss.STATE_INIT
+                    self.x = 0
+                    self.y = -350
 
 
     def run(self, d_t):
