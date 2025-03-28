@@ -26,7 +26,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     first_boss.control(context)
 
 
-def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers):
+def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
 
     runners.contacts(player, bullets)
     bullet_shooters.contacts(context, bullets)
@@ -35,6 +35,7 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
     for bullet in bullets.elements:
 
         rocket_launchers.contacts(bullet)
+        first_boss.contacts(bullet)
 
         for rocket in rockets.elements:
             if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
@@ -53,7 +54,6 @@ def draw_mouse(context: PygameContext):
 def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
     context.screen.fill((0, 0, 0))
 
-    draw_mouse(context)
     bullets.draw(context)
     bullet_shooters.draw(context)
     runners.draw(context)
@@ -61,6 +61,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     rockets.draw(context)
     first_boss.draw(context)
     player.draw(context)
+    draw_mouse(context)
 
     pygame.display.flip()
 
@@ -127,6 +128,7 @@ def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player:
 
     if game_logic_parameters.wave == 8:
         first_boss.spawn()
+        game_logic_parameters.wave = 9
 
     game_logic_parameters.wave_time = game_logic_parameters.wave_time + 1
 
@@ -163,7 +165,7 @@ def game(context: PygameContext):
         running = player.control(context, running)
         control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
         draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
-        contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers)
+        contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
         game_logic(game_logic_parameters, context, player, bullet_shooters, runners, rocket_launchers, first_boss)
 
         context.delta_time = context.clock.tick(60) / 1000

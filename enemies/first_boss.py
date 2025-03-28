@@ -2,6 +2,7 @@ import pygame
 import random
 from base.context import PygameContext
 from base.directions import get_direction
+from base.bullets import Bullet
 
 
 class FirstBoss:
@@ -15,7 +16,7 @@ class FirstBoss:
     STATE_KILL = 6
 
     def __init__(self, x: int, y: int):
-        self.health = 100
+        self.health = 50
         self.x = x
         self.y = y
         self.x_0 = 0
@@ -115,7 +116,9 @@ class FirstBoss:
                     self.state = FirstBoss.STATE_INIT
                     self.x = 0
                     self.y = -350
-
+                    self.run_number = 0
+            if self.health <= 0:
+                self.state = FirstBoss.STATE_KILL
 
     def run(self, d_t):
         self.x = self.x_0 + self.dir_x * d_t * 500
@@ -125,3 +128,18 @@ class FirstBoss:
         self.dir_x, self.dir_y = get_direction(self.x, self.y, (self.run_dest[number])[0], (self.run_dest[number])[1])
         self.start_time = context.time
         self.x_0, self.y_0 = self.x, self.y
+
+    def contacts(self, bullet: Bullet):
+        if self.live:
+            if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
+                self.health = self.health - 1
+                bullet.sharp = False
+            if self.bullet_shooter_live:
+                if bullet.form.colliderect(self.bullet_shooter_form) and bullet.attacker == "friend":
+                    self.health = self.health - 10
+                    bullet.sharp = False
+                    self.bullet_shooter_live = False
+                    self.state = FirstBoss.STATE_SECOND_MOVE
+
+        if self.state == FirstBoss.STATE_KILL:
+            self.live = False
