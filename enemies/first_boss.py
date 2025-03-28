@@ -2,7 +2,8 @@ import pygame
 import random
 from base.context import PygameContext
 from base.directions import get_direction
-from base.bullets import Bullet
+from base.bullets import Bullets, Bullet
+from base.player import Player
 
 
 class FirstBoss:
@@ -13,7 +14,8 @@ class FirstBoss:
     STATE_SHOOT_BULLETS = 3
     STATE_SHOOT_ROCKETS = 4
     STATE_SECOND_MOVE = 5
-    STATE_KILL = 6
+    STATE_ESCAPE = 6
+    STATE_KILL = 7
 
     def __init__(self, x: int, y: int):
         self.health = 50
@@ -26,6 +28,7 @@ class FirstBoss:
         self.run_dest = None
         self.start_time = 0
         self.run_number = 0
+        self.attack = 0
         self.side = None
         self.form = None
         self.bullet_shooter_form = None
@@ -50,7 +53,7 @@ class FirstBoss:
                     r = pygame.Rect((self.x + self.width), ((self.y + (self.height / 2)) - 30), 60, 60)
                 self.bullet_shooter_form = pygame.draw.rect(context.screen, (0, 0, 255), r)
 
-    def control(self, context: PygameContext):
+    def control(self, context: PygameContext, player: Player):
         if self.live:
             if self.state == FirstBoss.STATE_INIT:
                 self.y = self.y + 2
@@ -104,9 +107,19 @@ class FirstBoss:
                     self.start_time = context.time
             if self.state == FirstBoss.STATE_SHOOT_BULLETS:
                 d_t = context.time - self.start_time
+                if (self.side == 1 and player.x <= self.width) or (self.side == 2 and player.x >= (context.width - self.width)):
+                    self.state = FirstBoss.STATE_ESCAPE
+                    self.bullet_shooter_live = False
                 if d_t >= 4:
                     self.state = FirstBoss.STATE_SECOND_MOVE
                     self.bullet_shooter_live = False
+            if self.state == FirstBoss.STATE_ESCAPE:
+                self.y = self.y - 5
+                if self.y == -self.height:
+                    self.state = FirstBoss.STATE_INIT
+                    self.x = 0
+                    self.y = -350
+                    self.run_number = 0
             if self.state == FirstBoss.STATE_SECOND_MOVE:
                 if self.side == 1:
                     self.x = self.x + 8
@@ -129,17 +142,22 @@ class FirstBoss:
         self.start_time = context.time
         self.x_0, self.y_0 = self.x, self.y
 
-    def contacts(self, bullet: Bullet):
+    def contacts(self, bullets: Bullets, player: Player):
         if self.live:
-            if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
-                self.health = self.health - 1
-                bullet.sharp = False
-            if self.bullet_shooter_live:
-                if bullet.form.colliderect(self.bullet_shooter_form) and bullet.attacker == "friend":
-                    self.health = self.health - 10
+            for bullet in bullets.elements:
+                if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
+                    self.health = self.health - 1
                     bullet.sharp = False
-                    self.bullet_shooter_live = False
-                    self.state = FirstBoss.STATE_SECOND_MOVE
+                if self.bullet_shooter_live:
+                    if bullet.form.colliderect(self.bullet_shooter_form) and bullet.attacker == "friend":
+                        self.health = self.health - 10
+                        bullet.sharp = False
+                        self.bullet_shooter_live = False
+                        self.state = FirstBoss.STATE_SECOND_MOVE
+            if self.form.colliderect(player.r) and self.attack >= 60:
+                player.health = player.health - 1
+                self.attack = 0
+            self.attack = self.attack + 1
 
         if self.state == FirstBoss.STATE_KILL:
             self.live = False

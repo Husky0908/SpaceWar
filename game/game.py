@@ -23,7 +23,7 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     rocket_launchers.control(context, player, rockets)
     bullets.control(context)
     rockets.control(player)
-    first_boss.control(context)
+    first_boss.control(context, player)
 
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
@@ -31,11 +31,11 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
     runners.contacts(player, bullets)
     bullet_shooters.contacts(context, bullets)
     player.contacts(bullets)
+    first_boss.contacts(bullets, player)
 
     for bullet in bullets.elements:
 
         rocket_launchers.contacts(bullet)
-        first_boss.contacts(bullet)
 
         for rocket in rockets.elements:
             if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
