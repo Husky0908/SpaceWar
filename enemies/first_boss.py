@@ -14,8 +14,9 @@ class FirstBoss:
     STATE_SHOOT_BULLETS = 3
     STATE_SHOOT_ROCKETS = 4
     STATE_SECOND_MOVE = 5
-    STATE_ESCAPE = 6
-    STATE_KILL = 7
+    STATE_ESCAPE_UP = 7
+    STATE_ESCAPE_DOWN = 8
+    STATE_KILL = 9
 
     def __init__(self, x: int, y: int):
         self.health = 50
@@ -31,8 +32,9 @@ class FirstBoss:
         self.attack = 0
         self.side = None
         self.form = None
-        self.bullet_shooter_form = None
-        self.bullet_shooter_live = False
+        self.shooter_form = None
+        self.shooter_live = False
+        self.bullet_shooter_dest = []
         self.live = False
         self.state = FirstBoss.STATE_INIT
         self.width = 370
@@ -46,18 +48,20 @@ class FirstBoss:
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
             self.form = pygame.draw.rect(context.screen, (255, 0, 255), r)
-            if self.bullet_shooter_live:
+            if self.shooter_live:
                 if self.side == 2:
                     r = pygame.Rect((self.x - 60), ((self.y + (self.height / 2)) - 30), 60, 60)
                 else:
                     r = pygame.Rect((self.x + self.width), ((self.y + (self.height / 2)) - 30), 60, 60)
-                self.bullet_shooter_form = pygame.draw.rect(context.screen, (0, 0, 255), r)
+                self.shooter_form = pygame.draw.rect(context.screen, (0, 0, 255), r)
 
-    def control(self, context: PygameContext, player: Player):
+    def control(self, context: PygameContext, player: Player, bullets: Bullets):
         if self.live:
             if self.state == FirstBoss.STATE_INIT:
                 self.y = self.y + 2
                 if self.y >= 0:
+                    for i in range(context.height // 50):
+                        self.bullet_shooter_dest.append(((context.width / 2), (i * 50)))
                     self.run_dest = [((context.width - self.width), (context.height - self.height)), ((context.width - self.width), self.height), (0, (context.height - self.height)), (0, 0)]
                     self.state = FirstBoss.STATE_RUNS
                     self.run_dest_reset(0, context)
@@ -101,21 +105,36 @@ class FirstBoss:
                     shoot = 1
                     if shoot == 1:
                         self.state = FirstBoss.STATE_SHOOT_BULLETS
-                        self.bullet_shooter_live = True
+                        self.shooter_live = True
                     else:
                         self.state = FirstBoss.STATE_SHOOT_ROCKETS
                     self.start_time = context.time
+                    for i in range(len(self.bullet_shooter_dest)):
+                        if self.side == 1:
+                            bullets.elements.append(Bullet((self.x + self.width + 30), ((self.y + (self.height / 2))), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
+                        else:
+                            bullets.elements.append(Bullet((self.x - 30), ((self.y + (self.height / 2))), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
             if self.state == FirstBoss.STATE_SHOOT_BULLETS:
                 d_t = context.time - self.start_time
                 if (self.side == 1 and player.x <= self.width) or (self.side == 2 and player.x >= (context.width - self.width)):
-                    self.state = FirstBoss.STATE_ESCAPE
-                    self.bullet_shooter_live = False
+                    if player.y < (context.height / 2):
+                        self.state = FirstBoss.STATE_ESCAPE_UP
+                    else:
+                        self.state = FirstBoss.STATE_ESCAPE_DOWN
+                    self.shooter_live = False
                 if d_t >= 4:
                     self.state = FirstBoss.STATE_SECOND_MOVE
-                    self.bullet_shooter_live = False
-            if self.state == FirstBoss.STATE_ESCAPE:
+                    self.shooter_live = False
+            if self.state == FirstBoss.STATE_ESCAPE_UP:
                 self.y = self.y - 5
                 if self.y == -self.height:
+                    self.state = FirstBoss.STATE_INIT
+                    self.x = 0
+                    self.y = -350
+                    self.run_number = 0
+            if self.state == FirstBoss.STATE_ESCAPE_DOWN:
+                self.y = self.y + 5
+                if self.y == context.height:
                     self.state = FirstBoss.STATE_INIT
                     self.x = 0
                     self.y = -350
@@ -148,11 +167,11 @@ class FirstBoss:
                 if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
                     self.health = self.health - 1
                     bullet.sharp = False
-                if self.bullet_shooter_live:
-                    if bullet.form.colliderect(self.bullet_shooter_form) and bullet.attacker == "friend":
+                if self.shooter_live:
+                    if bullet.form.colliderect(self.shooter_form) and bullet.attacker == "friend":
                         self.health = self.health - 10
                         bullet.sharp = False
-                        self.bullet_shooter_live = False
+                        self.shooter_live = False
                         self.state = FirstBoss.STATE_SECOND_MOVE
             if self.form.colliderect(player.r) and self.attack >= 60:
                 player.health = player.health - 1

@@ -21,9 +21,9 @@ def control(context: PygameContext, player: Player, runners: Runners, bullets: B
     runners.control(context, player)
     bullet_shooters.control(context, player, bullets)
     rocket_launchers.control(context, player, rockets)
+    first_boss.control(context, player, bullets)
     bullets.control(context)
     rockets.control(player)
-    first_boss.control(context, player)
 
 
 def contacts(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
