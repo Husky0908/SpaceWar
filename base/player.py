@@ -11,6 +11,7 @@ class Player:
         self.width = 20
         self.height = 40
         self.form = None
+        self.crosshair_form = pygame.image.load("Pictures/players_pictures/crosshair.png").convert_alpha()
         self.pictures = [pygame.image.load("Pictures/players_pictures/player_ship_1_hp_j.png").convert_alpha(), pygame.image.load(
             "Pictures/players_pictures/player_ship_2_hp_j.png").convert_alpha(), pygame.image.load(
             "Pictures/players_pictures/player_ship_3_hp_j.png").convert_alpha(), pygame.image.load(

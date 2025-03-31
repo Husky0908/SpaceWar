@@ -46,10 +46,10 @@ def contacts(context: PygameContext, player: Player, runners: Runners, bullets: 
     bullets.contacts()
 
 
-def draw_mouse(context: PygameContext):
+def draw_mouse(context: PygameContext, player: Player):
     mouse_x, mouse_y = pygame.mouse.get_pos()
-    pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
-
+    #pygame.draw.circle(context.screen, (255, 255, 255), (mouse_x, mouse_y), 10)
+    context.screen.blit(player.crosshair_form, (mouse_x, mouse_y))
 
 def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
     context.screen.fill((0, 0, 0))
@@ -61,7 +61,7 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     rockets.draw(context)
     first_boss.draw(context)
     player.draw(context)
-    draw_mouse(context)
+    draw_mouse(context, player)
 
     pygame.display.flip()
 

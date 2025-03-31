@@ -19,7 +19,7 @@ class FirstBoss:
     STATE_KILL = 9
 
     def __init__(self, x: int, y: int):
-        self.health = 50
+        self.health = 75
         self.x = x
         self.y = y
         self.x_0 = 0
