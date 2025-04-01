@@ -1,5 +1,6 @@
 import pygame
 from base.context import PygameContext
+from texts.text_print import print_text
 
 
 class TextInput:
@@ -55,10 +56,7 @@ class TextInput:
             for i in range(len(self.word_list)):
                 self.word = self.word + self.word_list[i - 1]
             print(self.word)
-            text_1 = pygame.font.Font(None, 50)
-            text_2 = text_1.render(self.word, True, (255, 255, 255))
-            text_3 = text_2.get_rect(center=(500, 125))
-            context.screen.blit(text_2, text_3)
+            print_text(self.word, 50, (255, 255, 255), (300, 300), context)
             context.time = context.time + 1
 
 
