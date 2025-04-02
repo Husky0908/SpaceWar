@@ -1,6 +1,7 @@
 import pygame
 from texts.text_print import print_text
 from base.context import PygameContext
+from texts.options_save import OptionsSave
 
 def menu(context: PygameContext) -> bool:
     ## TODO: context-et hasznalni menu_screen helyett
@@ -8,6 +9,7 @@ def menu(context: PygameContext) -> bool:
     menu_screen = pygame.display.set_mode((1280, 720))
     menu_clock = pygame.time.Clock()
 
+    options_save = OptionsSave()
     which_menu = "main menu"
 
     pygame.mouse.set_visible(False)
@@ -37,11 +39,11 @@ def menu(context: PygameContext) -> bool:
         mouse_form = pygame.draw.circle(menu_screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
         if which_menu == "main menu":
             play_game = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 200, 200, 80))
-            print_text("Play", 45, (0, 0, 0), ((1280 / 2), 240), context)
+            print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)
             options = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
-            print_text("Options", 45, (0, 0, 0), ((1280 / 2), 365), context)
+            print_text((options_save.languages[options_save.select_language])["options"], 45, (0, 0, 0), ((1280 / 2), 365), context)
             game_quit = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 450, 200, 80))
-            print_text("Quit", 45, (0, 0, 0), ((1280 / 2), 490), context)
+            print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 490), context)
 
             if play_game.colliderect(mouse_form):
                 menu_screen.blit(ship,((1280 / 2 - 165), 200))
@@ -58,9 +60,11 @@ def menu(context: PygameContext) -> bool:
                 must_quit = True
 
         if which_menu == "options":
-            menu_screen.blit(options_controls, (330, 100))
+            print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
+            print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 4), 150), context)
+            #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(menu_screen, (255, 255, 255), (540, 550, 200, 80))
-            print_text("Back", 45, (0, 0, 0), ((1280 / 2), 590), context)
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
 
             if back_main_menu.colliderect(mouse_form):
                 menu_screen.blit(ship, ((1280 / 2 - 165), 550))
