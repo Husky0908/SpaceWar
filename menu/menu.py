@@ -9,6 +9,8 @@ def menu(context: PygameContext) -> bool:
     menu_screen = pygame.display.set_mode((1280, 720))
     menu_clock = pygame.time.Clock()
 
+    mouse_press_time = 0
+
     options_save = OptionsSave()
     which_menu = "main menu"
 
@@ -26,10 +28,11 @@ def menu(context: PygameContext) -> bool:
             if event.type == pygame.QUIT:
                 running = False
                 must_quit = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and mouse_press_time > 60:
                 mouse_click = True
             else:
                 mouse_click = False
+        mouse_press_time = mouse_press_time + 1
         # keys = pygame.key.get_pressed()
         # if keys[pygame.K_ESCAPE] and esc:
         #     return None
@@ -61,13 +64,26 @@ def menu(context: PygameContext) -> bool:
 
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
-            print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 4), 150), context)
+            print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
+            language_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 125, 150, 50))
+            for i in options_save.languages.keys():
+                if i == options_save.select_language:
+                    if 1 == options_save.how_number:
+                        options_save.select_language = "English"
+                    else:
+                        options_save.select_language = "Magyar"
+                    print_text(i, 45, (0, 0, 0), ((1280 / 3 * 2), 150), context)
+            print(len(options_save.languages.keys()))
             #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(menu_screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
 
             if back_main_menu.colliderect(mouse_form):
                 menu_screen.blit(ship, ((1280 / 2 - 165), 550))
+            if language_button.colliderect(mouse_form) and mouse_click:
+                options_save.how_number = options_save.how_number + 1
+                if options_save.how_number > len(options_save.languages.keys()):
+                    options_save.how_number = 0
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
 
