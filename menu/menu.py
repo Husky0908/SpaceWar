@@ -12,6 +12,7 @@ def menu(context: PygameContext) -> bool:
     mouse_press_time = 0
 
     options_save = OptionsSave()
+    options_save.saving_reading()
     which_menu = "main menu"
 
     pygame.mouse.set_visible(False)
@@ -84,6 +85,7 @@ def menu(context: PygameContext) -> bool:
                 options_save.how_number = 0
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
+                options_save.saving_writing()
 
         pygame.display.flip()
         menu_clock.tick(60)
