@@ -8,8 +8,8 @@ from base.directions import get_direction
 
 class Runner:
 
-    height = 60
-    width = 100
+    height = 110
+    width = 50
     STATE_INIT = 0
     STATE_SLOW_MOVE = 1
     STATE_FIRST_STOP = 2
@@ -31,6 +31,7 @@ class Runner:
         self.dir_y = 0
         self.start_time = 0
         self.form = None
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/runners/runner_4_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_5_hp.png")]
         self.wounded = False
         self.r = None
         self.run_time = 0
@@ -77,7 +78,12 @@ class Runner:
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
-        self.form = pygame.draw.rect(context.screen, (0, 255, 0), self.r)
+        if self.health == 5:
+            self.form = self.forms[1]
+        else:
+            self.form = self.forms[0]
+        context.screen.blit(self.form, self.r)
+        #self.form = pygame.draw.rect(context.screen, (0, 255, 0), self.r)
 
 
     def destination(self, player: Player, width, height):

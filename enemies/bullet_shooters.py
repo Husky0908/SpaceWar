@@ -1,6 +1,5 @@
 import pygame
 import random
-
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from base.player import Player
@@ -27,7 +26,7 @@ class BulletShooter:
         self._y = y
         self._health = 2
         self._form = None
-        self._forms = [pygame.image.load("Pictures/enemies_pictures/bullet_shooters/bullet_shooter_2_hp.png")]
+        self._forms = [pygame.image.load("Pictures/enemies_pictures/bullet_shooters/bullet_shooter_1_hp.png"), pygame.image.load("Pictures/enemies_pictures/bullet_shooters/bullet_shooter_2_hp.png")]
         self._r = None
         self._STATE = BulletShooter.STATE_INIT
         self._how_many_pixel = None
@@ -66,7 +65,7 @@ class BulletShooter:
 
     def draw(self, context: PygameContext):
         self._r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
-        self._form = self._forms[0]
+        self._form = self._forms[self._health - 1]
         context.screen.blit(self._form, self._r)
 
 
