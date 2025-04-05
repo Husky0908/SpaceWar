@@ -8,13 +8,7 @@ from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 from enemies.first_boss import FirstBoss
 from texts.inputs import TextInput
-
-
-class GameLogic:
-    def __init__(self):
-        self.level = 1
-        self.wave_time = 0
-        self.wave = 1
+from game.game_logic import GameLogic
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
@@ -66,73 +60,6 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     pygame.display.flip()
 
 
-def game_logic(game_logic_parameters: GameLogic, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
-    if game_logic_parameters.wave_time == 0:
-        for i in range(4):
-            bullet_shooters.spawn(context)
-    if bullet_shooters.empty() and game_logic_parameters.wave == 1:
-        game_logic_parameters.wave_time = 1200
-
-    if game_logic_parameters.wave_time == 1200:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(4):
-            bullet_shooters.spawn(context)
-        for i in range(2):
-            runners.spawn(context)
-    if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 2:
-        game_logic_parameters.wave_time = 3600
-
-    if game_logic_parameters.wave_time == 3600:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(4):
-            bullet_shooters.spawn(context)
-            runners.spawn(context)
-    if bullet_shooters.empty() and len(runners.elements) == 0 and game_logic_parameters.wave == 3:
-        game_logic_parameters.wave_time = 6000
-
-    if game_logic_parameters.wave_time == 6000:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(8):
-            runners.spawn(context)
-    if len(runners.elements) == 0 and game_logic_parameters.wave == 4:
-        game_logic_parameters.wave_time = 9000
-
-    if game_logic_parameters.wave_time == 9000:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(4):
-            bullet_shooters.spawn(context)
-        for i in range(2):
-            rocket_launchers.spawn(context)
-    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and game_logic_parameters.wave == 5:
-        game_logic_parameters.wave_time = 11000
-
-    if game_logic_parameters.wave_time == 11000:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(3):
-            bullet_shooters.spawn(context)
-            rocket_launchers.spawn(context)
-        for i in range(2):
-            runners.spawn(context)
-    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 6:
-        game_logic_parameters.wave_time = 14000
-
-    if game_logic_parameters.wave_time == 14000:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-        for i in range(3):
-            rocket_launchers.spawn(context)
-            runners.spawn(context)
-        for i in range(4):
-            bullet_shooters.spawn(context)
-    if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and game_logic_parameters.wave == 7:
-        game_logic_parameters.wave = game_logic_parameters.wave + 1
-
-    if game_logic_parameters.wave == 8:
-        first_boss.spawn()
-        game_logic_parameters.wave = 9
-
-    game_logic_parameters.wave_time = game_logic_parameters.wave_time + 1
-
-
 def game(context: PygameContext):
     player = Player(context.width // 2, context.height // 2)
     first_boss = FirstBoss(0, -350)
@@ -166,7 +93,7 @@ def game(context: PygameContext):
         control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
         draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
         contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
-        game_logic(game_logic_parameters, context, player, bullet_shooters, runners, rocket_launchers, first_boss)
+        game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
 
         context.delta_time = context.clock.tick(60) / 1000
         context.time = context.time + context.delta_time
