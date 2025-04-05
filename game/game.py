@@ -7,7 +7,6 @@ from enemies.runners import Runners
 from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 from enemies.first_boss import FirstBoss
-from texts.inputs import TextInput
 from game.game_logic import GameLogic
 
 
@@ -60,11 +59,16 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     pygame.display.flip()
 
 
+def get_char(event: pygame.event) -> int:
+    if event.type == pygame.KEYUP:
+        return event.key
+    return None
+    
+
+
 def game(context: PygameContext):
     player = Player(context.width // 2, context.height // 2)
     first_boss = FirstBoss(0, -350)
-
-    t_input = TextInput()
 
     game_logic_parameters = GameLogic()
 
@@ -75,6 +79,8 @@ def game(context: PygameContext):
     rocket_launchers = RocketLaunchers()
 
     running = True
+    cheat_mode = False
+    input_timeout = 0
 
     while running:
         for event in pygame.event.get():
@@ -83,17 +89,45 @@ def game(context: PygameContext):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 player.press_mouse(running, bullets, context)
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_m]:
-            t_input.input_player(context)
+            if cheat_mode and input_timeout == 0:
+                c = get_char(event)
+                if c == pygame.K_ESCAPE:
+                    cheat_mode = False
+                if c is not None:
+                    cheat = cheat + chr(c)
+
+
+            if not cheat_mode and event.type == pygame.KEYUP and event.unicode == chr(pygame.K_m):
+                cheat_mode = True
+                cheat = ""
+                
         #if keys[pygame.K_ESCAPE]:
         #    menu(True)
+        
 
-        running = player.control(context, running)
-        control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
-        draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
-        contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
-        game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
+        if not cheat_mode:
+            context.time = context.time + context.delta_time
+            
+            running = player.control(context, running)
+            control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+            draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+            contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
+            game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
+        else:
+            if cheat == "iddqd":
+                player.health = 5
+                cheat_mode = False
+            if cheat == "idkfa":
+                bullets.elements.clear()
+                rockets.elements.clear()
+                runners.elements.clear()
+                bullet_shooters._elements.clear()
+                rocket_launchers.elements.clear()
+                
+                game_logic_parameters.wave_time = 16000
+                game_logic_parameters.wave = 8
+                cheat_mode = False
+
 
         context.delta_time = context.clock.tick(60) / 1000
-        context.time = context.time + context.delta_time
+
