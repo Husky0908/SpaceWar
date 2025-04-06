@@ -65,12 +65,21 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
+            print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 250), context)
             language_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 125, 150, 50))
+            difficulty_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
             if 1 == options_save.how_number:
                 options_save.select_language = "English"
             else:
                 options_save.select_language = "Magyar"
             print_text(options_save.select_language, 45, (0, 0, 0), ((1280 / 3 * 2), 150), context)
+            if options_save.game_difficulty == 1:
+                d = (options_save.languages[options_save.select_language])["hard"]
+            if options_save.game_difficulty == 0:
+                d = (options_save.languages[options_save.select_language])["normal"]
+            if options_save.game_difficulty == -1:
+                d = (options_save.languages[options_save.select_language])["easy"]
+            print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 250), context)
             #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(menu_screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
@@ -82,6 +91,11 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
                 mouse_press_time = 0
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
+            if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                options_save.game_difficulty = options_save.game_difficulty + 1
+                mouse_press_time = 0
+            if options_save.game_difficulty > 1:
+                options_save.game_difficulty = -1
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
                 options_save.saving_writing()
