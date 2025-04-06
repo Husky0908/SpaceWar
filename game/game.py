@@ -8,6 +8,7 @@ from base.rockets import Rocket, Rockets
 from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 from enemies.first_boss import FirstBoss
 from game.game_logic import GameLogic
+from texts.options_save import OptionsSave
 
 
 def control(context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
@@ -66,11 +67,11 @@ def get_char(event: pygame.event) -> int:
     
 
 
-def game(context: PygameContext):
+def game(context: PygameContext, options_saving: OptionsSave):
     player = Player(context.width // 2, context.height // 2)
     first_boss = FirstBoss(0, -350)
 
-    game_logic_parameters = GameLogic()
+    game_logic_parameters = GameLogic(options_saving.game_difficulty)
 
     bullets = Bullets()
     rockets = Rockets()

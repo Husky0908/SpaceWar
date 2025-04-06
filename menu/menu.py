@@ -3,7 +3,7 @@ from texts.text_print import print_text
 from base.context import PygameContext
 from texts.options_save import OptionsSave
 
-def menu(context: PygameContext) -> bool:
+def menu(context: PygameContext, options_save: OptionsSave) -> bool:
     ## TODO: context-et hasznalni menu_screen helyett
     ## meg a clock helyett is
     menu_screen = pygame.display.set_mode((1280, 720))
@@ -11,7 +11,6 @@ def menu(context: PygameContext) -> bool:
 
     mouse_press_time = 0
 
-    options_save = OptionsSave()
     options_save.saving_reading()
     which_menu = "main menu"
 

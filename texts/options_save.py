@@ -1,9 +1,12 @@
+from game.game_logic import GameLogic
+
 class OptionsSave:
     def __init__(self):
         self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:"},
                           "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:"}}
         self.select_language = "English"
         self.how_number = 0
+        self.game_difficulty = 0
 
     def saving_reading(self):
         with (open("texts/options_saving", "r") as f):
@@ -12,6 +15,9 @@ class OptionsSave:
             self.how_number = f.readline()
             self.how_number = self.how_number.strip("\n")
             self.how_number = int(self.how_number)
+            self.game_difficulty = f.readline()
+            self.game_difficulty = self.game_difficulty.strip("\n")
+            self.game_difficulty = int(self.game_difficulty)
 
     def saving_writing(self):
         with (open("texts/options_saving", "w") as f):
