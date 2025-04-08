@@ -60,10 +60,9 @@ def draw(context: PygameContext, player: Player, runners: Runners, bullets: Bull
     pygame.display.flip()
 
 
-def get_char(event: pygame.event) -> int:
+def get_char(event: pygame.event):
     if event.type == pygame.KEYUP:
         return event.key
-    return None
     
 
 
@@ -115,10 +114,13 @@ def game(context: PygameContext, options_saving: OptionsSave):
             contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
             game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
         else:
-            if cheat == "iddqd":
+            if cheat == "megh":
+                player.health = 100
+                cheat_mode = False
+            if cheat == "maxh":
                 player.health = 5
                 cheat_mode = False
-            if cheat == "idkfa":
+            if cheat == "spo1b":
                 bullets.elements.clear()
                 rockets.elements.clear()
                 runners.elements.clear()

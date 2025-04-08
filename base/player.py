@@ -20,7 +20,10 @@ class Player:
         self.r = None
 
     def picture(self, context: PygameContext):
-        self.form = self.pictures[self.health - 1]
+        if self.health < 6:
+            self.form = self.pictures[self.health - 1]
+        else:
+            self.form = self.pictures[4]
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)

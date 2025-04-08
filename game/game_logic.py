@@ -11,7 +11,6 @@ class GameLogic:
         self.wave_time = 0
         self.wave = 1
         self.difficulty = game_difficulty
-        print(self.difficulty)
 
     def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
         if self.wave_time == 0:

@@ -60,6 +60,7 @@ class FirstBoss:
             if self.state == FirstBoss.STATE_INIT:
                 self.y = self.y + 2
                 if self.y >= 0:
+                    self.bullet_shooter_dest = []
                     for i in range(context.height // 50):
                         self.bullet_shooter_dest.append(((context.width / 2), (i * 50)))
                     self.run_dest = [((context.width - self.width), (context.height - self.height)), ((context.width - self.width), self.height), (0, (context.height - self.height)), (0, 0)]
