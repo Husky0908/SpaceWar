@@ -9,6 +9,7 @@ from enemies.rocket_launchers import RocketLaunchers, RocketLauncher
 from enemies.first_boss import FirstBoss
 from game.game_logic import GameLogic
 from texts.options_save import OptionsSave
+from menu.menu import menu
 
 class Game:
 
@@ -91,7 +92,7 @@ class Game:
 
                 if cheat_mode and input_timeout == 0:
                     c = self.get_char(event)
-                    if c == pygame.K_ESCAPE:
+                    if c == pygame.K_BACKSPACE:
                         cheat_mode = False
                     if c is not None:
                         cheat = cheat + chr(c)
@@ -100,10 +101,8 @@ class Game:
                 if not cheat_mode and event.type == pygame.KEYUP and event.unicode == chr(pygame.K_m):
                     cheat_mode = True
                     cheat = ""
-
-            #if keys[pygame.K_ESCAPE]:
-            #    menu(True)
-
+                if event.type == pygame.KEYUP and event.unicode == chr(pygame.K_ESCAPE):
+                     player.health = menu(context, options_saving, True)
 
             if not cheat_mode:
                 context.time = context.time + context.delta_time

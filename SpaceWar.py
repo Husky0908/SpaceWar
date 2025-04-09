@@ -9,7 +9,7 @@ context = PygameContext(1280, 720)
 options_saving = OptionsSave()
 game = Game()
 
-while not menu(context, options_saving):
+while not menu(context, options_saving, False):
     game.game(context, options_saving)
 
 pygame.quit()

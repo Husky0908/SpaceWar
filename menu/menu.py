@@ -3,7 +3,7 @@ from texts.text_print import print_text
 from base.context import PygameContext
 from texts.options_save import OptionsSave
 
-def menu(context: PygameContext, options_save: OptionsSave) -> bool:
+def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
     ## TODO: context-et hasznalni menu_screen helyett
     ## meg a clock helyett is
     menu_screen = pygame.display.set_mode((1280, 720))
@@ -33,20 +33,23 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
             else:
                 mouse_click = False
         mouse_press_time = mouse_press_time + 1
-        # keys = pygame.key.get_pressed()
-        # if keys[pygame.K_ESCAPE] and esc:
-        #     return None
 
         menu_screen.fill((0, 0, 0))
 
         mouse_form = pygame.draw.circle(menu_screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
         if which_menu == "main menu":
             play_game = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 200, 200, 80))
-            print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)
+            if not escape:
+                print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)
+            else:
+                print_text((options_save.languages[options_save.select_language])["continue"], 45, (0, 0, 0), ((1280 / 2), 240), context)
             options = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
             print_text((options_save.languages[options_save.select_language])["options"], 45, (0, 0, 0), ((1280 / 2), 365), context)
             game_quit = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 2 - 100), 450, 200, 80))
-            print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 490), context)
+            if not escape:
+                print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 490), context)
+            else:
+                print_text((options_save.languages[options_save.select_language])["finish"], 45, (0, 0, 0), ((1280 / 2), 490), context)
 
             if play_game.colliderect(mouse_form):
                 menu_screen.blit(ship,((1280 / 2 - 165), 200))
@@ -59,27 +62,32 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
             if options.colliderect(mouse_form) and mouse_click:
                 which_menu = "options"
             if game_quit.colliderect(mouse_form) and mouse_click:
-                running = False
-                must_quit = True
+                if not escape:
+                    running = False
+                    must_quit = True
+                else:
+                    return 0
 
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
-            print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 250), context)
+            if not escape:
+                print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 250), context)
+                difficulty_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
             language_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 125, 150, 50))
-            difficulty_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
             if 1 == options_save.how_number:
                 options_save.select_language = "English"
             else:
                 options_save.select_language = "Magyar"
             print_text(options_save.select_language, 45, (0, 0, 0), ((1280 / 3 * 2), 150), context)
-            if options_save.game_difficulty == 1:
-                d = (options_save.languages[options_save.select_language])["hard"]
-            if options_save.game_difficulty == 0:
-                d = (options_save.languages[options_save.select_language])["normal"]
-            if options_save.game_difficulty == -1:
-                d = (options_save.languages[options_save.select_language])["easy"]
-            print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 250), context)
+            if not escape:
+                if options_save.game_difficulty == 1:
+                    d = (options_save.languages[options_save.select_language])["hard"]
+                if options_save.game_difficulty == 0:
+                    d = (options_save.languages[options_save.select_language])["normal"]
+                if options_save.game_difficulty == -1:
+                    d = (options_save.languages[options_save.select_language])["easy"]
+                print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 250), context)
             #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(menu_screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
@@ -91,9 +99,10 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
                 mouse_press_time = 0
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
-            if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
-                options_save.game_difficulty = options_save.game_difficulty + 1
-                mouse_press_time = 0
+            if not escape:
+                if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    options_save.game_difficulty = options_save.game_difficulty + 1
+                    mouse_press_time = 0
             if options_save.game_difficulty > 1:
                 options_save.game_difficulty = -1
             if back_main_menu.colliderect(mouse_form) and mouse_click:
@@ -101,8 +110,6 @@ def menu(context: PygameContext, options_save: OptionsSave) -> bool:
                 options_save.saving_writing()
 
         pygame.display.flip()
-        menu_clock.tick(60)
+        context.delta_time = context.clock.tick(60) / 1000
 
     return must_quit
-
-#menu(False)
