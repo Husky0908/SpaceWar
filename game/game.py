@@ -102,7 +102,9 @@ class Game:
                     cheat_mode = True
                     cheat = ""
                 if event.type == pygame.KEYUP and event.unicode == chr(pygame.K_ESCAPE):
-                     player.health = menu(context, options_saving, True)
+                    game_next = menu(context, options_saving, True)
+                    if game_next:
+                        player.health = 0
 
             if not cheat_mode:
                 context.time = context.time + context.delta_time

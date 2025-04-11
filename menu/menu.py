@@ -16,6 +16,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
 
     pygame.mouse.set_visible(False)
     pygame.display.set_caption("Space War")
+    print(options_save.fullscreen)
+    if options_save.fullscreen:
+        pygame.display.toggle_fullscreen()
 
     ship = pygame.image.load("Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha()
     options_controls = pygame.image.load("Pictures/menu_pictures/options_controls.png").convert_alpha()
@@ -58,7 +61,10 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
             if game_quit.colliderect(mouse_form):
                 menu_screen.blit(ship, ((1280 / 2 - 165), 450))
             if play_game.colliderect(mouse_form) and mouse_click:
-                running = False
+                if not escape:
+                    running = False
+                else:
+                    return False
             if options.colliderect(mouse_form) and mouse_click:
                 which_menu = "options"
             if game_quit.colliderect(mouse_form) and mouse_click:
@@ -66,15 +72,21 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                     running = False
                     must_quit = True
                 else:
-                    return 0
+                    return True
 
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
+            print_text((options_save.languages[options_save.select_language])["fullscreen"], 45, (255, 255, 255), ((1280 / 3), 250), context)
             if not escape:
-                print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 250), context)
-                difficulty_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
+                print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 350), context)
+                difficulty_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 325, 150, 50))
             language_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 125, 150, 50))
+            fullscreen_button = pygame.draw.rect(menu_screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
+            if options_save.fullscreen:
+                print_text((options_save.languages[options_save.select_language])["on"], 45, (0, 0, 0), (((1280 / 3) * 2), 250), context)
+            else:
+                print_text((options_save.languages[options_save.select_language])["off"], 45, (0, 0, 0), (((1280 / 3) * 2), 250), context)
             if 1 == options_save.how_number:
                 options_save.select_language = "English"
             else:
@@ -87,7 +99,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                     d = (options_save.languages[options_save.select_language])["normal"]
                 if options_save.game_difficulty == -1:
                     d = (options_save.languages[options_save.select_language])["easy"]
-                print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 250), context)
+                print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 350), context)
             #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(menu_screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
@@ -97,6 +109,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
             if language_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                 options_save.how_number = options_save.how_number + 1
                 mouse_press_time = 0
+            if fullscreen_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                mouse_press_time = 0
+                if options_save.fullscreen:
+                    options_save.fullscreen = False
+                else:
+                    options_save.fullscreen = True
+                pygame.display.toggle_fullscreen()
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
             if not escape:
