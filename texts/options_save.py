@@ -21,12 +21,10 @@ class OptionsSave:
             self.game_difficulty = int(self.game_difficulty)
             self.fullscreen = f.readline()
             self.fullscreen = self.fullscreen.strip("\n")
-            print(self.fullscreen)
             if self.fullscreen == "True":
                 self.fullscreen = True
             else:
                 self.fullscreen = False
-            print(self.fullscreen)
 
     def saving_writing(self):
         with (open("texts/options_saving", "w") as f):

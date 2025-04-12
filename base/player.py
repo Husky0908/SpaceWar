@@ -27,8 +27,9 @@ class Player:
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
-        self.picture(context)
-        context.screen.blit(self.form, self.r)
+        if self.health > 0:
+            self.picture(context)
+            context.screen.blit(self.form, self.r)
 
     def contacts(self, bullets: Bullets):
         for bullet in bullets.elements:
@@ -58,7 +59,7 @@ class Player:
             self.x = context.width - self.width / 2
 
         if self.health <= 0:
-            running = False
+            running = True
 
         return running
 

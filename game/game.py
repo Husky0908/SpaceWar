@@ -10,8 +10,15 @@ from enemies.first_boss import FirstBoss
 from game.game_logic import GameLogic
 from texts.options_save import OptionsSave
 from menu.menu import menu
+from texts.text_print import print_text
 
 class Game:
+    def __init__(self):
+        self.running = True
+        self.end = False
+        self.end_text = None
+        self.end_time = 0
+
 
     def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
         runners.control(context, player)
@@ -49,14 +56,17 @@ class Game:
     def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
         context.screen.fill((0, 0, 0))
 
-        bullets.draw(context)
         bullet_shooters.draw(context)
         runners.draw(context)
         rocket_launchers.draw(context)
-        rockets.draw(context)
         first_boss.draw(context)
         player.draw(context)
+        bullets.draw(context)
+        rockets.draw(context)
         self.draw_mouse(context, player)
+
+        if self.end:
+            print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
 
         pygame.display.flip()
 
@@ -64,7 +74,6 @@ class Game:
     def get_char(self, event: pygame.event):
         if event.type == pygame.KEYUP:
             return event.key
-
 
 
     def game(self, context: PygameContext, options_saving: OptionsSave):
@@ -79,16 +88,17 @@ class Game:
         bullet_shooters = BulletShooters()
         rocket_launchers = RocketLaunchers()
 
-        running = True
+        self.running = True
+        self.end = False
         cheat_mode = False
         input_timeout = 0
 
-        while running:
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    player.press_mouse(running, bullets, context)
+                    player.press_mouse(self.running, bullets, context)
 
                 if cheat_mode and input_timeout == 0:
                     c = self.get_char(event)
@@ -109,11 +119,26 @@ class Game:
             if not cheat_mode:
                 context.time = context.time + context.delta_time
 
-                running = player.control(context, running)
-                self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
-                self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
-                self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
-                game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
+                if not self.end:
+                    self.end = player.control(context, self.end)
+                    if self.end:
+                        self.end_time = context.time
+                        self.end_text = "Game over"
+                        first_boss.live = False
+                    self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
+                    game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
+                else:
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    bullets.elements.clear()
+                    rockets.elements.clear()
+                    runners.elements.clear()
+                    bullet_shooters._elements.clear()
+                    rocket_launchers.elements.clear()
+                    if context.time - self.end_time > 3:
+                        self.running = False
+
             else:
                 if cheat == "megh":
                     player.health = 100
