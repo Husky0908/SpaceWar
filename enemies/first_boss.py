@@ -18,8 +18,8 @@ class FirstBoss:
     STATE_ESCAPE_DOWN = 8
     STATE_KILL = 9
 
-    def __init__(self, x: int, y: int):
-        self.health = 75
+    def __init__(self, x: int, y: int, l: int):
+        self.health = 75 + (l * 25)
         self.x = x
         self.y = y
         self.x_0 = 0
@@ -152,6 +152,9 @@ class FirstBoss:
                     self.run_number = 0
             if self.health <= 0:
                 self.state = FirstBoss.STATE_KILL
+                return  True
+
+            return False
 
     def run(self, d_t):
         self.x = self.x_0 + self.dir_x * d_t * 500

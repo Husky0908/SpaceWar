@@ -18,14 +18,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
     must_quit = False
 
     while running:
+        mouse_click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 must_quit = True
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_click = True
-            else:
-                mouse_click = False
         mouse_press_time = mouse_press_time + 1
 
         context.screen.fill((0, 0, 0))

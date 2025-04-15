@@ -24,7 +24,7 @@ class Game:
         runners.control(context, player)
         bullet_shooters.control(context, player, bullets)
         rocket_launchers.control(context, player, rockets)
-        first_boss.control(context, player, bullets)
+        self.end = first_boss.control(context, player, bullets)
         bullets.control(context)
         rockets.control(player)
 
@@ -78,7 +78,7 @@ class Game:
 
     def game(self, context: PygameContext, options_saving: OptionsSave):
         player = Player(context.width // 2, context.height // 2)
-        first_boss = FirstBoss(0, -350)
+        first_boss = FirstBoss(0, -350, options_saving.game_difficulty)
 
         game_logic_parameters = GameLogic(options_saving.game_difficulty)
 
@@ -115,6 +115,8 @@ class Game:
                     game_next = menu(context, options_saving, True)
                     if game_next:
                         player.health = 0
+                        self.end = True
+                        self.end_text = ""
 
             if not cheat_mode:
                 context.time = context.time + context.delta_time
@@ -123,9 +125,14 @@ class Game:
                     self.end = player.control(context, self.end)
                     if self.end:
                         self.end_time = context.time
-                        self.end_text = "Game over"
+                        self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
                         first_boss.live = False
-                    self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    if not self.end:
+                        self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                        if self.end:
+                            self.end_time = context.time
+                            self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
+                            player.health = 0
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
                     self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
                     game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
@@ -136,7 +143,7 @@ class Game:
                     runners.elements.clear()
                     bullet_shooters._elements.clear()
                     rocket_launchers.elements.clear()
-                    if context.time - self.end_time > 3:
+                    if context.time - self.end_time > 3 or self.end_text == "":
                         self.running = False
 
             else:
