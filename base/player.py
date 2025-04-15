@@ -30,6 +30,20 @@ class Player:
         if self.health > 0:
             self.picture(context)
             context.screen.blit(self.form, self.r)
+            if self.health < 6:
+                hmp = 15
+                color = (255, 0, 0)
+                if self.health == 2:
+                    color = (255, 128, 0)
+                if self.health == 3:
+                    color = (255, 255, 0)
+                if self.health == 4:
+                    color = (128, 255, 0)
+                if self.health == 5:
+                    color = (0, 255, 0)
+                for i in range(self.health):
+                    pygame.draw.rect(context.screen, color, (hmp, context.height - 50, 15, 40))
+                    hmp = hmp + 20
 
     def contacts(self, bullets: Bullets):
         for bullet in bullets.elements:
