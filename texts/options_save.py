@@ -2,8 +2,8 @@ from game.game_logic import GameLogic
 
 class OptionsSave:
     def __init__(self):
-        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits"},
-                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők"}}
+        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits", "game" : "Game", "controls" : "Controls"},
+                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások"}}
         self.select_language = "English"
         self.how_number = 0
         self.game_difficulty = 0

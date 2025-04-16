@@ -76,6 +76,28 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
 
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
+            game_options_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 200, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["game"], 45, (0, 0, 0), ((1280 / 2), 240), context)
+            controls_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["controls"], 45, (0, 0, 0), ((1280 / 2), 365), context)
+            back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
+
+            if back_main_menu.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 550))
+            if game_options_button.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 200))
+            if controls_button.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 325))
+            if back_main_menu.colliderect(mouse_form) and mouse_click:
+                which_menu = "main menu"
+            if game_options_button.colliderect(mouse_form) and mouse_click:
+                which_menu = "game options"
+            if controls_button.colliderect(mouse_form) and mouse_click:
+                which_menu = "controls"
+
+        if which_menu == "game options":
+            print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
             print_text((options_save.languages[options_save.select_language])["fullscreen"], 45, (255, 255, 255), ((1280 / 3), 250), context)
             if not escape:
@@ -124,7 +146,18 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
             if options_save.game_difficulty > 1:
                 options_save.game_difficulty = -1
             if back_main_menu.colliderect(mouse_form) and mouse_click:
-                which_menu = "main menu"
+                which_menu = "options"
+                options_save.saving_writing()
+
+        if which_menu == "controls":
+            print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
+            back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
+
+            if back_main_menu.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 550))
+            if back_main_menu.colliderect(mouse_form) and mouse_click:
+                which_menu = "options"
                 options_save.saving_writing()
 
         if which_menu == "credits":
