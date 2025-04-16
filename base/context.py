@@ -6,6 +6,7 @@ class PygameContext:
         pygame.init()
         pygame.mouse.set_visible(False)
         pygame.display.set_caption("Space War")
+        pygame.display.set_icon(pygame.image.load("Pictures/players_pictures/player_ship_4_hp_j.png"))
 
         self.width = width
         self.height = height

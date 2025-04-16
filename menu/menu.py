@@ -33,6 +33,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
 
         mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
         if which_menu == "main menu":
+            print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
+            print_text("Alpha 0.1.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
             play_game = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 200, 200, 80))
             if not escape:
                 print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)

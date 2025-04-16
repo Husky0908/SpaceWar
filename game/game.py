@@ -66,6 +66,8 @@ class Game:
         self.draw_mouse(context, player)
 
         if self.end:
+            if self.end_text == "Victory" or self.end_text == "Győzelem":
+                print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
 
         pygame.display.flip()
