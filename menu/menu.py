@@ -13,6 +13,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
     pygame.display.set_caption("Space War")
 
     ship = pygame.image.load("Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha()
+    credits_eng = pygame.image.load("Pictures/menu_pictures/credits_eng.png").convert_alpha()
+    credits_hun = pygame.image.load("Pictures/menu_pictures/credits_hun.png").convert_alpha()
 
     running = True
     must_quit = False
@@ -36,25 +38,31 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                 print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)
             else:
                 print_text((options_save.languages[options_save.select_language])["continue"], 45, (0, 0, 0), ((1280 / 2), 240), context)
-            options = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
-            print_text((options_save.languages[options_save.select_language])["options"], 45, (0, 0, 0), ((1280 / 2), 365), context)
-            game_quit = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 450, 200, 80))
+            credits = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["credits"], 45, (0, 0, 0), ((1280 / 2), 365), context)
+            options = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 450, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["options"], 45, (0, 0, 0), ((1280 / 2), 490), context)
+            game_quit = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 575, 200, 80))
             if not escape:
-                print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 490), context)
+                print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 615), context)
             else:
-                print_text((options_save.languages[options_save.select_language])["finish"], 45, (0, 0, 0), ((1280 / 2), 490), context)
+                print_text((options_save.languages[options_save.select_language])["finish"], 45, (0, 0, 0), ((1280 / 2), 615), context)
 
             if play_game.colliderect(mouse_form):
                 context.screen.blit(ship,((1280 / 2 - 165), 200))
+            if credits.colliderect(mouse_form):
+                context.screen.blit(ship,((1280 / 2 - 165), 325))
             if options.colliderect(mouse_form):
-                context.screen.blit(ship, ((1280 / 2 - 165), 325))
-            if game_quit.colliderect(mouse_form):
                 context.screen.blit(ship, ((1280 / 2 - 165), 450))
+            if game_quit.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 575))
             if play_game.colliderect(mouse_form) and mouse_click:
                 if not escape:
                     running = False
                 else:
                     return False
+            if credits.colliderect(mouse_form) and mouse_click:
+                which_menu = "credits"
             if options.colliderect(mouse_form) and mouse_click:
                 which_menu = "options"
             if game_quit.colliderect(mouse_form) and mouse_click:
@@ -90,7 +98,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                 if options_save.game_difficulty == -1:
                     d = (options_save.languages[options_save.select_language])["easy"]
                 print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 350), context)
-            #menu_screen.blit(options_controls, (330, 100))
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
 
@@ -117,6 +124,20 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
                 options_save.saving_writing()
+
+        if which_menu == "credits":
+            if options_save.select_language == "English":
+                context.screen.blit(credits_eng, (0, 0))
+            else:
+                context.screen.blit(credits_hun, (0, 0))
+            print_text((options_save.languages[options_save.select_language])["credits"], 70, (255, 255, 255), ((1280 / 2), 60), context)
+            back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
+
+            if back_main_menu.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 2 - 165), 550))
+            if back_main_menu.colliderect(mouse_form) and mouse_click:
+                which_menu = "main menu"
 
         pygame.display.flip()
         context.delta_time = context.clock.tick(60) / 1000
