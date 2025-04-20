@@ -124,7 +124,7 @@ class Game:
                 context.time = context.time + context.delta_time
 
                 if not self.end:
-                    self.end = player.control(context, self.end)
+                    self.end = player.control(context, self.end, options_saving)
                     if self.end:
                         self.end_time = context.time
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]

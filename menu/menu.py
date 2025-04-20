@@ -3,6 +3,7 @@ from texts.text_print import print_text
 from base.context import PygameContext
 from texts.options_save import OptionsSave
 
+
 def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
     mouse_press_time = 0
 
@@ -95,6 +96,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                 which_menu = "game options"
             if controls_button.colliderect(mouse_form) and mouse_click:
                 which_menu = "controls"
+                get_input = False
 
         if which_menu == "game options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
@@ -153,12 +155,35 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
+            print_text((options_save.languages[options_save.select_language])["up"], 45, (255, 255, 255), ((1280 / 3), 150), context)
+            up_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 125, 50, 50))
+            print_text((options_save.languages[options_save.select_language])["down"], 45, (255, 255, 255), ((1280 / 3), 250), context)
+            down_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 225, 50, 50))
+            print_text((options_save.languages[options_save.select_language])["left"], 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
+            left_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 125, 50, 50))
+            print_text((options_save.languages[options_save.select_language])["right"], 45, (255, 255, 255), ((1280 / 3 * 2), 250), context)
+            right_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 225, 50, 50))
 
-            if back_main_menu.colliderect(mouse_form):
-                context.screen.blit(ship, ((1280 / 2 - 165), 550))
-            if back_main_menu.colliderect(mouse_form) and mouse_click:
-                which_menu = "options"
-                options_save.saving_writing()
+            if not get_input:
+                if back_main_menu.colliderect(mouse_form):
+                    context.screen.blit(ship, ((1280 / 2 - 165), 550))
+                if up_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    mouse_press_time = 0
+                    get_input = True
+                if back_main_menu.colliderect(mouse_form) and mouse_click:
+                    which_menu = "options"
+                    options_save.saving_writing()
+            else:
+                print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 100), context)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYUP:
+                        if event.unicode == chr(pygame.K_ESCAPE) or event.unicode == chr(pygame.K_BACKSPACE):
+                            get_input = False
+                        else:
+                            n_c = event.key
+                            if type(n_c) == int:
+                                options_save.up_control = chr(n_c)
+                                get_input = False
 
         if which_menu == "credits":
             if options_save.select_language == "English":

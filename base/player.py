@@ -1,6 +1,7 @@
 import pygame
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
+from texts.options_save import OptionsSave
 
 
 class Player:
@@ -52,10 +53,15 @@ class Player:
                 bullet.sharp = False
 
 
-    def control(self, context: PygameContext, running):
+    def control(self, context: PygameContext, running, options_save: OptionsSave):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.unicode == chr(pygame.K_w):
+                    self.y -= 300 * context.delta_time
+            #print(chr(options_save.up_control))
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.y -= 300 * context.delta_time
+        #if keys[pygame.K_w]:
+            #self.y -= 300 * context.delta_time
         if keys[pygame.K_s]:
             self.y += 300 * context.delta_time
         if keys[pygame.K_a]:

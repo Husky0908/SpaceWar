@@ -1,13 +1,15 @@
-from game.game_logic import GameLogic
+import pygame
+
 
 class OptionsSave:
     def __init__(self):
-        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits", "game" : "Game", "controls" : "Controls"},
-                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások"}}
+        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits", "game" : "Game", "controls" : "Controls", "up" : "Up:", "down" : "Down:", "left" : "Left:", "right" : "Right:", "press" : "Press the button"},
+                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások", "up" : "Fel:", "down" : "Le:", "left" : "Bal:", "right" : "Jobb:", "press" : "Nyomd meg a gombot"}}
         self.select_language = "English"
         self.how_number = 0
         self.game_difficulty = 0
         self.fullscreen = True
+        self.up_control = chr(pygame.K_w)
 
     def saving_reading(self):
         with (open("texts/options_saving", "r") as f):
