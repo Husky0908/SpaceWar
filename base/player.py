@@ -57,11 +57,11 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[options_save.up_control]:
             self.y -= 300 * context.delta_time
-        if keys[pygame.K_s]:
+        if keys[options_save.down_control]:
             self.y += 300 * context.delta_time
-        if keys[pygame.K_a]:
+        if keys[options_save.left_control]:
             self.x -= 300 * context.delta_time
-        if keys[pygame.K_d]:
+        if keys[options_save.right_control]:
             self.x += 300 * context.delta_time
 
         if self.y - self.height / 2 < 0:

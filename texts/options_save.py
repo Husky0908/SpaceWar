@@ -10,6 +10,9 @@ class OptionsSave:
         self.game_difficulty = 0
         self.fullscreen = True
         self.up_control = pygame.K_w
+        self.down_control = pygame.K_s
+        self.left_control = pygame.K_a
+        self.right_control = pygame.K_d
         self.saving_reading()
 
     def saving_reading(self):

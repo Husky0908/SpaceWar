@@ -29,6 +29,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
 
     running = True
     must_quit = False
+    which_control = ""
 
     while running:
         mouse_click = False
@@ -180,7 +181,23 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 if up_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     get_input = True
+                    which_control = "up"
                     print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 100), context)
+                if down_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    mouse_press_time = 0
+                    get_input = True
+                    which_control = "down"
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 200), context)
+                if left_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    mouse_press_time = 0
+                    get_input = True
+                    which_control = "left"
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 125), 100), context)
+                if right_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    mouse_press_time = 0
+                    get_input = True
+                    which_control = "right"
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 125), 200), context)
                 if back_main_menu.colliderect(mouse_form) and mouse_click:
                     which_menu = "options"
                     options_save.saving_writing()
@@ -188,7 +205,14 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 key = _get_key_code()
                 get_input = False
                 if key is not None:
-                    options_save.up_control = key
+                    if which_control == "up":
+                        options_save.up_control = key
+                    if which_control == "down":
+                        options_save.down_control = key
+                    if which_control == "left":
+                        options_save.left_control = key
+                    if which_control == "right":
+                        options_save.right_control = key
 
         if which_menu == "credits":
             if options_save.select_language == "English":
