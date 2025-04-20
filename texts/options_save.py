@@ -9,7 +9,8 @@ class OptionsSave:
         self.how_number = 0
         self.game_difficulty = 0
         self.fullscreen = True
-        self.up_control = chr(pygame.K_w)
+        self.up_control = pygame.K_w
+        self.saving_reading()
 
     def saving_reading(self):
         with (open("texts/options_saving", "r") as f):

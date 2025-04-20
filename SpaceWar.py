@@ -4,13 +4,9 @@ from menu.menu import menu
 from game.game import Game
 from texts.options_save import OptionsSave
 
-
-context = PygameContext(1280, 720)
 options_saving = OptionsSave()
+context = PygameContext(1280, 720, options_saving.fullscreen)
 game = Game()
-
-if options_saving.fullscreen:
-    pygame.display.toggle_fullscreen()
 
 while not menu(context, options_saving, False):
     game.game(context, options_saving)
