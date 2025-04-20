@@ -175,6 +175,64 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             print_text((options_save.languages[options_save.select_language])["right"], 45, (255, 255, 255), ((1280 / 3 * 2), 250), context)
             right_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 225, 50, 50))
 
+            if options_save.up_control >= 0 and options_save.up_control <= 127:
+                print_text(chr(options_save.up_control), 45, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+            else:
+                if options_save.up_control >= 1073741903 and options_save.up_control <= 1073741906:
+                    if options_save.up_control == 1073741906:
+                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+                    if options_save.up_control == 1073741905:
+                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+                    if options_save.up_control == 1073741904:
+                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+                    if options_save.up_control == 1073741903:
+                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+                else:
+                    print_text("*", 45, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+            if options_save.down_control >= 0 and options_save.down_control <= 127:
+                print_text(chr(options_save.down_control), 45, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+            else:
+                if options_save.down_control >= 1073741903 and options_save.down_control <= 1073741906:
+                    if options_save.down_control == 1073741906:
+                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+                    if options_save.down_control == 1073741905:
+                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+                    if options_save.down_control == 1073741904:
+                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+                    if options_save.down_control == 1073741903:
+                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+                else:
+                    print_text("*", 45, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+            if options_save.left_control >= 0 and options_save.left_control <= 127:
+                print_text(chr(options_save.left_control), 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+            else:
+                if options_save.left_control >= 1073741903 and options_save.left_control <= 1073741906:
+                    if options_save.left_control == 1073741906:
+                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+                    if options_save.left_control == 1073741905:
+                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+                    if options_save.left_control == 1073741904:
+                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+                    if options_save.left_control == 1073741903:
+                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+                else:
+                    print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+            if options_save.right_control >= 0 and options_save.right_control <= 127:
+                print_text(chr(options_save.right_control), 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+            else:
+                if options_save.right_control >= 1073741903 and options_save.right_control <= 1073741906:
+                    if options_save.right_control == 1073741906:
+                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+                    if options_save.right_control == 1073741905:
+                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+                    if options_save.right_control == 1073741904:
+                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+                    if options_save.right_control == 1073741903:
+                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+                else:
+                    print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+            print_text((options_save.languages[options_save.select_language])["*"], 45, (255, 255, 255), ((1280 / 2 + 50), 350), context)
+
             if not get_input:
                 if back_main_menu.colliderect(mouse_form):
                     context.screen.blit(ship, ((1280 / 2 - 165), 550))

@@ -3,8 +3,8 @@ import pygame
 
 class OptionsSave:
     def __init__(self):
-        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits", "game" : "Game", "controls" : "Controls", "up" : "Up:", "down" : "Down:", "left" : "Left:", "right" : "Right:", "press" : "Press the button"},
-                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások", "up" : "Fel:", "down" : "Le:", "left" : "Bal:", "right" : "Jobb:", "press" : "Nyomd meg a gombot"}}
+        self.languages = {"English" : {"play" : "Play", "options" : "Options", "quit" : "Quit", "back" : "Back", "language" : "Langauge:", "difficulty" : "Difficulty:", "normal" : "Normal", "easy" : "Easy", "hard" : "Hard", "continue" : "Continue", "finish" : "Finish", "fullscreen" : "Fullscreen:", "on" : "On", "off" : "Off", "game over" : "Game over", "victory" : "Victory", "credits" : "Credits", "game" : "Game", "controls" : "Controls", "up" : "Up:", "down" : "Down:", "left" : "Left:", "right" : "Right:", "press" : "Press the button", "*" : "It cannot fill in the fields marked with *!"},
+                          "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások", "up" : "Fel:", "down" : "Le:", "left" : "Bal:", "right" : "Jobb:", "press" : "Nyomd meg a gombot", "*" : "A *-gal jelölt mezőket nem tudja kitölteni!"}}
         self.select_language = "English"
         self.how_number = 0
         self.game_difficulty = 0
@@ -31,6 +31,10 @@ class OptionsSave:
                 self.fullscreen = True
             else:
                 self.fullscreen = False
+            self.up_control = int(f.readline().strip("\n"))
+            self.down_control = int(f.readline().strip("\n"))
+            self.left_control = int(f.readline().strip("\n"))
+            self.right_control = int(f.readline().strip("\n"))
 
     def saving_writing(self):
         with (open("texts/options_saving", "w") as f):
@@ -38,3 +42,7 @@ class OptionsSave:
             f.write(f"{str(self.how_number)}\n")
             f.write(f"{str(self.game_difficulty)}\n")
             f.write(f"{str(self.fullscreen)}\n")
+            f.write(f"{str(self.up_control)}\n")
+            f.write(f"{str(self.down_control)}\n")
+            f.write(f"{str(self.left_control)}\n")
+            f.write(f"{str(self.right_control)}\n")
