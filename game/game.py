@@ -73,7 +73,7 @@ class Game:
         pygame.display.flip()
 
 
-    def get_char(self, event: pygame.event):
+    def get_char(self, event: pygame.event.Event):
         if event.type == pygame.KEYUP:
             return event.key
 
@@ -93,7 +93,9 @@ class Game:
         self.running = True
         self.end = False
         cheat_mode = False
+        cheat = ""
         input_timeout = 0
+        show_menu = False
 
         while self.running:
             for event in pygame.event.get():
@@ -114,11 +116,15 @@ class Game:
                     cheat_mode = True
                     cheat = ""
                 if event.type == pygame.KEYUP and event.unicode == chr(pygame.K_ESCAPE):
-                    game_next = menu(context, options_saving, True)
-                    if game_next:
-                        player.health = 0
-                        self.end = True
-                        self.end_text = ""
+                    show_menu = True
+
+            if show_menu:
+                game_next = menu(context, options_saving, True)
+                show_menu = False
+                if game_next:
+                    player.health = 0
+                    self.end = True
+                    self.end_text = ""
 
             if not cheat_mode:
                 context.time = context.time + context.delta_time

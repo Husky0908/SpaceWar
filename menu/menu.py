@@ -4,7 +4,17 @@ from base.context import PygameContext
 from texts.options_save import OptionsSave
 
 
-def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
+def _get_key_code() -> int | None:
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYUP:
+                if event.unicode == chr(pygame.K_ESCAPE) or event.unicode == chr(pygame.K_BACKSPACE):
+                    return None
+                else:
+                    return event.key
+
+
+def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> bool:
     mouse_press_time = 0
 
     options_save.saving_reading()
@@ -170,20 +180,15 @@ def menu(context: PygameContext, options_save: OptionsSave, escape) -> bool:
                 if up_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     get_input = True
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 100), context)
                 if back_main_menu.colliderect(mouse_form) and mouse_click:
                     which_menu = "options"
                     options_save.saving_writing()
             else:
-                print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 100), context)
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYUP:
-                        if event.unicode == chr(pygame.K_ESCAPE) or event.unicode == chr(pygame.K_BACKSPACE):
-                            get_input = False
-                        else:
-                            n_c = event.key
-                            if type(n_c) == int:
-                                options_save.up_control = chr(n_c)
-                                get_input = False
+                key = _get_key_code()
+                get_input = False
+                if key is not None:
+                    options_save.up_control = key
 
         if which_menu == "credits":
             if options_save.select_language == "English":
