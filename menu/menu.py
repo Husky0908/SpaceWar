@@ -31,6 +31,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     must_quit = False
     which_control = ""
 
+    if not escape:
+        context.time = 0
+
     while running:
         mouse_click = False
         for event in pygame.event.get():
@@ -150,6 +153,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 else:
                     options_save.fullscreen = True
                 pygame.display.toggle_fullscreen()
+                pygame.display.set_icon(ship)
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
             if not escape:
