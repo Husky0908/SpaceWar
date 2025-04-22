@@ -31,9 +31,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     must_quit = False
     which_control = ""
 
-    if not escape:
-        context.time = 0
-
     while running:
         mouse_click = False
         for event in pygame.event.get():
@@ -75,6 +72,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 context.screen.blit(ship, ((1280 / 2 - 165), 575))
             if play_game.colliderect(mouse_form) and mouse_click:
                 if not escape:
+                    context.time = 0
                     running = False
                 else:
                     return False
@@ -171,71 +169,30 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
             print_text((options_save.languages[options_save.select_language])["up"], 45, (255, 255, 255), ((1280 / 3), 150), context)
-            up_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 125, 50, 50))
+            up_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 125, 150, 50))
             print_text((options_save.languages[options_save.select_language])["down"], 45, (255, 255, 255), ((1280 / 3), 250), context)
-            down_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 225, 50, 50))
+            down_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 + 100), 225, 150, 50))
             print_text((options_save.languages[options_save.select_language])["left"], 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
-            left_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 125, 50, 50))
+            left_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 125, 150, 50))
             print_text((options_save.languages[options_save.select_language])["right"], 45, (255, 255, 255), ((1280 / 3 * 2), 250), context)
-            right_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 225, 50, 50))
+            right_control_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 + 100), 225, 150, 50))
 
-            if options_save.up_control >= 0 and options_save.up_control <= 127:
-                print_text(chr(options_save.up_control), 45, (0, 0, 0), ((1280 / 3 + 125), 150), context)
+            if not pygame.key.name(options_save.up_control, use_compat=True) == "":
+                print_text(pygame.key.name(options_save.up_control, use_compat=True), 45, (0, 0, 0), ((1280 / 3 + 175), 150), context)
             else:
-                if options_save.up_control >= 1073741903 and options_save.up_control <= 1073741906:
-                    if options_save.up_control == 1073741906:
-                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
-                    if options_save.up_control == 1073741905:
-                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
-                    if options_save.up_control == 1073741904:
-                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
-                    if options_save.up_control == 1073741903:
-                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 150), context)
-                else:
-                    print_text("*", 45, (0, 0, 0), ((1280 / 3 + 125), 150), context)
-            if options_save.down_control >= 0 and options_save.down_control <= 127:
-                print_text(chr(options_save.down_control), 45, (0, 0, 0), ((1280 / 3 + 125), 250), context)
+                print_text("*", 45, (0, 0, 0), ((1280 / 3 + 175), 150), context)
+            if not pygame.key.name(options_save.left_control, use_compat=True) == "":
+                print_text(pygame.key.name(options_save.left_control, use_compat=True), 45, (0, 0, 0), ((1280 / 3 * 2 + 175), 150), context)
             else:
-                if options_save.down_control >= 1073741903 and options_save.down_control <= 1073741906:
-                    if options_save.down_control == 1073741906:
-                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
-                    if options_save.down_control == 1073741905:
-                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
-                    if options_save.down_control == 1073741904:
-                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
-                    if options_save.down_control == 1073741903:
-                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 + 125), 250), context)
-                else:
-                    print_text("*", 45, (0, 0, 0), ((1280 / 3 + 125), 250), context)
-            if options_save.left_control >= 0 and options_save.left_control <= 127:
-                print_text(chr(options_save.left_control), 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
+                print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 175), 150), context)
+            if not pygame.key.name(options_save.down_control, use_compat=True) == "":
+                print_text(pygame.key.name(options_save.down_control, use_compat=True), 45, (0, 0, 0), ((1280 / 3 + 175), 250), context)
             else:
-                if options_save.left_control >= 1073741903 and options_save.left_control <= 1073741906:
-                    if options_save.left_control == 1073741906:
-                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
-                    if options_save.left_control == 1073741905:
-                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
-                    if options_save.left_control == 1073741904:
-                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
-                    if options_save.left_control == 1073741903:
-                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
-                else:
-                    print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 150), context)
-            if options_save.right_control >= 0 and options_save.right_control <= 127:
-                print_text(chr(options_save.right_control), 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
+                print_text("*", 45, (0, 0, 0), ((1280 / 3 + 175), 250), context)
+            if not pygame.key.name(options_save.right_control, use_compat=True) == "":
+                print_text(pygame.key.name(options_save.right_control, use_compat=True), 45, (0, 0, 0), ((1280 / 3 * 2 + 175), 250), context)
             else:
-                if options_save.right_control >= 1073741903 and options_save.right_control <= 1073741906:
-                    if options_save.right_control == 1073741906:
-                        print_text((options_save.languages[options_save.select_language])["up"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
-                    if options_save.right_control == 1073741905:
-                        print_text((options_save.languages[options_save.select_language])["down"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
-                    if options_save.right_control == 1073741904:
-                        print_text((options_save.languages[options_save.select_language])["left"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
-                    if options_save.right_control == 1073741903:
-                        print_text((options_save.languages[options_save.select_language])["right"].strip(":"), 25, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
-                else:
-                    print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 125), 250), context)
-            print_text((options_save.languages[options_save.select_language])["*"], 45, (255, 255, 255), ((1280 / 2 + 50), 350), context)
+                print_text("*", 45, (0, 0, 0), ((1280 / 3 * 2 + 175), 250), context)
 
             if not get_input:
                 if back_main_menu.colliderect(mouse_form):
@@ -244,22 +201,22 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     mouse_press_time = 0
                     get_input = True
                     which_control = "up"
-                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 100), context)
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 175), 100), context)
                 if down_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     get_input = True
                     which_control = "down"
-                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 125), 200), context)
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 + 175), 200), context)
                 if left_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     get_input = True
                     which_control = "left"
-                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 125), 100), context)
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 175), 100), context)
                 if right_control_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     get_input = True
                     which_control = "right"
-                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 125), 200), context)
+                    print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 175), 200), context)
                 if back_main_menu.colliderect(mouse_form) and mouse_click:
                     which_menu = "options"
                     options_save.saving_writing()
