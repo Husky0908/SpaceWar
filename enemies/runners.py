@@ -31,7 +31,7 @@ class Runner:
         self.dir_y = 0
         self.start_time = 0
         self.form = None
-        self.forms = [pygame.image.load("Pictures/enemies_pictures/runners/runner_4_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_5_hp.png")]
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/runners/runner_1_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_2_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_3_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_4_hp.png"), pygame.image.load("Pictures/enemies_pictures/runners/runner_5_hp.png")]
         self.wounded = False
         self.r = None
         self.run_time = 0
@@ -75,23 +75,17 @@ class Runner:
         if self.health <= 0:
             self.state = Runner.STATE_KILLED
 
-
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
-        if self.health == 5:
-            self.form = self.forms[1]
-        else:
-            self.form = self.forms[0]
+        if self.health > 0:
+            self.form = self.forms[self.health - 1]
         context.screen.blit(self.form, self.r)
-        #self.form = pygame.draw.rect(context.screen, (0, 255, 0), self.r)
-
 
     def destination(self, player: Player, width, height):
         rect = player.get_rectangle_around_player(width, height)
         dest_x = random.randint(rect.left, rect.right)
         dest_y = random.randint(rect.top, rect.bottom)
         return dest_x, dest_y
-
 
     def contacts(self, player: Player, bullets: Bullets):
         if self.r.colliderect(player.r) and not self.wounded:
