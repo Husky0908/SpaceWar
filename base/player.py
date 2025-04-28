@@ -22,15 +22,14 @@ class Player:
 
     def picture(self, context: PygameContext):
         if self.health < 6:
-            self.form = self.pictures[self.health - 1]
+            self.form = context.screen.blit(self.pictures[self.health - 1], self.r)
         else:
-            self.form = self.pictures[4]
+            self.form = context.screen.blit(self.pictures[4], self.r)
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
         if self.health > 0:
             self.picture(context)
-            context.screen.blit(self.form, self.r)
             if self.health < 6:
                 hmp = 15
                 color = (255, 0, 0)
@@ -48,10 +47,9 @@ class Player:
 
     def contacts(self, bullets: Bullets):
         for bullet in bullets.elements:
-            if bullet.form.colliderect(self.r) and bullet.attacker == "enemy":
+            if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
                 self.health = self.health - 1
                 bullet.sharp = False
-
 
     def control(self, context: PygameContext, running, options_save: OptionsSave):
         keys = pygame.key.get_pressed()

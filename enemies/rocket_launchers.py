@@ -28,7 +28,8 @@ class RocketLauncher:
         self.dir_y = None
         self.health = 4
         self.STATE = RocketLauncher.STATE_INIT
-        self.form = pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_4_hp.png")
+        self.form = None
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_4_hp.png")]
         self.r = None
         self.start_time = 0
         self.speed = 75
@@ -37,8 +38,7 @@ class RocketLauncher:
         self.r = pygame.Rect(self.x - self.width / 2,
                         self.y - self.height / 2, self.width,
                         self.height)
-        context.screen.blit(self.form, self.r)
-        #self.form = pygame.draw.rect(context.screen, (200, 200, 200), r)
+        self.form = context.screen.blit(self.forms[0], (self.x, self.y))
 
     def control(self, context: PygameContext, player: Player, rockets: Rockets):
         if self.STATE == RocketLauncher.STATE_INIT:
@@ -77,7 +77,7 @@ class RocketLauncher:
             self.STATE = RocketLauncher.STATE_KILL
 
     def contacts(self, bullet: Bullet):
-        if bullet.form.colliderect(self.r) and bullet.attacker == "friend":
+        if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
             bullet.sharp = False
             self.health = self.health - 1
 

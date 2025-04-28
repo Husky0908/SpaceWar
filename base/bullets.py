@@ -1,4 +1,5 @@
 import pygame
+import math
 from base.context import PygameContext
 from base.directions import get_direction
 
@@ -17,7 +18,7 @@ class Bullet:
         self.start_time = 0
         self.sharp = False
         self.form = None
-        self.forms = [pygame.image.load("Pictures/players_pictures/player_bullet.png")]
+        self.forms = [pygame.image.load("Pictures/players_pictures/player_bullet.png"), pygame.image.load("Pictures/enemies_pictures/bullet_shooters/bullet_shooter_bullet.png")]
         self.r = 10
         self.attacker = attacker
 
@@ -33,12 +34,15 @@ class Bullet:
             self.start_time = context.time
             self.sharp = True
 
-
     def draw(self, context: PygameContext):
         if self.attacker == "friend":
             self.form = context.screen.blit(self.forms[0], (self.x, self.y))
         else:
-            self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), self.r)
+            value = math.atan((self.dest_y - self.y_0) / (self.x_0 - self.dest_x)) * 180 / math.pi - 90
+            if self.x_0 > self.dest_x:
+                value = value - 180
+
+            self.form = context.screen.blit(pygame.transform.rotate(self.forms[1], value), (self.x, self.y))
 
 
 class Bullets:

@@ -58,16 +58,14 @@ class BulletShooter:
 
     def contacts(self, context: PygameContext, bullets: Bullets):
         for bullet in bullets.elements:
-            if self._r.colliderect(bullet.form) and bullet.attacker == "friend":
+            if self._form.colliderect(bullet.form) and bullet.attacker == "friend":
                 self._health = self._health - 1
                 bullet.sharp = False
 
 
     def draw(self, context: PygameContext):
         self._r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
-        self._form = self._forms[self._health - 1]
-        context.screen.blit(self._form, self._r)
-
+        self._form = context.screen.blit(self._forms[self._health - 1], self._r)
 
     def is_killed(self) -> bool:
         return self._STATE == BulletShooter.STATE_KILLED
