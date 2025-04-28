@@ -1,4 +1,5 @@
 import pygame
+import math
 from base.context import PygameContext
 from base.player import Player
 from base.directions import get_direction
@@ -21,6 +22,7 @@ class Rocket:
         self.dir_y = None
         self.speed = 3
         self.form = None
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_rocket.png")]
         self.r = 10
         self.attacker = attacker
         self.state = Rocket.STATE_MOVE
@@ -36,26 +38,26 @@ class Rocket:
         if self.health <= 0:
             self.state = Rocket.STATE_DESTROY
 
-
     def contacts(self, player: Player):
         if self.form.colliderect(player.r):
             self.state = Rocket.STATE_DESTROY
             player.health = player.health - 1
 
-
     def draw(self, context: PygameContext):
         r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
-        self.form = pygame.draw.rect(context.screen, (230, 0, 100), r)
+        value = math.atan((self.dest_y - self.y) / (self.x - self.dest_x)) * 180 / math.pi - 90
+        if self.x > self.dest_x:
+            value = value - 180
+        self.form = context.screen.blit(pygame.transform.rotate(self.forms[0], value), (self.x, self.y))
+        #self.form = pygame.draw.rect(context.screen, (230, 0, 100), r)
 
 
 class Rockets:
     def __init__(self):
         self.elements = []
 
-
     def spawn(self, x, y, attacker):
         self.elements.append(Rocket(x, y, attacker))
-
 
     def control(self, player: Player):
         for rocket in self.elements:
