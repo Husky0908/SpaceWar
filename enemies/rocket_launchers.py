@@ -29,7 +29,7 @@ class RocketLauncher:
         self.health = 4
         self.STATE = RocketLauncher.STATE_INIT
         self.form = None
-        self.forms = [pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_4_hp.png")]
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_1_hp.png"), pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_2_hp.png"), pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_3_hp.png"), pygame.image.load("Pictures/enemies_pictures/rocket_launchers/rocket_launcher_4_hp.png")]
         self.r = None
         self.start_time = 0
         self.speed = 75
@@ -38,7 +38,9 @@ class RocketLauncher:
         self.r = pygame.Rect(self.x - self.width / 2,
                         self.y - self.height / 2, self.width,
                         self.height)
-        self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+        if self.health > 0:
+            self.form = context.screen.blit(self.forms[self.health - 1], (self.x, self.y))
+
 
     def control(self, context: PygameContext, player: Player, rockets: Rockets):
         if self.STATE == RocketLauncher.STATE_INIT:
