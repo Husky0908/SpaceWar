@@ -95,7 +95,6 @@ class FirstBoss:
                     if self.y <= -self.height:
                         self.state = FirstBoss.STATE_MOVE
                         self.side = random.randint(1, 2)
-                        self.side = 1
                         if self.side == 1:
                             self.x = 0 - self.width
                         else:
@@ -117,9 +116,9 @@ class FirstBoss:
                     self.start_time = context.time
                     for i in range(len(self.bullet_shooter_dest)):
                         if self.side == 1:
-                            bullets.elements.append(Bullet((self.x + self.width + 30), ((self.y + (self.height / 2))), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
+                            bullets.elements.append(Bullet((self.x + self.width - 75), ((self.y + (self.height / 2))), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
                         else:
-                            bullets.elements.append(Bullet((self.x - 30), ((self.y + (self.height / 2))), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
+                            bullets.elements.append(Bullet((self.x - 40), ((self.y + (self.height / 2) - 5)), (self.bullet_shooter_dest[i - 1])[0], (self.bullet_shooter_dest[i - 1])[1], "enemy"))
             if self.state == FirstBoss.STATE_SHOOT_BULLETS:
                 d_t = context.time - self.start_time
                 if (self.side == 1 and player.x <= self.width) or (self.side == 2 and player.x >= (context.width - self.width)):
@@ -157,7 +156,7 @@ class FirstBoss:
                     self.run_number = 0
             if self.health <= 0:
                 self.state = FirstBoss.STATE_KILL
-                return  True
+                return True
 
             return False
 
