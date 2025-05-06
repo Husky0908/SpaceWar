@@ -32,6 +32,8 @@ class FirstBoss:
         self.attack = 0
         self.side = None
         self.form = None
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_many_health.png").convert_alpha()]
+        self.cannon_form = pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_cannon.png")
         self.shooter_form = None
         self.shooter_live = False
         self.bullet_shooter_dest = []
@@ -43,17 +45,19 @@ class FirstBoss:
     def spawn(self):
         self.live = True
 
-
     def draw(self, context: PygameContext):
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
-            self.form = pygame.draw.rect(context.screen, (255, 0, 255), r)
+            self.form = context.screen.blit(self.forms[0], (self.x, self.y))
             if self.shooter_live:
+                rotate = 0
                 if self.side == 2:
-                    r = pygame.Rect((self.x - 60), ((self.y + (self.height / 2)) - 30), 60, 60)
+                    r = pygame.Rect((self.x - 40), (self.y + (self.height / 2) - 5), 60, 60)
+                    rotate = 90
                 else:
-                    r = pygame.Rect((self.x + self.width), ((self.y + (self.height / 2)) - 30), 60, 60)
-                self.shooter_form = pygame.draw.rect(context.screen, (0, 0, 255), r)
+                    r = pygame.Rect((self.x + self.width - 75), (self.y + (self.height / 2)), 60, 60)
+                    rotate = -90
+                self.shooter_form = context.screen.blit(pygame.transform.rotate(self.cannon_form, rotate), r)
 
     def control(self, context: PygameContext, player: Player, bullets: Bullets):
         if self.live:
@@ -91,6 +95,7 @@ class FirstBoss:
                     if self.y <= -self.height:
                         self.state = FirstBoss.STATE_MOVE
                         self.side = random.randint(1, 2)
+                        self.side = 1
                         if self.side == 1:
                             self.x = 0 - self.width
                         else:
