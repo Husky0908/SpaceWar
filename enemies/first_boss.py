@@ -4,6 +4,7 @@ from base.context import PygameContext
 from base.directions import get_direction
 from base.bullets import Bullets, Bullet
 from base.player import Player
+from texts.options_save import OptionsSave
 
 
 class FirstBoss:
@@ -32,7 +33,7 @@ class FirstBoss:
         self.attack = 0
         self.side = None
         self.form = None
-        self.forms = [pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_many_health.png").convert_alpha()]
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_few_hp.png"), pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_medium_hp.png"), pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_many_health.png").convert_alpha()]
         self.cannon_form = pygame.image.load("Pictures/enemies_pictures/first_boss/first_boss_cannon.png")
         self.shooter_form = None
         self.shooter_live = False
@@ -45,10 +46,23 @@ class FirstBoss:
     def spawn(self):
         self.live = True
 
-    def draw(self, context: PygameContext):
+    def draw(self, context: PygameContext, options_saving: OptionsSave):
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
-            self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+            if options_saving.game_difficulty >= 0:
+                if self.health > 25:
+                    self.form = context.screen.blit(self.forms[1], (self.x, self.y))
+                else:
+                    self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+                if self.health > 50:
+                    self.form = context.screen.blit(self.forms[2], (self.x, self.y))
+            else:
+                if self.health > 15:
+                    self.form = context.screen.blit(self.forms[1], (self.x, self.y))
+                else:
+                    self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+                if self.health > 30:
+                    self.form = context.screen.blit(self.forms[2], (self.x, self.y))
             if self.shooter_live:
                 rotate = 0
                 if self.side == 2:

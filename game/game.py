@@ -12,13 +12,13 @@ from texts.options_save import OptionsSave
 from menu.menu import menu
 from texts.text_print import print_text
 
+
 class Game:
     def __init__(self):
         self.running = True
         self.end = False
         self.end_text = None
         self.end_time = 0
-
 
     def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
         runners.control(context, player)
@@ -27,7 +27,6 @@ class Game:
         self.end = first_boss.control(context, player, bullets)
         bullets.control(context)
         rockets.control(player)
-
 
     def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
 
@@ -48,18 +47,17 @@ class Game:
         rockets.contacts(player)
         bullets.contacts()
 
-
     def draw_mouse(self, context: PygameContext, player: Player):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         context.screen.blit(player.crosshair_form, (mouse_x, mouse_y))
 
-    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss):
+    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, options_saving: OptionsSave):
         context.screen.fill((0, 0, 0))
 
         bullet_shooters.draw(context)
         runners.draw(context)
         rocket_launchers.draw(context)
-        first_boss.draw(context)
+        first_boss.draw(context, options_saving)
         player.draw(context)
         bullets.draw(context)
         rockets.draw(context)
@@ -72,11 +70,9 @@ class Game:
 
         pygame.display.flip()
 
-
     def get_char(self, event: pygame.event.Event):
         if event.type == pygame.KEYUP:
             return event.key
-
 
     def game(self, context: PygameContext, options_saving: OptionsSave):
         player = Player(context.width // 2, context.height // 2)
@@ -111,7 +107,6 @@ class Game:
                     if c is not None:
                         cheat = cheat + chr(c)
 
-
                 if not cheat_mode and event.type == pygame.KEYUP and event.unicode == chr(pygame.K_m):
                     cheat_mode = True
                     cheat = ""
@@ -141,11 +136,11 @@ class Game:
                             self.end_time = context.time
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
                             player.health = 0
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving)
                     self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss)
                     game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
                 else:
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving)
                     bullets.elements.clear()
                     rockets.elements.clear()
                     runners.elements.clear()
@@ -172,6 +167,4 @@ class Game:
                     game_logic_parameters.wave = 8
                     cheat_mode = False
 
-
             context.delta_time = context.clock.tick(60) / 1000
-
