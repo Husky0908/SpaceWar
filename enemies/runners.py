@@ -4,6 +4,7 @@ from base.context import PygameContext
 from base.player import Player
 from base.bullets import Bullets, Bullet
 from base.directions import get_direction
+from base.boxes import Boxes, Coins
 
 
 class Runner:
@@ -36,7 +37,7 @@ class Runner:
         self.r = None
         self.run_time = 0
 
-    def control(self, context: PygameContext, player: Player):
+    def control(self, context: PygameContext, player: Player, boxes: Boxes, coins: Coins):
         if self.state == Runner.STATE_INIT:
             self.run_time = random.randint(3, 6)
             self.state = Runner.STATE_SLOW_MOVE
@@ -74,6 +75,7 @@ class Runner:
                 self.state = Runner.STATE_INIT
         if self.health <= 0:
             self.state = Runner.STATE_KILLED
+            boxes.small_box(coins, self.x, self.y)
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
@@ -102,9 +104,9 @@ class Runners:
         self.elements = []
 
 
-    def control(self, context: PygameContext, player: Player):
+    def control(self, context: PygameContext, player: Player, boxes: Boxes, coins: Coins):
         for runner in self.elements:
-            runner.control(context, player)
+            runner.control(context, player, boxes, coins)
 
 
     def draw(self, context: PygameContext):
