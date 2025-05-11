@@ -2,6 +2,7 @@ import pygame
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
+from base.boxes import Coins
 
 
 class Player:
@@ -19,6 +20,7 @@ class Player:
             "Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha(), pygame.image.load(
             "Pictures/players_pictures/player_ship_5_hp_j.png").convert_alpha()]
         self.r = None
+        self.coins = 0
 
     def picture(self, context: PygameContext):
         if self.health < 6:
@@ -45,11 +47,22 @@ class Player:
                     pygame.draw.rect(context.screen, color, (hmp, context.height - 50, 15, 40))
                     hmp = hmp + 20
 
-    def contacts(self, bullets: Bullets):
+    def contacts(self, bullets: Bullets, coins: Coins):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
                 self.health = self.health - 1
                 bullet.sharp = False
+
+        for coin in coins.elements:
+            if coin.form.colliderect(self.form):
+                self.coins = self.coins + coin.value
+                coin.delete = True
+
+        tmp_list = []
+        for coin in coins.elements:
+            if not coin.delete:
+                tmp_list.append(coin)
+        coins.elements = tmp_list
 
     def control(self, context: PygameContext, running, options_save: OptionsSave):
         keys = pygame.key.get_pressed()
