@@ -3,6 +3,7 @@ from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
 from base.boxes import Coins
+from texts.text_print import print_text
 
 
 class Player:
@@ -21,6 +22,7 @@ class Player:
             "Pictures/players_pictures/player_ship_5_hp_j.png").convert_alpha()]
         self.r = None
         self.coins = 0
+        self.coin_pictures = pygame.image.load("Pictures/other_pictures/coin_big.png")
 
     def picture(self, context: PygameContext):
         if self.health < 6:
@@ -30,22 +32,27 @@ class Player:
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
+
+        if self.health < 6:
+            hmp = 15
+            color = (255, 0, 0)
+            if self.health == 2:
+                color = (255, 128, 0)
+            if self.health == 3:
+                color = (255, 255, 0)
+            if self.health == 4:
+                color = (128, 255, 0)
+            if self.health == 5:
+                color = (0, 255, 0)
+            for i in range(self.health):
+                pygame.draw.rect(context.screen, color, (hmp, context.height - 50, 15, 40))
+                hmp = hmp + 20
+
+        context.screen.blit(self.coin_pictures, (context.width - 200, context.height - 75))
+        print_text(str(self.coins), 60, (255, 255, 255), (context.width - 75, context.height - 35), context)
+
         if self.health > 0:
             self.picture(context)
-            if self.health < 6:
-                hmp = 15
-                color = (255, 0, 0)
-                if self.health == 2:
-                    color = (255, 128, 0)
-                if self.health == 3:
-                    color = (255, 255, 0)
-                if self.health == 4:
-                    color = (128, 255, 0)
-                if self.health == 5:
-                    color = (0, 255, 0)
-                for i in range(self.health):
-                    pygame.draw.rect(context.screen, color, (hmp, context.height - 50, 15, 40))
-                    hmp = hmp + 20
 
     def contacts(self, bullets: Bullets, coins: Coins):
         for bullet in bullets.elements:
