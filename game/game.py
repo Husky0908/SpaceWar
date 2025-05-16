@@ -29,11 +29,11 @@ class Game:
         bullets.control(context)
         rockets.control(player)
 
-    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins):
+    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths):
 
         runners.contacts(player, bullets)
         bullet_shooters.contacts(context, bullets)
-        player.contacts(bullets, coins)
+        player.contacts(bullets, coins, plus_hp)
         first_boss.contacts(bullets, player)
 
         for bullet in bullets.elements:
@@ -145,7 +145,7 @@ class Game:
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
                             player.health = 0
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp)
-                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins)
+                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp)
                     game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
                 else:
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp)

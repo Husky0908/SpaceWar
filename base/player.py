@@ -2,7 +2,7 @@ import pygame
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
-from base.boxes import Coins
+from base.boxes import Coins, PlusHealths
 from texts.text_print import print_text
 
 
@@ -54,7 +54,7 @@ class Player:
         if self.health > 0:
             self.picture(context)
 
-    def contacts(self, bullets: Bullets, coins: Coins):
+    def contacts(self, bullets: Bullets, coins: Coins, plus_hp: PlusHealths):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
                 self.health = self.health - 1
@@ -65,11 +65,24 @@ class Player:
                 self.coins = self.coins + coin.value
                 coin.delete = True
 
+        for plus_h in plus_hp.elements:
+            if plus_h.form.colliderect(self.form) and self.health < 5:
+                self.health = self.health + plus_h.value
+                if self.health > 5:
+                    self.health = 5
+                plus_h.delete = True
+
         tmp_list = []
         for coin in coins.elements:
             if not coin.delete:
                 tmp_list.append(coin)
         coins.elements = tmp_list
+
+        tmp_list = []
+        for plus_h in plus_hp.elements:
+            if not plus_h.delete:
+                tmp_list.append(plus_h)
+        plus_hp.elements = tmp_list
 
     def control(self, context: PygameContext, running, options_save: OptionsSave):
         keys = pygame.key.get_pressed()
