@@ -3,6 +3,7 @@ import random
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from base.player import Player
+from base.boxes import Boxes, Coins, PlusHealths
 
 
 class BulletShooter:
@@ -38,7 +39,7 @@ class BulletShooter:
         self._shoot_time_end = 0
 
 
-    def control(self, context: PygameContext, player: Player, bullets: Bullets):
+    def control(self, context: PygameContext, player: Player, bullets: Bullets, plus_hp: PlusHealths, coins: Coins, boxes: Boxes):
         if self._STATE == BulletShooter.STATE_INIT:
             self._handle_init()
         if self._STATE == BulletShooter.STATE_MOVE_RIGHT or self._STATE == BulletShooter.STATE_MOVE_LEFT or \
@@ -53,6 +54,7 @@ class BulletShooter:
             self._handle_shoot(player, bullets)
 
         if self._health <= 0:
+            boxes.small_box(coins, self._x, self._y, plus_hp)
             self._STATE = BulletShooter.STATE_KILLED
 
 
@@ -134,9 +136,9 @@ class BulletShooters:
     def empty(self) -> bool:
         return len(self._elements) == 0
 
-    def control(self, context: PygameContext, player: Player, bullets: Bullets):
+    def control(self, context: PygameContext, player: Player, bullets: Bullets, plus_hp: PlusHealths, coins: Coins, boxes: Boxes):
         for bullet_shooter in self._elements:
-            bullet_shooter.control(context, player, bullets)
+            bullet_shooter.control(context, player, bullets, plus_hp, coins, boxes)
 
 
     def contacts(self, context: PygameContext, bullets: Bullets):

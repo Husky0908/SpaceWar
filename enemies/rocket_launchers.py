@@ -5,6 +5,7 @@ from base.player import Player
 from base.bullets import Bullet
 from base.directions import get_direction, length
 from base.rockets import Rockets
+from base.boxes import Boxes, Coins, PlusHealths
 
 
 class RocketLauncher:
@@ -42,7 +43,7 @@ class RocketLauncher:
             self.form = context.screen.blit(self.forms[self.health - 1], (self.x, self.y))
 
 
-    def control(self, context: PygameContext, player: Player, rockets: Rockets):
+    def control(self, context: PygameContext, player: Player, rockets: Rockets, plus_hp: PlusHealths, coins: Coins, boxes: Boxes):
         if self.STATE == RocketLauncher.STATE_INIT:
             self.y = self.y + self.speed / 40
             if self.y >= 50:
@@ -76,6 +77,7 @@ class RocketLauncher:
             rockets.spawn(self.x, self.y, "enemy")
             self.STATE = RocketLauncher.STATE_INIT
         if self.health <= 0:
+            boxes.small_box(coins, self.x, self.y, plus_hp)
             self.STATE = RocketLauncher.STATE_KILL
 
     def contacts(self, bullet: Bullet):
@@ -97,9 +99,9 @@ class RocketLaunchers:
         for rocket_launcher in self.elements:
             rocket_launcher.draw(context)
 
-    def control(self, context: PygameContext, player: Player, rockets: Rockets):
+    def control(self, context: PygameContext, player: Player, rockets: Rockets, plus_hp: PlusHealths, coins: Coins, boxes: Boxes):
         for rocket_launcher in self.elements:
-            rocket_launcher.control(context, player, rockets)
+            rocket_launcher.control(context, player, rockets, plus_hp, coins, boxes)
 
     def contacts(self, bullet: Bullet):
         for rocket_launcher in self.elements:

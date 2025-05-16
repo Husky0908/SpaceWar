@@ -23,8 +23,8 @@ class Game:
 
     def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, boxes: Boxes, coins: Coins, plus_hp: PlusHealths):
         runners.control(context, player, boxes, coins, plus_hp)
-        bullet_shooters.control(context, player, bullets)
-        rocket_launchers.control(context, player, rockets)
+        bullet_shooters.control(context, player, bullets, plus_hp, coins, boxes)
+        rocket_launchers.control(context, player, rockets, plus_hp, coins, boxes)
         self.end = first_boss.control(context, player, bullets)
         bullets.control(context)
         rockets.control(player)
