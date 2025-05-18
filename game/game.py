@@ -11,7 +11,7 @@ from game.game_logic import GameLogic
 from texts.options_save import OptionsSave
 from menu.menu import menu
 from texts.text_print import print_text
-from base.boxes import Boxes, Coins, PlusHealths
+from base.boxes import Coins, PlusHealths
 
 
 class Game:
@@ -21,7 +21,7 @@ class Game:
         self.end_text = None
         self.end_time = 0
 
-    def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, boxes: Boxes, coins: Coins, plus_hp: PlusHealths):
+    def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths):
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
@@ -35,10 +35,9 @@ class Game:
         bullet_shooters.contacts(context, bullets)
         player.contacts(bullets, coins, plus_hp)
         first_boss.contacts(bullets, player)
+        rocket_launchers.contacts(bullets)
 
         for bullet in bullets.elements:
-
-            rocket_launchers.contacts(bullet)
 
             for rocket in rockets.elements:
                 if bullet.form.colliderect(rocket.form) and bullet.attacker == "friend":
@@ -90,7 +89,6 @@ class Game:
         bullet_shooters = BulletShooters()
         rocket_launchers = RocketLaunchers()
 
-        boxes = Boxes()
         coins = Coins()
         plus_hp = PlusHealths()
 
@@ -139,7 +137,7 @@ class Game:
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
                         first_boss.live = False
                     if not self.end:
-                        self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, boxes, coins, plus_hp)
+                        self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp)
                         if self.end:
                             self.end_time = context.time
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
@@ -173,6 +171,26 @@ class Game:
 
                     game_logic_parameters.wave_time = 16000
                     game_logic_parameters.wave = 8
+                    cheat_mode = False
+                if cheat == "joiar":
+                    bullets.elements.clear()
+                    rockets.elements.clear()
+                    runners.elements.clear()
+                    bullet_shooters._elements.clear()
+                    rocket_launchers.elements.clear()
+                    game_logic_parameters.level = 0
+                    cheat_mode = False
+                if cheat == "arerl":
+                    for i in range(5):
+                        rocket_launchers.spawn(context)
+                    cheat_mode = False
+                if cheat == "arebs":
+                    for i in range(5):
+                        bullet_shooters.spawn(context)
+                    cheat_mode = False
+                if cheat == "areru":
+                    for i in range(5):
+                        runners.spawn(context)
                     cheat_mode = False
 
             context.delta_time = context.clock.tick(60) / 1000

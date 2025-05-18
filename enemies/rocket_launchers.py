@@ -2,7 +2,7 @@ import pygame
 import random
 from base.context import PygameContext
 from base.player import Player
-from base.bullets import Bullet
+from base.bullets import Bullet, Bullets
 from base.directions import get_direction, length
 from base.rockets import Rockets
 from base.boxes import Coins, PlusHealths, Coin, PlusHealth
@@ -87,10 +87,11 @@ class RocketLauncher:
                 plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
             self.STATE = RocketLauncher.STATE_KILL
 
-    def contacts(self, bullet: Bullet):
-        if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
-            bullet.sharp = False
-            self.health = self.health - 1
+    def contacts(self, bullets: Bullets):
+         for bullet in bullets.elements:
+            if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
+                bullet.sharp = False
+                self.health = self.health - 1
 
 
 class RocketLaunchers:
@@ -114,9 +115,9 @@ class RocketLaunchers:
         for rocket_launcher in self.elements:
             rocket_launcher.contacts(bullet)
 
-        for rocket_launcher in self.elements:
-            tmp_list = []
-            for x in self.elements:
-                if not x.STATE == RocketLauncher.STATE_KILL:
-                    tmp_list.append(x)
-            self.elements = tmp_list
+        tmp_list = []
+        for x in self.elements:
+            if not x.STATE == RocketLauncher.STATE_KILL:
+                tmp_list.append(x)
+                print(x.STATE)
+        self.elements = tmp_list

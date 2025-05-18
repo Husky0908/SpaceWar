@@ -44,19 +44,3 @@ class PlusHealths:
     def draw(self, context: PygameContext):
         for plus_hp in self.elements:
             plus_hp.draw(context)
-
-
-class Boxes:
-    def __init__(self):
-        self.chance = 0
-
-    def small_box(self, coins: Coins, x, y, plus_hp: PlusHealths):
-        self.chance = random.randint(1, 10)
-        if self.chance > 3:
-            if self.chance > 6:
-                if self.chance <= 9:
-                    coins.elements.append(Coin(x, y, (2 * 10)))
-                else:
-                    plus_hp.elements.append(PlusHealth(x, y, 1))
-            else:
-                coins.elements.append(Coin(x, y, (1 * 10)))
