@@ -5,6 +5,7 @@ from base.directions import get_direction
 from base.bullets import Bullets, Bullet
 from base.player import Player
 from texts.options_save import OptionsSave
+from base.boxes import Upgraders, Upgrader
 
 
 class FirstBoss:
@@ -73,7 +74,7 @@ class FirstBoss:
                     rotate = -90
                 self.shooter_form = context.screen.blit(pygame.transform.rotate(self.cannon_form, rotate), r)
 
-    def control(self, context: PygameContext, player: Player, bullets: Bullets):
+    def control(self, context: PygameContext, player: Player, bullets: Bullets, upgrades: Upgraders):
         if self.live:
 
             if self.state == FirstBoss.STATE_INIT:
@@ -170,6 +171,11 @@ class FirstBoss:
                     self.y = -350
                     self.run_number = 0
             if self.health <= 0:
+                chance = random.randint(1, 10)
+                if chance >= 4:
+                    upgrades.elements.append(Upgrader(self.x + 150, self.y, 2))
+                else:
+                    upgrades.elements.append(Upgrader(self.x + 150, self.y, 1))
                 self.state = FirstBoss.STATE_KILL
 
     def run(self, d_t):

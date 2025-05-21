@@ -2,7 +2,7 @@ import pygame
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
-from base.boxes import Coins, PlusHealths
+from base.boxes import Coins, PlusHealths, Upgraders
 from texts.text_print import print_text
 
 
@@ -23,6 +23,7 @@ class Player:
         self.r = None
         self.coins = 0
         self.coin_pictures = pygame.image.load("Pictures/other_pictures/coin_big.png")
+        self.upgrades_box = 0
 
     def picture(self, context: PygameContext):
         if self.health < 6:
@@ -54,7 +55,7 @@ class Player:
         if self.health > 0:
             self.picture(context)
 
-    def contacts(self, bullets: Bullets, coins: Coins, plus_hp: PlusHealths):
+    def contacts(self, bullets: Bullets, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
                 self.health = self.health - 1
@@ -72,6 +73,11 @@ class Player:
                     self.health = 5
                 plus_h.delete = True
 
+        for upgrade in upgrades.elements:
+            if upgrade.form.colliderect(self.form):
+                self.upgrades_box = self.upgrades_box + upgrade.value
+                upgrade.delete = True
+
         tmp_list = []
         for coin in coins.elements:
             if not coin.delete:
@@ -83,6 +89,12 @@ class Player:
             if not plus_h.delete:
                 tmp_list.append(plus_h)
         plus_hp.elements = tmp_list
+
+        tmp_list = []
+        for upgrade in upgrades.elements:
+            if not upgrade.delete:
+                tmp_list.append(upgrade)
+        upgrades.elements = tmp_list
 
     def control(self, context: PygameContext, running, options_save: OptionsSave):
         keys = pygame.key.get_pressed()

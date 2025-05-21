@@ -1,4 +1,3 @@
-import random
 import pygame
 from base.context import PygameContext
 
@@ -45,3 +44,25 @@ class PlusHealths:
     def draw(self, context: PygameContext):
         for plus_hp in self.elements:
             plus_hp.draw(context)
+
+
+class Upgrader:
+    def __init__(self, x, y, value):
+        self.x = x
+        self.y = y
+        self.value = value
+        self.form = None
+        self.forms = None
+        self.delete = False
+
+    def draw(self, context: PygameContext):
+        self.form = pygame.draw.rect(context.screen, (0, 0, 255), (self.x, self.y, 50, 20))
+
+
+class Upgraders:
+    def __init__(self):
+        self.elements = []
+
+    def draw(self, context: PygameContext):
+        for upgrade in self.elements:
+            upgrade.draw(context)
