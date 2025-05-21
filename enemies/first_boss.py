@@ -75,6 +75,7 @@ class FirstBoss:
 
     def control(self, context: PygameContext, player: Player, bullets: Bullets):
         if self.live:
+
             if self.state == FirstBoss.STATE_INIT:
                 self.y = self.y + 2
                 if self.y >= 0:
@@ -170,9 +171,6 @@ class FirstBoss:
                     self.run_number = 0
             if self.health <= 0:
                 self.state = FirstBoss.STATE_KILL
-                return True
-
-            return False
 
     def run(self, d_t):
         self.x = self.x_0 + self.dir_x * d_t * 500

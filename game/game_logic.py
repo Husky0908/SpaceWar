@@ -13,7 +13,9 @@ class GameLogic:
         self.difficulty = game_difficulty
 
     def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss):
+
         if self.level == 1:
+
             if self.wave_time == 0:
                 for i in range(4 + self.difficulty):
                     bullet_shooters.spawn(context)
@@ -79,4 +81,13 @@ class GameLogic:
                 first_boss.spawn()
                 self.wave = 9
 
+            if self.wave == 9 and not first_boss.live:
+                self.wave_time = 0
+                self.wave = self.wave + 1
+
+            if self.wave == 10 and self.wave_time >= 600:
+                return True
+
             self.wave_time = self.wave_time + 1
+
+        return False

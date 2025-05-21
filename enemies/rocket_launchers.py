@@ -119,5 +119,4 @@ class RocketLaunchers:
         for x in self.elements:
             if not x.STATE == RocketLauncher.STATE_KILL:
                 tmp_list.append(x)
-                print(x.STATE)
         self.elements = tmp_list

@@ -31,10 +31,11 @@ class PlusHealth:
         self.y = y
         self.value = value
         self.form = None
+        self.forms = pygame.image.load("Pictures/other_pictures/player_plus_health.png")
         self.delete = False
 
     def draw(self, context: PygameContext):
-        self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), 15)
+        self.form = context.screen.blit(self.forms, (self.x, self.y))
 
 
 class PlusHealths:

@@ -25,7 +25,7 @@ class Game:
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
-        self.end = first_boss.control(context, player, bullets)
+        first_boss.control(context, player, bullets)
         bullets.control(context)
         rockets.control(player)
 
@@ -51,8 +51,11 @@ class Game:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         context.screen.blit(player.crosshair_form, (mouse_x, mouse_y))
 
-    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, options_saving: OptionsSave, coins: Coins, plus_hp: PlusHealths):
+    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, options_saving: OptionsSave, coins: Coins, plus_hp: PlusHealths, game_logic_parameters: GameLogic):
         context.screen.fill((0, 0, 0))
+
+        plus_hp.draw(context)
+        coins.draw(context)
 
         bullet_shooters.draw(context)
         runners.draw(context)
@@ -63,19 +66,19 @@ class Game:
         rockets.draw(context)
         self.draw_mouse(context, player)
 
-        plus_hp.draw(context)
-        coins.draw(context)
-
         if self.end:
             if self.end_text == "Victory" or self.end_text == "Győzelem":
                 print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
+        elif game_logic_parameters.wave == 10:
+            print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
 
         pygame.display.flip()
 
     def get_char(self, event: pygame.event.Event):
         if event.type == pygame.KEYUP:
             return event.key
+        return None
 
     def game(self, context: PygameContext, options_saving: OptionsSave):
         player = Player(context.width // 2, context.height // 2)
@@ -138,15 +141,15 @@ class Game:
                         first_boss.live = False
                     if not self.end:
                         self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp)
+                        self.end = game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
                         if self.end:
                             self.end_time = context.time
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
                             player.health = 0
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters)
                     self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp)
-                    game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss)
                 else:
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters)
                     bullets.elements.clear()
                     rockets.elements.clear()
                     runners.elements.clear()
