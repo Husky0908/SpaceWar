@@ -29,6 +29,10 @@ class Game:
         bullets.control(context)
         rockets.control(player)
 
+        coins.control(context)
+        plus_hp.control(context)
+        upgrades.control(context)
+
     def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
 
         runners.contacts(player, bullets)

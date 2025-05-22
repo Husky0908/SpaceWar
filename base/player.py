@@ -78,24 +78,6 @@ class Player:
                 self.upgrades_box = self.upgrades_box + upgrade.value
                 upgrade.delete = True
 
-        tmp_list = []
-        for coin in coins.elements:
-            if not coin.delete:
-                tmp_list.append(coin)
-        coins.elements = tmp_list
-
-        tmp_list = []
-        for plus_h in plus_hp.elements:
-            if not plus_h.delete:
-                tmp_list.append(plus_h)
-        plus_hp.elements = tmp_list
-
-        tmp_list = []
-        for upgrade in upgrades.elements:
-            if not upgrade.delete:
-                tmp_list.append(upgrade)
-        upgrades.elements = tmp_list
-
     def control(self, context: PygameContext, running, options_save: OptionsSave):
         keys = pygame.key.get_pressed()
         if keys[options_save.up_control]:
