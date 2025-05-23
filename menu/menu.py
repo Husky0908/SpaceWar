@@ -1,4 +1,5 @@
 import pygame
+import os
 from texts.text_print import print_text
 from base.context import PygameContext
 from texts.options_save import OptionsSave
@@ -71,11 +72,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             if game_quit.colliderect(mouse_form):
                 context.screen.blit(ship, ((1280 / 2 - 165), 575))
             if play_game.colliderect(mouse_form) and mouse_click:
-                if not escape:
-                    context.time = 0
-                    running = False
-                else:
-                    return False
+                which_menu = "players"
+                mouse_click = False
+                # if not escape:
+                #     context.time = 0
+                #     running = False
+                # else:
+                #     return False
             if credits.colliderect(mouse_form) and mouse_click:
                 which_menu = "credits"
             if options.colliderect(mouse_form) and mouse_click:
@@ -244,6 +247,38 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
 
             if back_main_menu.colliderect(mouse_form):
                 context.screen.blit(ship, ((1280 / 2 - 165), 550))
+            if back_main_menu.colliderect(mouse_form) and mouse_click:
+                which_menu = "main menu"
+
+        if which_menu == "players":
+            players = os.listdir("texts/players")
+            how_many = 1
+            how_many_2 = 1
+            print_text((options_save.languages[options_save.select_language])["players"], 80, (255, 255, 255), ((1280 / 2), 100), context)
+
+            for player_name in players:
+                if how_many_2 == 1:
+                    player_box = pygame.draw.rect(context.screen, (255, 255, 0), ((how_many * context.width / 5), (how_many_2 * 200 - 50), 200, 200))
+                    print_text(player_name, 45, (0, 0, 0), ((how_many * (context.width / 5) + 100), (how_many_2 * 200 + 50)), context)
+                else:
+                    player_box = pygame.draw.rect(context.screen, (255, 255, 0), ((how_many * context.width / 5), (how_many_2 * 200), 200, 200))
+                    print_text(player_name, 45, (0, 0, 0), ((how_many * (context.width / 5) + 100), (how_many_2 * 200 + 100)), context)
+                how_many = how_many + 1
+                if how_many == 4:
+                    how_many = 1
+                    how_many_2 = 2
+                if player_box.colliderect(mouse_form) and mouse_click:
+                    if not escape:
+                        context.time = 0
+                        running = False
+                    else:
+                        return False
+
+            back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 625, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 665), context)
+
+            if back_main_menu.colliderect(mouse_form):
+                context.screen.blit(ship, ((1280 / 4 * 3 - 15), 625))
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
 
