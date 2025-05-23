@@ -23,6 +23,7 @@ class Player:
         self.r = None
         self.coins = 0
         self.coin_pictures = pygame.image.load("Pictures/other_pictures/coin_big.png")
+        self.upgrader_pictures = pygame.image.load("Pictures/other_pictures/upgrader_box_big.png")
         self.upgrades_box = 0
 
     def picture(self, context: PygameContext):
@@ -51,6 +52,8 @@ class Player:
 
         context.screen.blit(self.coin_pictures, (context.width - 200, context.height - 75))
         print_text(str(self.coins), 60, (255, 255, 255), (context.width - 75, context.height - 35), context)
+        context.screen.blit(self.upgrader_pictures, (context.width - 400, context.height - 70))
+        print_text(str(self.upgrades_box), 60, (255, 255, 255), (context.width - 250, context.height - 35), context)
 
         if self.health > 0:
             self.picture(context)
