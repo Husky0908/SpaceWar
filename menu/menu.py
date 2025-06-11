@@ -31,6 +31,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     running = True
     must_quit = False
     which_control = ""
+    new_ship_name = ""
 
     while running:
         mouse_click = False
@@ -274,13 +275,52 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     else:
                         return False
 
+            new_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 - 200), 625, 400, 80))
+            print_text((options_save.languages[options_save.select_language])["create"], 45, (0, 0, 0), ((context.width / 5), 665), context)
+            delete_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 * 3 - 235), 625, 400, 80))
+            print_text((options_save.languages[options_save.select_language])["delete"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 625, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 665), context)
 
             if back_main_menu.colliderect(mouse_form):
                 context.screen.blit(ship, ((1280 / 4 * 3 - 15), 625))
+
+            if new_ship.colliderect(mouse_form) and mouse_click:
+                which_menu = "new ship"
+                new_ship_name = ""
+                get_key = False
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
+
+        if which_menu == "new ship":
+            print_text((options_save.languages[options_save.select_language])["create"], 80, (255, 255, 255), ((1280 / 2), 100), context)
+            name_button = pygame.draw.rect(context.screen, (255, 255, 0), ((context.width / 2 - 100), 550, 200, 80))
+            back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 - 100), 550, 200, 80))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 4 * 3), 590), context)
+
+            if back_main_menu.colliderect(mouse_form):
+                context.screen.blit(ship, ((context.width / 4 * 3 - 165), 550))
+            if name_button.colliderect(mouse_form) and mouse_click:
+                get_key = True
+            if back_main_menu.colliderect(mouse_form) and mouse_click:
+                which_menu = "players"
+
+            if get_key:
+                typing = True
+                while typing:
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYUP:
+                            if event.unicode == chr(pygame.K_ESCAPE) or event.unicode == chr(pygame.K_BACKSPACE) or event.unicode == chr(pygame.K_RETURN):
+                                if event.unicode == chr(pygame.K_BACKSPACE):
+                                    if len(new_ship_name) > 0:
+                                        new_ship_name = new_ship_name.strip(new_ship_name[len(new_ship_name) - 1])
+                                else:
+                                    get_key = False
+                                typing = False
+                            else:
+                                typing = False
+                                new_ship_name = new_ship_name + chr(event.key)
+            print_text(new_ship_name, 45, (255, 255, 255), (100, 100), context)
 
         pygame.display.flip()
         context.delta_time = context.clock.tick(60) / 1000
