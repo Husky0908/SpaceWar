@@ -76,6 +76,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             if play_game.colliderect(mouse_form) and mouse_click:
                 which_menu = "players"
                 mouse_click = False
+                ic2 = False
                 # if not escape:
                 #     context.time = 0
                 #     running = False
@@ -253,10 +254,15 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 which_menu = "main menu"
 
         if which_menu == "players":
+            if not os.path.isdir("texts/players"):
+                os.mkdir("texts/players")
             players = os.listdir("texts/players")
             how_many = 1
             how_many_2 = 1
             print_text((options_save.languages[options_save.select_language])["players"], 80, (255, 255, 255), ((1280 / 2), 100), context)
+
+            if ic2:
+                print_text((options_save.languages[options_save.select_language])["max ships"], 60, (255, 255, 255), ((1280 / 2), context.height / 2 + 20), context)
 
             for player_name in players:
                 if how_many_2 == 1:
@@ -287,10 +293,17 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 context.screen.blit(ship, ((1280 / 4 * 3 - 15), 625))
 
             if new_ship.colliderect(mouse_form) and mouse_click:
-                which_menu = "new ship"
-                new_ship_name = ""
-                dif = 0
-                get_key = False
+                hms = 0
+                for ns_hm in os.listdir("texts/players"):
+                    hms = hms + 1
+                if 6 > hms:
+                    which_menu = "new ship"
+                    new_ship_name = ""
+                    dif = 0
+                    get_key = False
+                    ic = True
+                else:
+                    ic2 = True
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
 
@@ -304,6 +317,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             difficulty_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 325, 150, 50))
             create_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 - 100), 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["create2"], 45, (0, 0, 0), ((context.width / 4), 590), context)
+
+            if not ic:
+                print_text((options_save.languages[options_save.select_language])["bad name"], 60, (255, 255, 255), ((context.width / 2), 590), context)
 
             if dif == 1:
                 d = (options_save.languages[options_save.select_language])["hard"]
@@ -327,18 +343,22 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 if dif >= 2:
                     dif = -1
             if create_button.colliderect(mouse_form) and mouse_click:
-                if not os.path.isdir("players"):
-                    os.mkdir("players")
-                with open(f"texts/players/{new_ship_name}", "w") as f:
-                    f.write(f"{dif}\n")
-                    f.write("0\n")
-                    f.write("0\n")
-                    f.write("1\n")
-                    f.write("1\n")
-                    f.write("0\n")
-                    f.write("0\n")
-                    f.write("0\n")
-                which_menu = "players"
+                ic = True
+                for ship_name in os.listdir("texts/players"):
+                    if ship_name == new_ship_name:
+                        ic = False
+                if ic:
+                    with open(f"texts/players/{new_ship_name}", "w") as f:
+                        f.write(f"{dif}\n")
+                        f.write("0\n")
+                        f.write("0\n")
+                        f.write("1\n")
+                        f.write("1\n")
+                        f.write("0\n")
+                        f.write("0\n")
+                        f.write("0\n")
+                    which_menu = "players"
+                    ic2 = False
 
             if get_key:
                 typing = True
