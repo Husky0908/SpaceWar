@@ -33,6 +33,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     which_control = ""
     new_ship_name = ""
     dif = 0
+    delete_account = False
 
     while running:
         mouse_click = False
@@ -75,6 +76,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 context.screen.blit(ship, ((1280 / 2 - 165), 575))
             if play_game.colliderect(mouse_form) and mouse_click:
                 which_menu = "players"
+                delete_account = False
                 mouse_click = False
                 ic2 = False
                 # if not escape:
@@ -276,16 +278,23 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     how_many = 1
                     how_many_2 = 2
                 if player_box.colliderect(mouse_form) and mouse_click:
-                    if not escape:
-                        context.time = 0
-                        running = False
+                    if delete_account == False:
+                        if not escape:
+                            context.time = 0
+                            running = False
+                        else:
+                            return False
                     else:
-                        return False
+                        os.remove(f"texts/players/{player_name}")
+                        delete_account = False
 
             new_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 - 200), 625, 400, 80))
             print_text((options_save.languages[options_save.select_language])["create"], 45, (0, 0, 0), ((context.width / 5), 665), context)
             delete_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 * 3 - 235), 625, 400, 80))
-            print_text((options_save.languages[options_save.select_language])["delete"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
+            if delete_account == False:
+                print_text((options_save.languages[options_save.select_language])["delete"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
+            else:
+                print_text((options_save.languages[options_save.select_language])["cancel"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 625, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 665), context)
 
@@ -304,6 +313,12 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     ic = True
                 else:
                     ic2 = True
+            if delete_ship.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15:
+                if delete_account:
+                    delete_account = False
+                else:
+                    delete_account = True
+                mouse_press_time = 0
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "main menu"
 
@@ -337,6 +352,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 get_key = True
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "players"
+                delete_account = False
             if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                 dif = dif + 1
                 mouse_press_time = 0
