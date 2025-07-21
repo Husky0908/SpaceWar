@@ -3,6 +3,7 @@ import os
 from texts.text_print import print_text
 from base.context import PygameContext
 from texts.options_save import OptionsSave
+from menu.map_and_upgrades import Map_and_Upgrades
 
 
 def _get_key_code() -> int | None:
@@ -35,6 +36,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     dif = 0
     delete_account = False
 
+    mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
+
     while running:
         mouse_click = False
         for event in pygame.event.get():
@@ -47,7 +50,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
 
         context.screen.fill((0, 0, 0))
 
-        mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
         if which_menu == "main menu":
             print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
             print_text("Alpha 0.1.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
@@ -75,15 +77,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             if game_quit.colliderect(mouse_form):
                 context.screen.blit(ship, ((1280 / 2 - 165), 575))
             if play_game.colliderect(mouse_form) and mouse_click:
-                which_menu = "players"
-                delete_account = False
-                mouse_click = False
-                ic2 = False
-                # if not escape:
-                #     context.time = 0
-                #     running = False
-                # else:
-                #     return False
+                if not escape:
+                    which_menu = "players"
+                    delete_account = False
+                    mouse_click = False
+                    ic2 = False
+                else:
+                    return False
             if credits.colliderect(mouse_form) and mouse_click:
                 which_menu = "credits"
             if options.colliderect(mouse_form) and mouse_click:
@@ -280,8 +280,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 if player_box.colliderect(mouse_form) and mouse_click:
                     if delete_account == False:
                         if not escape:
-                            context.time = 0
-                            running = False
+                            with (open(f"texts/players/{player_name}", "r") as f):
+                                dif = int(f.readline().strip("\n"))
+                                hmm = int(f.readline().strip("\n"))
+                                coin = int(f.readline().strip("\n"))
+                                upgrade_box = int(f.readline().strip("\n"))
+                                mau = Map_and_Upgrades(coin, upgrade_box, dif, player_name, hmm)
+                            which_menu = "map"
                         else:
                             return False
                     else:
@@ -366,6 +371,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 if ic:
                     with open(f"texts/players/{new_ship_name}", "w") as f:
                         f.write(f"{dif}\n")
+                        f.write("1\n")
                         f.write("0\n")
                         f.write("0\n")
                         f.write("1\n")
@@ -392,6 +398,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                                 typing = False
                                 new_ship_name = new_ship_name + chr(event.key)
             print_text(new_ship_name, 45, (255, 255, 255), (context.width // 3 * 2, context.height // 3), context)
+
+        if which_menu == "map":
+            which_menu = mau.map(context, mouse_form, mouse_click, options_save, ship)
+            if which_menu == "play the game":
+                return False
+
+        mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
 
         pygame.display.flip()
         context.delta_time = context.clock.tick(60) / 1000
