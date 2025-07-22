@@ -7,7 +7,7 @@ from texts.text_print import print_text
 
 
 class Player:
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, name: str):
         self.x = x
         self.y = y
         self.health = 5
@@ -21,10 +21,43 @@ class Player:
             "Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha(), pygame.image.load(
             "Pictures/players_pictures/player_ship_5_hp_j.png").convert_alpha()]
         self.r = None
+        self.name = name
         self.coins = 0
         self.coin_pictures = pygame.image.load("Pictures/other_pictures/coin_big.png")
         self.upgrader_pictures = pygame.image.load("Pictures/other_pictures/upgrader_box_big.png")
         self.upgrades_box = 0
+        self.dif = 0
+        self.unlock_levels = 1
+        self.ship_power = 1
+        self.gun_power = 1
+        self.bomb_power = 0
+        self.rocket_power = 0
+        self.skins = 0
+        self.read_player_text()
+
+    def read_player_text(self):
+        with open(f"texts/players/{self.name}", "r") as f:
+            self.dif = int(f.readline().strip("\n"))
+            self.unlock_levels = int(f.readline().strip("\n"))
+            self.coins = int(f.readline().strip("\n"))
+            self.upgrades_box = int(f.readline().strip("\n"))
+            self.ship_power = int(f.readline().strip("\n"))
+            self.gun_power = int(f.readline().strip("\n"))
+            self.bomb_power = int(f.readline().strip("\n"))
+            self.rocket_power = int(f.readline().strip("\n"))
+            self.skins = int(f.readline().strip("\n"))
+
+    def write_player_text(self):
+        with open(f"texts/players/{self.name}", "w") as f:
+            f.write(f"{self.dif}\n")
+            f.write(f"{self.unlock_levels}\n")
+            f.write(f"{self.coins}\n")
+            f.write(f"{self.upgrades_box}\n")
+            f.write(f"{self.ship_power}\n")
+            f.write(f"{self.gun_power}\n")
+            f.write(f"{self.bomb_power}\n")
+            f.write(f"{self.rocket_power}\n")
+            f.write(f"{self.skins}\n")
 
     def picture(self, context: PygameContext):
         if self.health < 6:
@@ -102,6 +135,7 @@ class Player:
             self.x = context.width - self.width / 2
 
         if self.health <= 0:
+            self.write_player_text()
             running = True
 
         return running

@@ -76,7 +76,8 @@ class Game:
                 print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
         elif game_logic_parameters.wave == 10:
-            print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
+            #print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
+            pass
 
         pygame.display.flip()
 
@@ -85,11 +86,11 @@ class Game:
             return event.key
         return None
 
-    def game(self, context: PygameContext, options_saving: OptionsSave):
-        player = Player(context.width // 2, context.height // 2)
-        first_boss = FirstBoss(0, -350, options_saving.game_difficulty)
+    def game(self, context: PygameContext, options_saving: OptionsSave, name):
+        player = Player(context.width // 2, context.height // 2, name)
+        first_boss = FirstBoss(0, -350, player.dif)
 
-        game_logic_parameters = GameLogic(options_saving.game_difficulty)
+        game_logic_parameters = GameLogic(player.dif)
 
         bullets = Bullets()
         rockets = Rockets()
@@ -133,6 +134,7 @@ class Game:
                 show_menu = False
                 if game_next:
                     player.health = 0
+                    player.write_player_text()
                     self.end = True
                     self.end_text = ""
 

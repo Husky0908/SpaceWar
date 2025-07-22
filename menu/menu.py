@@ -33,6 +33,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     must_quit = False
     which_control = ""
     new_ship_name = ""
+    player_name = ""
+    unlock_player_name = ""
     dif = 0
     delete_account = False
 
@@ -93,7 +95,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     running = False
                     must_quit = True
                 else:
-                    return True
+                    return True, None
 
         if which_menu == "options":
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
@@ -122,9 +124,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             print_text((options_save.languages[options_save.select_language])["language"], 45, (255, 255, 255), ((1280 / 3), 150), context)
             print_text((options_save.languages[options_save.select_language])["fullscreen"], 45, (255, 255, 255), ((1280 / 3), 250), context)
-            if not escape:
-                print_text((options_save.languages[options_save.select_language])["difficulty"], 45, (255, 255, 255), ((1280 / 3), 350), context)
-                difficulty_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 325, 150, 50))
             language_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 125, 150, 50))
             fullscreen_button = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 3 * 2 - 75), 225, 150, 50))
             if options_save.fullscreen:
@@ -136,14 +135,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             else:
                 options_save.select_language = "Magyar"
             print_text(options_save.select_language, 45, (0, 0, 0), ((1280 / 3 * 2), 150), context)
-            if not escape:
-                if options_save.game_difficulty == 1:
-                    d = (options_save.languages[options_save.select_language])["hard"]
-                if options_save.game_difficulty == 0:
-                    d = (options_save.languages[options_save.select_language])["normal"]
-                if options_save.game_difficulty == -1:
-                    d = (options_save.languages[options_save.select_language])["easy"]
-                print_text(d, 45, (0, 0, 0), ((1280 / 3 * 2), 350), context)
             back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), (540, 550, 200, 80))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((1280 / 2), 590), context)
 
@@ -162,12 +153,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 pygame.display.set_icon(ship)
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
-            if not escape:
-                if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
-                    options_save.game_difficulty = options_save.game_difficulty + 1
-                    mouse_press_time = 0
-            if options_save.game_difficulty > 1:
-                options_save.game_difficulty = -1
             if back_main_menu.colliderect(mouse_form) and mouse_click:
                 which_menu = "options"
                 options_save.saving_writing()
@@ -278,6 +263,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     how_many = 1
                     how_many_2 = 2
                 if player_box.colliderect(mouse_form) and mouse_click:
+                    unlock_player_name = player_name
                     if delete_account == False:
                         if not escape:
                             with (open(f"texts/players/{player_name}", "r") as f):
@@ -288,7 +274,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                                 mau = Map_and_Upgrades(coin, upgrade_box, dif, player_name, hmm)
                             which_menu = "map"
                         else:
-                            return False
+                            return False, player_name
                     else:
                         os.remove(f"texts/players/{player_name}")
                         delete_account = False
@@ -402,11 +388,11 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
         if which_menu == "map":
             which_menu = mau.map(context, mouse_form, mouse_click, options_save, ship)
             if which_menu == "play the game":
-                return False
+                return False, unlock_player_name
 
         mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
 
         pygame.display.flip()
         context.delta_time = context.clock.tick(60) / 1000
 
-    return must_quit
+    return must_quit, None

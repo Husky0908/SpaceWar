@@ -7,7 +7,6 @@ class OptionsSave:
                           "Magyar" : {"play" : "Játék", "options" : "Beállítások", "quit" : "Kilépés", "back" : "Vissza", "language" : "Nyelv:", "difficulty" : "Nehézség:", "normal" : "Normál", "easy" : "Könnyű", "hard" : "Nehéz", "continue" : "Folytatás", "finish" : "Befejezés", "fullscreen": "Teljes képernyő:", "on" : "Be", "off" : "Ki", "game over" : "Vége a játéknak", "victory" : "Győzelem", "credits" : "Készítők", "game" : "Játék", "controls" : "Irányítások", "up" : "Fel:", "down" : "Le:", "left" : "Bal:", "right" : "Jobb:", "press" : "Nyomd meg a gombot", "end" : "Szint vége:", "players" : "Válaszd ki a hajódat", "create" : "Új hajó létrehozása", "delete" : "Hajó törlése", "ship name" : "Hajó neve:", "create2" : "Létrehozás", "bad name" : "Helytelen név!", "max ships" : "6 hajód van!", "cancel" : "Mégsem", "start" : "Kezdés"}}
         self.select_language = "English"
         self.how_number = 0
-        self.game_difficulty = 0
         self.fullscreen = True
         self.up_control = pygame.K_w
         self.down_control = pygame.K_s
@@ -22,9 +21,6 @@ class OptionsSave:
             self.how_number = f.readline()
             self.how_number = self.how_number.strip("\n")
             self.how_number = int(self.how_number)
-            self.game_difficulty = f.readline()
-            self.game_difficulty = self.game_difficulty.strip("\n")
-            self.game_difficulty = int(self.game_difficulty)
             self.fullscreen = f.readline()
             self.fullscreen = self.fullscreen.strip("\n")
             if self.fullscreen == "True":
@@ -40,7 +36,6 @@ class OptionsSave:
         with (open("texts/options_saving", "w") as f):
             f.write(f"{self.select_language}\n")
             f.write(f"{str(self.how_number)}\n")
-            f.write(f"{str(self.game_difficulty)}\n")
             f.write(f"{str(self.fullscreen)}\n")
             f.write(f"{str(self.up_control)}\n")
             f.write(f"{str(self.down_control)}\n")
