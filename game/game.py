@@ -65,7 +65,7 @@ class Game:
         bullet_shooters.draw(context)
         runners.draw(context)
         rocket_launchers.draw(context)
-        first_boss.draw(context, options_saving)
+        first_boss.draw(context, player.dif)
         player.draw(context)
         bullets.draw(context)
         rockets.draw(context)
@@ -76,8 +76,7 @@ class Game:
                 print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
         elif game_logic_parameters.wave == 10:
-            #print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
-            pass
+            print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
 
         pygame.display.flip()
 
@@ -90,7 +89,7 @@ class Game:
         player = Player(context.width // 2, context.height // 2, name)
         first_boss = FirstBoss(0, -350, player.dif)
 
-        game_logic_parameters = GameLogic(player.dif)
+        game_logic_parameters = GameLogic(player.dif, player.level)
 
         bullets = Bullets()
         rockets = Rockets()
@@ -153,6 +152,9 @@ class Game:
                         if self.end:
                             self.end_time = context.time
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
+                            if player.level == player.unlock_levels:
+                                player.unlock_levels = player.unlock_levels + 1
+                            player.write_player_text()
                             player.health = 0
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades)
                     self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades)

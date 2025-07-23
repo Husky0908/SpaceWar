@@ -6,8 +6,8 @@ from enemies.first_boss import FirstBoss
 
 
 class GameLogic:
-    def __init__(self, game_difficulty: int):
-        self.level = 1
+    def __init__(self, game_difficulty: int, level: int):
+        self.level = level
         self.wave_time = 0
         self.wave = 1
         self.difficulty = game_difficulty

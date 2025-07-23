@@ -4,7 +4,6 @@ from base.context import PygameContext
 from base.directions import get_direction
 from base.bullets import Bullets, Bullet
 from base.player import Player
-from texts.options_save import OptionsSave
 from base.boxes import Upgraders, Upgrader
 
 
@@ -47,10 +46,10 @@ class FirstBoss:
     def spawn(self):
         self.live = True
 
-    def draw(self, context: PygameContext, options_saving: OptionsSave):
+    def draw(self, context: PygameContext, dif: int):
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
-            if options_saving.game_difficulty >= 0:
+            if dif >= 0:
                 if self.health > 25:
                     self.form = context.screen.blit(self.forms[1], (self.x, self.y))
                 else:

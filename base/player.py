@@ -27,6 +27,7 @@ class Player:
         self.upgrader_pictures = pygame.image.load("Pictures/other_pictures/upgrader_box_big.png")
         self.upgrades_box = 0
         self.dif = 0
+        self.level = 1
         self.unlock_levels = 1
         self.ship_power = 1
         self.gun_power = 1
@@ -38,6 +39,7 @@ class Player:
     def read_player_text(self):
         with open(f"texts/players/{self.name}", "r") as f:
             self.dif = int(f.readline().strip("\n"))
+            self.level = int(f.readline().strip("\n"))
             self.unlock_levels = int(f.readline().strip("\n"))
             self.coins = int(f.readline().strip("\n"))
             self.upgrades_box = int(f.readline().strip("\n"))
@@ -50,6 +52,7 @@ class Player:
     def write_player_text(self):
         with open(f"texts/players/{self.name}", "w") as f:
             f.write(f"{self.dif}\n")
+            f.write(f"{self.level}\n")
             f.write(f"{self.unlock_levels}\n")
             f.write(f"{self.coins}\n")
             f.write(f"{self.upgrades_box}\n")

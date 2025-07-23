@@ -358,6 +358,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     with open(f"texts/players/{new_ship_name}", "w") as f:
                         f.write(f"{dif}\n")
                         f.write("1\n")
+                        f.write("1\n")
                         f.write("0\n")
                         f.write("0\n")
                         f.write("1\n")
