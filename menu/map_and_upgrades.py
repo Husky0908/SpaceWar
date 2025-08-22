@@ -12,10 +12,12 @@ class Map_and_Upgrades:
         self.ship_name = ship_name
         self.hmm = hmm
         self.map_picture = pygame.image.load("Pictures/menu_pictures/map.png").convert_alpha()
+        self.map_background = pygame.image.load("Pictures/menu_pictures/map_background.png").convert_alpha()
 
     def map(self, context: PygameContext, mouse_form, mouse_click, options_save: OptionsSave, ship):
+        context.screen.blit(self.map_background, (0, 0))
         context.screen.blit(self.map_picture, (-10, 0))
-        context.screen.blit(ship, (40, 525))
+        context.screen.blit(ship, (55, 545))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
         print_text((options_save.languages[options_save.select_language])["start"], 45, (0, 0, 0), ((context.width / 4 * 2 + 210), 665), context)
