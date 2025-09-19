@@ -28,7 +28,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     ship = pygame.image.load("Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha()
     credits_eng = pygame.image.load("Pictures/menu_pictures/credits_eng.png").convert_alpha()
     credits_hun = pygame.image.load("Pictures/menu_pictures/credits_hun.png").convert_alpha()
-
+    button_plate = pygame.image.load("Pictures/menu_pictures/button_plate.png").convert_alpha()
+    button_plate_on = pygame.image.load("Pictures/menu_pictures/button_plate_on.png").convert_alpha()
+    
     running = True
     must_quit = False
     which_control = ""
@@ -55,29 +57,39 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
         if which_menu == "main menu":
             print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
             print_text("Alpha 0.1.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
-            play_game = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 200, 200, 80))
+            play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
             if not escape:
-                print_text((options_save.languages[options_save.select_language])["play"], 45, (0, 0, 0), ((1280 / 2), 240), context)
+                print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
             else:
-                print_text((options_save.languages[options_save.select_language])["continue"], 45, (0, 0, 0), ((1280 / 2), 240), context)
-            credits = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 325, 200, 80))
-            print_text((options_save.languages[options_save.select_language])["credits"], 45, (0, 0, 0), ((1280 / 2), 365), context)
-            options = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 450, 200, 80))
-            print_text((options_save.languages[options_save.select_language])["options"], 45, (0, 0, 0), ((1280 / 2), 490), context)
-            game_quit = pygame.draw.rect(context.screen, (255, 255, 255), ((1280 / 2 - 100), 575, 200, 80))
+                print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
+            credits = context.screen.blit(button_plate, ((1280 / 2 - 100), 305))
+            print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 15), 385), context)
+            options = context.screen.blit(button_plate, ((1280 / 2 - 100), 450)) 
+            print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 15), 530), context)
+            game_quit = context.screen.blit(button_plate, ((1280 / 2 - 100), 595))
             if not escape:
-                print_text((options_save.languages[options_save.select_language])["quit"], 45, (0, 0, 0), ((1280 / 2), 615), context)
+                print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
             else:
-                print_text((options_save.languages[options_save.select_language])["finish"], 45, (0, 0, 0), ((1280 / 2), 615), context)
+                print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
 
             if play_game.colliderect(mouse_form):
-                context.screen.blit(ship,((1280 / 2 - 165), 200))
+                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 160))
+                if not escape:
+                    print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
+                else:
+                    print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
             if credits.colliderect(mouse_form):
-                context.screen.blit(ship,((1280 / 2 - 165), 325))
+                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 305))
+                print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 20), 390), context)
             if options.colliderect(mouse_form):
-                context.screen.blit(ship, ((1280 / 2 - 165), 450))
+                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 450))
+                print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 20), 535), context)
             if game_quit.colliderect(mouse_form):
-                context.screen.blit(ship, ((1280 / 2 - 165), 575))
+                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 595))
+                if not escape:
+                    print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
+                else:
+                    print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
             if play_game.colliderect(mouse_form) and mouse_click:
                 if not escape:
                     which_menu = "players"
