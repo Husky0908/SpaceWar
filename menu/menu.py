@@ -281,9 +281,15 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                             with (open(f"texts/players/{player_name}", "r") as f):
                                 dif = int(f.readline().strip("\n"))
                                 hmm = int(f.readline().strip("\n"))
+                                hmmu = int(f.readline().strip("\n"))
                                 coin = int(f.readline().strip("\n"))
                                 upgrade_box = int(f.readline().strip("\n"))
-                                mau = Map_and_Upgrades(coin, upgrade_box, dif, player_name, hmm)
+                                ship_def = int(f.readline().strip("\n"))
+                                mas_gun = int(f.readline().strip("\n"))
+                                bomb = int(f.readline().strip("\n"))
+                                rocket = int(f.readline().strip("\n"))
+                                skins = int(f.readline().strip("\n"))
+                                mau = Map_and_Upgrades(coin, upgrade_box, dif, player_name, hmm, hmmu, ship_def, mas_gun, bomb, rocket, skins)
                             which_menu = "map"
                         else:
                             return False, player_name
@@ -399,10 +405,15 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
             print_text(new_ship_name, 45, (255, 255, 255), (context.width // 3 * 2, context.height // 3), context)
 
         if which_menu == "map":
-            which_menu = mau.map(context, mouse_form, mouse_click, options_save, ship)
+            which_menu, mouse_press_time = mau.map(context, mouse_form, mouse_click, mouse_press_time, options_save, ship)
             if which_menu == "play the game":
                 return False, unlock_player_name
 
+        if which_menu == "upgrade":
+            which_menu, mouse_press_time = mau.upgrade(context, mouse_form, mouse_click, mouse_press_time, options_save, ship)
+            if which_menu == "play the game":
+                return False, unlock_player_name
+            
         mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
 
         pygame.display.flip()

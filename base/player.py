@@ -145,7 +145,10 @@ class Player:
 
     def press_mouse(self, running, bullets: Bullets, context: PygameContext):
         if running:
-            if bullets.last_spawn - context.time >= 30:
+            shoot_time = 30
+            if self.gun_power == 2:
+                shoot_time = 25
+            if bullets.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))
                 bullets.last_spawn = context.time
