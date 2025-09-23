@@ -22,6 +22,8 @@ class Map_and_Upgrades:
         self.upgrade_ship = pygame.image.load("Pictures/menu_pictures/upgrade_ship.png").convert_alpha()
         self.coin_picture = pygame.image.load("Pictures/other_pictures/coin.png").convert_alpha()
         self.upgrader_box_picture = pygame.image.load("Pictures/other_pictures/upgrader_box.png").convert_alpha()
+        self.button_plate = pygame.image.load("Pictures/menu_pictures/button_plate.png").convert_alpha()
+        self.button_plate_on = pygame.image.load("Pictures/menu_pictures/button_plate_on.png").convert_alpha()
         
     def map(self, context: PygameContext, mouse_form, mouse_click, mouse_click_time, options_save: OptionsSave, ship):
         context.screen.blit(self.map_background, (0, 0))
@@ -30,15 +32,17 @@ class Map_and_Upgrades:
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
         print_text((options_save.languages[options_save.select_language])["start"], 45, (0, 0, 0), ((context.width / 4 * 2 + 210), 665), context)
-        go_upgrade = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 50, 200, 80))
-        print_text((options_save.languages[options_save.select_language])["upgrades"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 90), context)
-        back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 625, 200, 80))
-        print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 665), context)
+        go_upgrade = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
+        print_text((options_save.languages[options_save.select_language])["upgrades"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 130), context)
+        back_main_menu = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 590))
+        print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 670), context)
 
         if back_main_menu.colliderect(mouse_form):
-            context.screen.blit(ship, ((1280 / 4 * 3 - 15), 625))
+            context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 590))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 675), context)
         if go_upgrade.colliderect(mouse_form):
-            context.screen.blit(ship, ((1280 / 4 * 3 - 15), 50))
+            context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 50))
+            print_text((options_save.languages[options_save.select_language])["upgrades"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 135), context)
         if start_button.colliderect(mouse_form):
             context.screen.blit(ship, ((1280 / 4 * 2 + 45), 625))
 
@@ -55,10 +59,10 @@ class Map_and_Upgrades:
 
     def upgrade(self, context: PygameContext, mouse_form, mouse_click, mouse_press_time, options_save: OptionsSave, ship):
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
-        go_map = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 50, 200, 80))
-        print_text((options_save.languages[options_save.select_language])["map"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 90), context)
-        back_main_menu = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 3 + 50), 625, 200, 80))
-        print_text((options_save.languages[options_save.select_language])["back"], 45, (0, 0, 0), ((context.width / 4 * 3 + 150), 665), context)
+        go_map = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
+        print_text((options_save.languages[options_save.select_language])["map"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 130), context)
+        back_main_menu = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 590))
+        print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 670), context)
 
         context.screen.blit(self.upgrade_ship, (context.width / 2 - 200, context.height / 2 - 200))
         context.screen.blit(self.coin_picture, (context.width / 2 - 200, 50))
@@ -74,15 +78,17 @@ class Map_and_Upgrades:
         if self.mas_gun == 2:
             print_text("Max", 45, (0, 0, 0), (context.width / 4, context.height / 4 * 3 + 80), context)
 
-        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_click and self.mas_gun == 1:
+        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_click and self.mas_gun == 1 and self.coin >= 200:
             self.mas_gun = 2
             self.coin = self.coin - 200
             self.write_file()
             
         if back_main_menu.colliderect(mouse_form):
-            context.screen.blit(ship, ((1280 / 4 * 3 - 15), 625))
+            context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 590))
+            print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 675), context)
         if go_map.colliderect(mouse_form):
-            context.screen.blit(ship, ((1280 / 4 * 3 - 15), 50))
+            context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 50))
+            print_text((options_save.languages[options_save.select_language])["map"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 135), context)
 
         if back_main_menu.colliderect(mouse_form) and mouse_click:
             return "main menu", mouse_press_time
