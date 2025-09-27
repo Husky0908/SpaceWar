@@ -22,6 +22,7 @@ class Game:
         self.end_time = 0
 
     def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
+        player.mashingun_shoot(self.running, bullets, context)
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
@@ -113,7 +114,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    player.press_mouse(self.running, bullets, context)
+                    pass
 
                 if cheat_mode and input_timeout == 0:
                     c = self.get_char(event)
@@ -129,7 +130,7 @@ class Game:
                     show_menu = True
 
             if show_menu:
-                game_next = menu(context, options_saving, True)
+                game_next = menu(context, options_saving, True, False, "")
                 show_menu = False
                 if game_next:
                     player.health = 0
@@ -210,3 +211,6 @@ class Game:
                     cheat_mode = False
 
             context.delta_time = context.clock.tick(60) / 1000
+
+        return player.name
+            

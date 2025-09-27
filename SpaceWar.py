@@ -8,11 +8,14 @@ options_saving = OptionsSave()
 context = PygameContext(1280, 720, options_saving.fullscreen)
 game = Game()
 run = True
+after_game = False
+player_name = ""
 
 while run:
-    gr, name = menu(context, options_saving, False)
+    gr, name = menu(context, options_saving, False, after_game, player_name)
     if not gr:
-        game.game(context, options_saving, name)
+        player_name = game.game(context, options_saving, name)
+        after_game = True
     else:
         run = False
 

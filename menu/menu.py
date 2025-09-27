@@ -16,11 +16,15 @@ def _get_key_code() -> int | None:
                     return event.key
 
 
-def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> bool:
+def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_game: bool, player_name: str) -> bool:
     mouse_press_time = 0
 
     options_save.saving_reading()
-    which_menu = "main menu"
+    if after_game:
+        mau = Map_and_Upgrades(player_name)
+        which_menu = "map"
+    else:
+        which_menu = "main menu"
 
     pygame.mouse.set_visible(False)
     pygame.display.set_caption("Space War")
@@ -41,7 +45,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
     delete_account = False
 
     mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
-
+    
     while running:
         mouse_click = False
         for event in pygame.event.get():
@@ -290,18 +294,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                     unlock_player_name = player_name
                     if delete_account == False:
                         if not escape:
-                            with (open(f"texts/players/{player_name}", "r") as f):
-                                dif = int(f.readline().strip("\n"))
-                                hmm = int(f.readline().strip("\n"))
-                                hmmu = int(f.readline().strip("\n"))
-                                coin = int(f.readline().strip("\n"))
-                                upgrade_box = int(f.readline().strip("\n"))
-                                ship_def = int(f.readline().strip("\n"))
-                                mas_gun = int(f.readline().strip("\n"))
-                                bomb = int(f.readline().strip("\n"))
-                                rocket = int(f.readline().strip("\n"))
-                                skins = int(f.readline().strip("\n"))
-                                mau = Map_and_Upgrades(coin, upgrade_box, dif, player_name, hmm, hmmu, ship_def, mas_gun, bomb, rocket, skins)
+                            mau = Map_and_Upgrades(player_name)
                             which_menu = "map"
                         else:
                             return False, player_name
@@ -328,6 +321,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> boo
                 for ns_hm in os.listdir("texts/players"):
                     hms = hms + 1
                 if 6 > hms:
+                    delete_account = False
                     which_menu = "new ship"
                     new_ship_name = ""
                     dif = 0

@@ -5,18 +5,19 @@ from texts.options_save import OptionsSave
 
 
 class Map_and_Upgrades:
-    def __init__(self, coin: int, upgrade_box: int, dif: int, ship_name: str, hmm: int, hmmu: int, ship_def: int, mas_gun: int, bomb, rocket, skins):
-        self.coin = coin
-        self.upgrade_box = upgrade_box
-        self.difficulty = dif
+    def __init__(self, ship_name: str):
         self.ship_name = ship_name
-        self.hmm = hmm
-        self.hmmu = hmmu
-        self.ship_def = ship_def
-        self.mas_gun = mas_gun
-        self.bomb = bomb
-        self.rocket = rocket
-        self.skins = skins
+        with (open(f"texts/players/{self.ship_name}", "r") as f):
+            self.difficulty = int(f.readline().strip("\n"))
+            self.hmm = int(f.readline().strip("\n"))
+            self.hmmu = int(f.readline().strip("\n"))
+            self.coin = int(f.readline().strip("\n"))
+            self.upgrade_box = int(f.readline().strip("\n"))
+            self.ship_def = int(f.readline().strip("\n"))
+            self.mas_gun = int(f.readline().strip("\n"))
+            self.bomb = int(f.readline().strip("\n"))
+            self.rocket = int(f.readline().strip("\n"))
+            self.skins = int(f.readline().strip("\n"))
         self.map_picture = pygame.image.load("Pictures/menu_pictures/map.png").convert_alpha()
         self.map_background = pygame.image.load("Pictures/menu_pictures/map_background.png").convert_alpha()
         self.upgrade_ship = pygame.image.load("Pictures/menu_pictures/upgrade_ship.png").convert_alpha()

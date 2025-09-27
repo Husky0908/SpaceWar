@@ -143,7 +143,7 @@ class Player:
 
         return running
 
-    def press_mouse(self, running, bullets: Bullets, context: PygameContext):
+    def mashingun_shoot(self, running, bullets: Bullets, context: PygameContext):
         if running:
             shoot_time = 30
             if self.gun_power == 2:
