@@ -20,6 +20,7 @@ class Map_and_Upgrades:
             self.skins = int(f.readline().strip("\n"))
         self.map_picture = pygame.image.load("Pictures/menu_pictures/map.png").convert_alpha()
         self.map_background = pygame.image.load("Pictures/menu_pictures/map_background.png").convert_alpha()
+        self.lock_picture = pygame.image.load("Pictures/menu_pictures/lock.png").convert_alpha()
         self.upgrade_ship = pygame.image.load("Pictures/menu_pictures/upgrade_ship.png").convert_alpha()
         self.coin_picture = pygame.image.load("Pictures/other_pictures/coin.png").convert_alpha()
         self.upgrader_box_picture = pygame.image.load("Pictures/other_pictures/upgrader_box.png").convert_alpha()
@@ -27,8 +28,23 @@ class Map_and_Upgrades:
         self.button_plate_on = pygame.image.load("Pictures/menu_pictures/button_plate_on.png").convert_alpha()
         
     def map(self, context: PygameContext, mouse_form, mouse_click, mouse_click_time, options_save: OptionsSave, ship):
+        first_mission = pygame.draw.rect(context.screen, (255, 255, 255), (55, 545, 80, 80))
         context.screen.blit(self.map_background, (0, 0))
         context.screen.blit(self.map_picture, (-10, 0))
+        if self.hmmu < 8:
+            context.screen.blit(self.lock_picture, (1125, 465))
+            if self.hmmu < 7:
+                context.screen.blit(self.lock_picture, (950, 355))
+                if self.hmmu < 6:
+                    context.screen.blit(self.lock_picture, (810, 285))
+                    if self.hmmu < 5:
+                        context.screen.blit(self.lock_picture, (670, 385))
+                        if self.hmmu < 4:
+                            context.screen.blit(self.lock_picture, (590, 490))
+                            if self.hmmu < 3:
+                                context.screen.blit(self.lock_picture, (425, 375))
+                                if self.hmmu < 2:
+                                    context.screen.blit(self.lock_picture, (210, 385))
         context.screen.blit(ship, (55, 545))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
@@ -48,7 +64,7 @@ class Map_and_Upgrades:
             context.screen.blit(ship, ((1280 / 4 * 2 + 45), 625))
 
 
-        if start_button.colliderect(mouse_form) and mouse_click:
+        if (start_button.colliderect(mouse_form) and mouse_click) or (first_mission.colliderect(mouse_form) and mouse_click):
             return "play the game", mouse_click_time
         if go_upgrade.colliderect(mouse_form) and mouse_click and mouse_click_time >= 15:
             mouse_click_time = 0

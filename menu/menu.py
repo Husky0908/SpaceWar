@@ -23,8 +23,10 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     if after_game:
         mau = Map_and_Upgrades(player_name)
         which_menu = "map"
+        unlock_player_name = player_name
     else:
         which_menu = "main menu"
+        unlock_player_name = ""
 
     pygame.mouse.set_visible(False)
     pygame.display.set_caption("Space War")
@@ -40,7 +42,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     which_control = ""
     new_ship_name = ""
     player_name = ""
-    unlock_player_name = ""
     dif = 0
     delete_account = False
 
