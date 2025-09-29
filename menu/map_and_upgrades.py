@@ -21,6 +21,7 @@ class Map_and_Upgrades:
         self.map_picture = pygame.image.load("Pictures/menu_pictures/map.png").convert_alpha()
         self.map_background = pygame.image.load("Pictures/menu_pictures/map_background.png").convert_alpha()
         self.lock_picture = pygame.image.load("Pictures/menu_pictures/lock.png").convert_alpha()
+        self.complete_picture = pygame.image.load("Pictures/menu_pictures/complete.png").convert_alpha()
         self.upgrade_ship = pygame.image.load("Pictures/menu_pictures/upgrade_ship.png").convert_alpha()
         self.coin_picture = pygame.image.load("Pictures/other_pictures/coin.png").convert_alpha()
         self.upgrader_box_picture = pygame.image.load("Pictures/other_pictures/upgrader_box.png").convert_alpha()
@@ -45,6 +46,8 @@ class Map_and_Upgrades:
                                 context.screen.blit(self.lock_picture, (425, 375))
                                 if self.hmmu < 2:
                                     context.screen.blit(self.lock_picture, (210, 385))
+        if self.hmmu > 1:
+            context.screen.blit(self.complete_picture, (70, 450))
         context.screen.blit(ship, (55, 545))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
