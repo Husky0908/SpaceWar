@@ -117,7 +117,7 @@ class Player:
                 self.upgrades_box = self.upgrades_box + upgrade.value
                 upgrade.delete = True
 
-    def control(self, context: PygameContext, running, options_save: OptionsSave):
+    def control(self, context: PygameContext, running, options_save: OptionsSave, bullets: Bullets):
         keys = pygame.key.get_pressed()
         if keys[options_save.up_control]:
             self.y -= 300 * context.delta_time
@@ -137,6 +137,10 @@ class Player:
         if self.x + self.width / 2 > context.width:
             self.x = context.width - self.width / 2
 
+        mouse_button = pygame.mouse.get_pressed()
+        if mouse_button[0]:
+            self.mashingun_shoot(True, bullets, context)
+            
         if self.health <= 0:
             self.write_player_text()
             running = True

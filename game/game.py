@@ -22,7 +22,6 @@ class Game:
         self.end_time = 0
 
     def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
-        player.mashingun_shoot(self.running, bullets, context)
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
@@ -115,7 +114,7 @@ class Game:
                     self.running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pass
-
+                        
                 if cheat_mode and input_timeout == 0:
                     c = self.get_char(event)
                     if c == pygame.K_BACKSPACE:
@@ -142,7 +141,7 @@ class Game:
                 context.time = context.time + context.delta_time
 
                 if not self.end:
-                    self.end = player.control(context, self.end, options_saving)
+                    self.end = player.control(context, self.end, options_saving, bullets)
                     if self.end:
                         self.end_time = context.time
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
