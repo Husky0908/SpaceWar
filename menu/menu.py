@@ -105,6 +105,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                     return False
             if credits.colliderect(mouse_form) and mouse_click:
                 which_menu = "credits"
+                credits_y = 720
             if options.colliderect(mouse_form) and mouse_click:
                 mouse_press_time = 0
                 which_menu = "options"
@@ -255,20 +256,16 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
 
         if which_menu == "credits":
             if options_save.select_language == "English":
-                context.screen.blit(credits_eng, (0, 0))
+                context.screen.blit(credits_eng, (0, credits_y))
             else:
-                context.screen.blit(credits_hun, (0, 0))
-            print_text((options_save.languages[options_save.select_language])["credits"], 70, (255, 255, 255), ((1280 / 2), 60), context)
-            back_main_menu = context.screen.blit(button_plate, (context.width / 2 - 110, 510))
-            print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 2 + 5), 590), context)
+                context.screen.blit(credits_hun, (0, credits_y))
 
-            if back_main_menu.colliderect(mouse_form):
-                context.screen.blit(button_plate_on, (context.width / 2 - 110, 510))
-                print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 2 + 10), 595), context)
-
-            if back_main_menu.colliderect(mouse_form) and mouse_click:
+            credits_y = credits_y - 1
+            
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE] or credits_y <= -1050:
                 which_menu = "main menu"
-
+            
         if which_menu == "players":
             if not os.path.isdir("texts/players"):
                 os.mkdir("texts/players")
