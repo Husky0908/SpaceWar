@@ -61,6 +61,8 @@ class Map_and_Upgrades:
                                     context.screen.blit(self.lock_picture, (210, 385))
         if self.hmmu > 1:
             context.screen.blit(self.complete_picture, (70, 450))
+        if self.how_many_map_now == 2:
+            print_text((options_save.languages[options_save.select_language])["coming"], 60, (255, 255, 255), (220, 300), context)
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
