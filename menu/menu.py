@@ -56,7 +56,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_click = True
         mouse_press_time = mouse_press_time + 1
-
+        keys = pygame.key.get_pressed()
+        
         context.screen.fill((0, 0, 0))
 
         if which_menu == "main menu":
@@ -134,7 +135,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             if back_main_menu.colliderect(mouse_form):
                 context.screen.blit(button_plate_on, (context.width / 2 - 110, 510))
                 print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 2 + 10), 595), context)
-            if back_main_menu.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15:
+            if (back_main_menu.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15) or (keys[pygame.K_ESCAPE] and mouse_press_time > 15):
                 mouse_press_time = 0
                 which_menu = "main menu"
             if game_options_button.colliderect(mouse_form) and mouse_click:
@@ -179,7 +180,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 pygame.display.set_icon(ship)
             if options_save.how_number >= len(options_save.languages.keys()):
                 options_save.how_number = 0
-            if back_main_menu.colliderect(mouse_form) and mouse_click:
+            if (back_main_menu.colliderect(mouse_form) and mouse_click) or keys[pygame.K_ESCAPE]:
+                mouse_press_time = 0
                 which_menu = "options"
                 options_save.saving_writing()
 
@@ -238,7 +240,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                     get_input = True
                     which_control = "right"
                     print_text((options_save.languages[options_save.select_language])["press"], 45, (255, 255, 255), ((1280 / 3 * 2 + 175), 200), context)
-                if back_main_menu.colliderect(mouse_form) and mouse_click:
+                if (back_main_menu.colliderect(mouse_form) and mouse_click) or keys[pygame.K_ESCAPE]:
+                    mouse_press_time = 0
                     which_menu = "options"
                     options_save.saving_writing()
             else:
@@ -262,7 +265,6 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
 
             credits_y = credits_y - 1
             
-            keys = pygame.key.get_pressed()
             if keys[pygame.K_ESCAPE] or credits_y <= -1050:
                 which_menu = "main menu"
             
@@ -333,7 +335,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 else:
                     delete_account = True
                 mouse_press_time = 0
-            if back_main_menu.colliderect(mouse_form) and mouse_click:
+            if (back_main_menu.colliderect(mouse_form) and mouse_click) or (keys[pygame.K_ESCAPE] and mouse_press_time > 15):
+                mouse_press_time = 0
                 which_menu = "main menu"
 
         if which_menu == "new ship":
@@ -365,7 +368,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 context.screen.blit(ship, ((context.width / 4 - 165), 550))
             if name_button.colliderect(mouse_form) and mouse_click:
                 get_key = True
-            if back_main_menu.colliderect(mouse_form) and mouse_click:
+            if (back_main_menu.colliderect(mouse_form) and mouse_click) or keys[pygame.K_ESCAPE]:
+                mouse_press_time = 0
                 which_menu = "players"
                 delete_account = False
             if difficulty_button.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
