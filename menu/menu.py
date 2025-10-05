@@ -44,7 +44,11 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     player_name = ""
     dif = 0
     delete_account = False
-
+    draw_mouse = True
+    how_many_button = 0
+    mouse_1 = pygame.mouse.get_pos()
+    enter = False
+    
     mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
     
     while running:
@@ -54,15 +58,43 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 running = False
                 must_quit = True
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_click = True
+                pass
+        mouse_button = pygame.mouse.get_pressed()
+        if mouse_button[0]:
+            mouse_click = True
+        if not draw_mouse:
+            mouse_2 = pygame.mouse.get_pos()
+            if not mouse_1 == mouse_2:
+                draw_mouse = True
+                how_many_button = 0
         mouse_press_time = mouse_press_time + 1
         keys = pygame.key.get_pressed()
         
         context.screen.fill((0, 0, 0))
-
+        
         if which_menu == "main menu":
+
+            if keys[options_save.up_control] and mouse_press_time > 15:
+                mouse_1 = pygame.mouse.get_pos()
+                mouse_press_time = 0
+                draw_mouse = False
+                how_many_button = how_many_button - 1
+                if how_many_button <= 0:
+                    how_many_button = 1
+            if keys[options_save.down_control] and mouse_press_time > 15:
+                mouse_1 = pygame.mouse.get_pos()
+                mouse_press_time = 0
+                draw_mouse = False
+                how_many_button = how_many_button + 1
+                if how_many_button > 4:
+                    how_many_button = 4
+            if keys[pygame.K_RETURN]:
+                enter = True
+            else:
+                enter = False
+                    
             print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
-            print_text("Alpha 0.1.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
+            print_text("Alpha 0.2.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
             play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
             if not escape:
                 print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
@@ -78,39 +110,42 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             else:
                 print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
 
-            if play_game.colliderect(mouse_form):
+            if (play_game.colliderect(mouse_form) and draw_mouse) or how_many_button == 1:
                 context.screen.blit(button_plate_on, ((1280 / 2 - 100), 160))
                 if not escape:
                     print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
                 else:
                     print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
-            if credits.colliderect(mouse_form):
+            if (credits.colliderect(mouse_form) and draw_mouse) or how_many_button == 2:
                 context.screen.blit(button_plate_on, ((1280 / 2 - 100), 305))
                 print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 20), 390), context)
-            if options.colliderect(mouse_form):
+            if (options.colliderect(mouse_form) and draw_mouse) or how_many_button == 3:
                 context.screen.blit(button_plate_on, ((1280 / 2 - 100), 450))
                 print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 20), 535), context)
-            if game_quit.colliderect(mouse_form):
+            if (game_quit.colliderect(mouse_form) and draw_mouse) or how_many_button == 4:
                 context.screen.blit(button_plate_on, ((1280 / 2 - 100), 595))
                 if not escape:
                     print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
                 else:
                     print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
-            if play_game.colliderect(mouse_form) and mouse_click:
+            if (play_game.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 1 and enter and mouse_press_time > 15):
                 if not escape:
+                    mouse_press_time = 0
                     which_menu = "players"
                     delete_account = False
                     mouse_click = False
                     ic2 = False
                 else:
                     return False
-            if credits.colliderect(mouse_form) and mouse_click:
+            if (credits.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 2 and enter):
                 which_menu = "credits"
                 credits_y = 720
-            if options.colliderect(mouse_form) and mouse_click:
+            if (options.colliderect(mouse_form) and mouse_click and draw_mouse and mouse_press_time > 15) or (how_many_button == 3 and enter):
                 mouse_press_time = 0
+                how_many_button = 1
                 which_menu = "options"
-            if game_quit.colliderect(mouse_form) and mouse_click:
+            if (game_quit.colliderect(mouse_form) and mouse_click and draw_mouse and mouse_press_time > 15) or (how_many_button == 4 and enter):
+                mouse_press_time = 0
                 if not escape:
                     running = False
                     must_quit = True
@@ -118,6 +153,26 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                     return True, None
 
         if which_menu == "options":
+
+            if keys[options_save.up_control] and mouse_press_time > 15:
+                mouse_1 = pygame.mouse.get_pos()
+                mouse_press_time = 0
+                draw_mouse = False
+                how_many_button = how_many_button - 1
+                if how_many_button <= 0:
+                    how_many_button = 1
+            if keys[options_save.down_control] and mouse_press_time > 15:
+                mouse_1 = pygame.mouse.get_pos()
+                mouse_press_time = 0
+                draw_mouse = False
+                how_many_button = how_many_button + 1
+                if how_many_button > 3:
+                    how_many_button = 3
+            if keys[pygame.K_RETURN]:
+                enter = True
+            else:
+                enter = False
+            
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             game_options_button = context.screen.blit(button_plate, (context.width / 2 - 110, 140))
             print_text((options_save.languages[options_save.select_language])["game"], 45, (255, 255, 255), ((1280 / 2 + 5), 220), context)
@@ -126,22 +181,29 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             back_main_menu = context.screen.blit(button_plate, (context.width / 2 - 110, 510))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 2 + 5), 590), context)
 
-            if game_options_button.colliderect(mouse_form):
+            if (game_options_button.colliderect(mouse_form) and draw_mouse) or (how_many_button == 1 and not draw_mouse):
                 context.screen.blit(button_plate_on, (context.width / 2 - 110, 140))
                 print_text((options_save.languages[options_save.select_language])["game"], 45, (255, 255, 255), ((1280 / 2 + 10), 225), context)
-            if controls_button.colliderect(mouse_form):
+            if (controls_button.colliderect(mouse_form) and draw_mouse) or (how_many_button == 2 and not draw_mouse):
                 context.screen.blit(button_plate_on, (context.width / 2 - 110, 285))
                 print_text((options_save.languages[options_save.select_language])["controls"], 45, (255, 255, 255), ((1280 / 2 + 10), 370), context)
-            if back_main_menu.colliderect(mouse_form):
+            if (back_main_menu.colliderect(mouse_form) and draw_mouse) or (how_many_button == 3 and not draw_mouse):
                 context.screen.blit(button_plate_on, (context.width / 2 - 110, 510))
                 print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 2 + 10), 595), context)
-            if (back_main_menu.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15) or (keys[pygame.K_ESCAPE] and mouse_press_time > 15):
+            if (back_main_menu.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15 and draw_mouse) or (keys[pygame.K_ESCAPE] and mouse_press_time > 15) or (how_many_button == 3 and not draw_mouse and enter):
                 mouse_press_time = 0
+                if not draw_mouse:
+                    how_many_button = 1
                 which_menu = "main menu"
-            if game_options_button.colliderect(mouse_form) and mouse_click:
-                which_menu = "game options"
-            if controls_button.colliderect(mouse_form) and mouse_click:
+            if (game_options_button.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 1 and not draw_mouse and enter and mouse_press_time > 15):
                 mouse_press_time = 0
+                if not draw_mouse:
+                    how_many_button = 1
+                which_menu = "game options"
+            if (controls_button.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 2 and not draw_mouse and enter):
+                mouse_press_time = 0
+                if not draw_mouse:
+                    how_many_button = 1
                 which_menu = "controls"
                 get_input = False
 
@@ -290,7 +352,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 if how_many == 4:
                     how_many = 1
                     how_many_2 = 2
-                if player_box.colliderect(mouse_form) and mouse_click:
+                if player_box.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
+                    mouse_press_time = 0
                     unlock_player_name = player_name
                     if delete_account == False:
                         if not escape:
@@ -378,24 +441,29 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 if dif >= 2:
                     dif = -1
             if create_button.colliderect(mouse_form) and mouse_click:
-                ic = True
-                for ship_name in os.listdir("texts/players"):
-                    if ship_name == new_ship_name:
-                        ic = False
-                if ic:
-                    with open(f"texts/players/{new_ship_name}", "w") as f:
-                        f.write(f"{dif}\n")
-                        f.write("1\n")
-                        f.write("1\n")
-                        f.write("0\n")
-                        f.write("0\n")
-                        f.write("1\n")
-                        f.write("1\n")
-                        f.write("0\n")
-                        f.write("0\n")
-                        f.write("0\n")
-                    which_menu = "players"
-                    ic2 = False
+                mouse_press_time = 0
+                if not new_ship_name == "":
+                    ic = True
+                    for ship_name in os.listdir("texts/players"):
+                        if ship_name == new_ship_name:
+                            ic = False
+                    if ic:
+                        with open(f"texts/players/{new_ship_name}", "w") as f:
+                            f.write(f"{dif}\n")
+                            f.write("1\n")
+                            f.write("1\n")
+                            f.write("0\n")
+                            f.write("0\n")
+                            f.write("1\n")
+                            f.write("1\n")
+                            f.write("0\n")
+                            f.write("0\n")
+                            f.write("0\n")
+                        mau = Map_and_Upgrades(new_ship_name)
+                        which_menu = "map"
+                        ic2 = False
+                else:
+                    ic = False
 
             if get_key:
                 typing = True
@@ -423,8 +491,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             which_menu, mouse_press_time = mau.upgrade(context, mouse_form, mouse_click, mouse_press_time, options_save, ship)
             if which_menu == "play the game":
                 return False, unlock_player_name
-            
-        mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
+        if draw_mouse:
+            mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
 
         pygame.display.flip()
         context.delta_time = context.clock.tick(60) / 1000
