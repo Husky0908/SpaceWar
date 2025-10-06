@@ -81,14 +81,19 @@ class Map_and_Upgrades:
         if start_button.colliderect(mouse_form):
             context.screen.blit(ship, ((1280 / 4 * 2 + 45), 625))
 
-        if first_mission.colliderect(mouse_form) and mouse_click and not self.how_many_map == 1 and not self.how_many_map_now == 1.5:
+        keys = pygame.key.get_pressed()
+        if ((first_mission.colliderect(mouse_form) and mouse_click) or keys[options_save.left_control]) and not self.how_many_map == 1 and not self.how_many_map_now == 1.5:
             self.how_many_map = 1
             self.move = True
             self.get_direction_map()
-        if second_mission.colliderect(mouse_form) and mouse_click and not self.how_many_map == 2 and self.hmmu >= 2 and not self.how_many_map_now == 1.5:
+        if ((second_mission.colliderect(mouse_form) and mouse_click) or keys[options_save.right_control]) and not self.how_many_map == 2 and self.hmmu >= 2 and not self.how_many_map_now == 1.5:
             self.how_many_map = 2
             self.move = True
             self.get_direction_map()
+        if keys[pygame.K_RETURN]:
+            enter = True
+        else:
+            enter = False
             
         if self.move:
             d_t = self.time - self.start_time
@@ -105,7 +110,7 @@ class Map_and_Upgrades:
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1) or (first_mission.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1):
+        if (start_button.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1) or (first_mission.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1) or (enter and self.how_many_map_now == 1):
             return "play the game", mouse_click_time
         if go_upgrade.colliderect(mouse_form) and mouse_click and mouse_click_time >= 15:
             mouse_click_time = 0

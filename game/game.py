@@ -91,7 +91,7 @@ class Game:
 
         game_logic_parameters = GameLogic(player.dif, player.level)
 
-        bullets = Bullets()
+        bullets = Bullets(context)
         rockets = Rockets()
         runners = Runners()
         bullet_shooters = BulletShooters()

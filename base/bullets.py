@@ -46,8 +46,8 @@ class Bullet:
 
 
 class Bullets:
-    def __init__(self):
-        self.last_spawn = 100
+    def __init__(self, context: PygameContext):
+        self.last_spawn = context.time
         self.elements = []
 
     def control(self, context: PygameContext):

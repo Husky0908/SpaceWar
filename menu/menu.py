@@ -128,14 +128,14 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                     print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
                 else:
                     print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
-            if (play_game.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 1 and enter and mouse_press_time > 15):
-                if not escape:
+            if (play_game.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 1 and enter and mouse_press_time > 15) or keys[pygame.K_ESCAPE]:
+                if not escape and not keys[pygame.K_ESCAPE]:
                     mouse_press_time = 0
                     which_menu = "players"
                     delete_account = False
                     mouse_click = False
                     ic2 = False
-                else:
+                if escape:
                     return False
             if (credits.colliderect(mouse_form) and mouse_click and draw_mouse) or (how_many_button == 2 and enter):
                 which_menu = "credits"
@@ -473,13 +473,13 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                             if event.unicode == chr(pygame.K_ESCAPE) or event.unicode == chr(pygame.K_BACKSPACE) or event.unicode == chr(pygame.K_RETURN):
                                 if event.unicode == chr(pygame.K_BACKSPACE):
                                     if len(new_ship_name) > 0:
-                                        new_ship_name = new_ship_name.strip(new_ship_name[len(new_ship_name) - 1])
+                                        new_ship_name = new_ship_name[:-1]
                                 else:
                                     get_key = False
                                 typing = False
                             else:
                                 typing = False
-                                new_ship_name = new_ship_name + chr(event.key)
+                                new_ship_name = new_ship_name + event.unicode
             print_text(new_ship_name, 45, (255, 255, 255), (context.width // 3 * 2, context.height // 3), context)
 
         if which_menu == "map":
