@@ -36,6 +36,8 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     credits_hun = pygame.image.load("Pictures/menu_pictures/credits_hun.png").convert_alpha()
     button_plate = pygame.image.load("Pictures/menu_pictures/button_plate.png").convert_alpha()
     button_plate_on = pygame.image.load("Pictures/menu_pictures/button_plate_on.png").convert_alpha()
+    big_button_plate = pygame.image.load("Pictures/menu_pictures/big_button_plate.png").convert_alpha()
+    big_button_plate_on = pygame.image.load("Pictures/menu_pictures/big_button_plate_on.png").convert_alpha()
     
     running = True
     must_quit = False
@@ -48,9 +50,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     how_many_button = 0
     mouse_1 = pygame.mouse.get_pos()
     enter = False
-    
+
     mouse_form = pygame.draw.circle(context.screen, (255, 255, 255), pygame.mouse.get_pos(), 10)
-    
+
     while running:
         mouse_click = False
         for event in pygame.event.get():
@@ -69,9 +71,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 how_many_button = 0
         mouse_press_time = mouse_press_time + 1
         keys = pygame.key.get_pressed()
-        
+
         context.screen.fill((0, 0, 0))
-        
+
         if which_menu == "main menu":
 
             if keys[options_save.up_control] and mouse_press_time > 15:
@@ -92,7 +94,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 enter = True
             else:
                 enter = False
-                    
+
             print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
             print_text("Alpha 0.2.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
             play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
@@ -172,7 +174,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 enter = True
             else:
                 enter = False
-            
+
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
             game_options_button = context.screen.blit(button_plate, (context.width / 2 - 110, 140))
             print_text((options_save.languages[options_save.select_language])["game"], 45, (255, 255, 255), ((1280 / 2 + 5), 220), context)
@@ -326,10 +328,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 context.screen.blit(credits_hun, (0, credits_y))
 
             credits_y = credits_y - 1
-            
             if keys[pygame.K_ESCAPE] or credits_y <= -1050:
                 which_menu = "main menu"
-            
+
         if which_menu == "players":
             if not os.path.isdir("texts/players"):
                 os.mkdir("texts/players")
@@ -355,7 +356,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 if player_box.colliderect(mouse_form) and mouse_click and mouse_press_time > 15:
                     mouse_press_time = 0
                     unlock_player_name = player_name
-                    if delete_account == False:
+                    if not delete_account:
                         if not escape:
                             mau = Map_and_Upgrades(player_name)
                             which_menu = "map"
@@ -365,16 +366,25 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                         os.remove(f"texts/players/{player_name}")
                         delete_account = False
 
-            new_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 - 200), 625, 400, 80))
-            print_text((options_save.languages[options_save.select_language])["create"], 45, (0, 0, 0), ((context.width / 5), 665), context)
-            delete_ship = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 5 * 3 - 235), 625, 400, 80))
+            new_ship = context.screen.blit(big_button_plate, ((context.width / 5 - 200), 575))
+            print_text((options_save.languages[options_save.select_language])["create"], 45, (255, 255, 255), ((context.width / 5 + 25), 665), context)
+            delete_ship = context.screen.blit(big_button_plate, ((context.width / 5 + 275), 575))
             if delete_account == False:
-                print_text((options_save.languages[options_save.select_language])["delete"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
+                print_text((options_save.languages[options_save.select_language])["delete"], 45, (255, 255, 255), ((context.width / 5 * 3 - 10), 665), context)
             else:
-                print_text((options_save.languages[options_save.select_language])["cancel"], 45, (0, 0, 0), ((context.width / 5 * 3 - 35), 665), context)
+                print_text((options_save.languages[options_save.select_language])["cancel"], 45, (255, 255, 255), ((context.width / 5 * 3 - 10), 665), context)
             back_main_menu = context.screen.blit(button_plate, (context.width / 4 * 3 + 60, 590))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 670), context)
-
+            
+            if new_ship.colliderect(mouse_form):
+                context.screen.blit(big_button_plate_on, ((context.width / 5 - 195), 580))
+                print_text((options_save.languages[options_save.select_language])["create"], 45, (255, 255, 255), ((context.width / 5 + 25), 663), context)
+            if delete_ship.colliderect(mouse_form):
+                context.screen.blit(big_button_plate_on, ((context.width / 5 + 275), 580))
+                if delete_account == False:
+                    print_text((options_save.languages[options_save.select_language])["delete"], 45, (255, 255, 255), ((context.width / 5 * 3 - 10), 662), context)
+                else:
+                    print_text((options_save.languages[options_save.select_language])["cancel"], 45, (255, 255, 255), ((context.width / 5 * 3 - 10), 662), context)
             if back_main_menu.colliderect(mouse_form):
                 context.screen.blit(button_plate_on, (context.width / 4 * 3 + 60, 590))
                 print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 675), context)
