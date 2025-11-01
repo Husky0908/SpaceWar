@@ -30,6 +30,11 @@ class Map_and_Upgrades:
         self.upgrader_box_picture = pygame.image.load("Pictures/other_pictures/upgrader_box.png").convert_alpha()
         self.button_plate = pygame.image.load("Pictures/menu_pictures/button_plate.png").convert_alpha()
         self.button_plate_on = pygame.image.load("Pictures/menu_pictures/button_plate_on.png").convert_alpha()
+        self.upgrade_picture = pygame.image.load("Pictures/menu_pictures/upgrade.png").convert_alpha()
+        self.upgrade_max_picture = pygame.image.load("Pictures/menu_pictures/upgrade_max.png").convert_alpha()
+        self.easy_picture = pygame.image.load("Pictures/menu_pictures/easy.png").convert_alpha()
+        self.normal_picture = pygame.image.load("Pictures/menu_pictures/normal.png").convert_alpha()
+        self.hard_picture = pygame.image.load("Pictures/menu_pictures/hard.png").convert_alpha()
         self.dir_x = 0
         self.dir_y = 0
         self.start_time = 0
@@ -65,6 +70,12 @@ class Map_and_Upgrades:
             print_text((options_save.languages[options_save.select_language])["coming"], 60, (255, 255, 255), (220, 300), context)
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
+        if self.difficulty == -1:
+            context.screen.blit(self.easy_picture, (115, 100))
+        if self.difficulty == 0:
+            context.screen.blit(self.normal_picture, (115, 100))
+        if self.difficulty == 1:
+            context.screen.blit(self.hard_picture, (115, 100))
         start_button = context.screen.blit(self.button_plate, ((context.width / 4 * 2 + 110), 590))
         print_text((options_save.languages[options_save.select_language])["start"], 45, (255, 255, 255), ((context.width / 4 * 2 + 225), 670), context)
         go_upgrade = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
@@ -97,7 +108,7 @@ class Map_and_Upgrades:
             enter = True
         else:
             enter = False
-            
+
         if self.move:
             d_t = self.time - self.start_time
             if d_t < 47:
@@ -124,7 +135,7 @@ class Map_and_Upgrades:
             return "sure quit 2", mouse_button_state
         else:
             return "map", mouse_button_state
-        
+
     def upgrade(self, context: PygameContext, mouse_form, mouse_button_state, options_save: OptionsSave, ship):
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         go_map = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
@@ -139,12 +150,13 @@ class Map_and_Upgrades:
         print_text(str(self.upgrade_box), 45, (255, 255, 255), (context.width / 2 + 150, 80), context)
         print_text((options_save.languages[options_save.select_language])["machine gun"], 45, (255, 255, 255), (context.width / 4, context.height / 4 * 3 - 50), context)
         print_text((options_save.languages[options_save.select_language])["level"] + " " + str(self.mas_gun), 45, (255, 255, 255), (context.width / 4, context.height / 4 * 3), context)
-        mas_gun_upgrade_button = pygame.draw.rect(context.screen, (255, 255, 255), (context.width / 4 - 100, context.height / 4 * 3 + 40, 200, 80))
         if self.mas_gun == 1:
+            mas_gun_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
             context.screen.blit(self.coin_picture, (context.width / 4 - 60, context.height / 4 * 3 + 55))
-            print_text("200", 45, (0, 0, 0), (context.width / 4 + 20, context.height / 4 * 3 + 80), context)
-        if self.mas_gun == 2:
-            print_text("Max", 45, (0, 0, 0), (context.width / 4, context.height / 4 * 3 + 80), context)
+            print_text("200", 45, (255, 255, 255), (context.width / 4 + 20, context.height / 4 * 3 + 80), context)
+        else:
+            mas_gun_upgrade_button = context.screen.blit(self.upgrade_max_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
+            print_text("Max", 45, (255, 255, 255), (context.width / 4, context.height / 4 * 3 + 80), context)
 
         if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.mas_gun == 1 and self.coin >= 200:
             mouse_button_state = 2
