@@ -121,7 +121,7 @@ class Map_and_Upgrades:
             return "upgrade", mouse_button_state
         if back_main_menu.colliderect(mouse_form) and mouse_button_state == 1:
             mouse_button_state = 2
-            return "main menu", mouse_button_state
+            return "sure quit 2", mouse_button_state
         else:
             return "map", mouse_button_state
         
@@ -161,7 +161,7 @@ class Map_and_Upgrades:
 
         if back_main_menu.colliderect(mouse_form) and mouse_button_state == 1:
             mouse_button_state = 2
-            return "main menu", mouse_button_state
+            return "sure quit 3", mouse_button_state
         if go_map.colliderect(mouse_form) and mouse_button_state == 1:
             mouse_button_state = 2
             return "map", mouse_button_state

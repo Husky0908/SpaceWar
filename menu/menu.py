@@ -41,6 +41,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
     player_name_plate = pygame.image.load("Pictures/menu_pictures/player_name.png").convert_alpha()
     on_picture = pygame.image.load("Pictures/menu_pictures/on.png").convert_alpha()
     off_picture = pygame.image.load("Pictures/menu_pictures/off.png").convert_alpha()
+    sure_picture = pygame.image.load("Pictures/menu_pictures/sure.png").convert_alpha()
 
     running = True
     must_quit = False
@@ -130,8 +131,9 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             if game_quit.colliderect(mouse_form) and mouse_button_state == 1:
                 mouse_button_state = 2
                 if not escape:
-                    running = False
-                    must_quit = True
+                    # running = False
+                    # must_quit = True
+                    which_menu = "sure quit"
                 else:
                     return True, None
 
@@ -461,6 +463,43 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
             which_menu, mouse_button_state = mau.upgrade(context, mouse_form, mouse_button_state, options_save, ship)
             if which_menu == "play the game":
                 return False, unlock_player_name
+
+        if which_menu == "sure quit" or which_menu == "sure quit 2" or which_menu == "sure quit 3":
+            sure_picture_plate = context.screen.blit(sure_picture, (0, 80))
+            if which_menu == "sure quit":
+                print_text((options_save.languages[options_save.select_language])["sure quit"], 60, (255, 255, 255), ((1280 / 2 - 295), 720 / 2 + 15), context)
+            elif not options_save.select_language == "English":
+                print_text((options_save.languages[options_save.select_language])["sure quit 2"], 60, (255, 255, 255), ((1280 / 2 - 295), 720 / 2 + 15), context)
+            else:
+                print_text((options_save.languages[options_save.select_language])["sure quit 2"], 60, (255, 255, 255), ((1280 / 2 - 295), 720 / 2 - 25), context)
+                print_text((options_save.languages[options_save.select_language])["sure quit 3"], 60, (255, 255, 255), ((1280 / 2 - 295), 720 / 2 + 40), context)
+            no_button = context.screen.blit(button_plate, ((1280 / 2 + 50), 720 / 2 - 50))
+            print_text((options_save.languages[options_save.select_language])["no"], 45, (255, 255, 255), ((1280 / 2 + 160), 720 / 2 + 30), context)
+            yes_button = context.screen.blit(button_plate, ((1280 / 2 + 350), 720 / 2 - 50))
+            print_text((options_save.languages[options_save.select_language])["yes"], 45, (255, 255, 255), ((1280 / 2 + 460), 720 / 2 + 30), context)
+
+            if no_button.colliderect(mouse_form):
+                context.screen.blit(button_plate_on, ((1280 / 2 + 50), 720 / 2 - 50))
+                print_text((options_save.languages[options_save.select_language])["no"], 45, (255, 255, 255), ((1280 / 2 + 165), 720 / 2 + 35), context)
+            if yes_button.colliderect(mouse_form):
+                context.screen.blit(button_plate_on, ((1280 / 2 + 350), 720 / 2 - 50))
+                print_text((options_save.languages[options_save.select_language])["yes"], 45, (255, 255, 255), ((1280 / 2 + 465), 720 / 2 + 35), context)
+
+            if (no_button.colliderect(mouse_form) and mouse_button_state == 1) or keys[pygame.K_ESCAPE] or (mouse_button_state == 1 and not sure_picture_plate.colliderect(mouse_form)):
+                mouse_button_state = 2
+                if which_menu == "sure quit":
+                    which_menu = "main menu"
+                elif which_menu == "sure quit 2":
+                    which_menu = "map"
+                else:
+                    which_menu = "upgrade"
+            if yes_button.colliderect(mouse_form) and mouse_button_state == 1:
+                mouse_button_state = 2
+                if which_menu == "sure quit":
+                    running = False
+                    must_quit = True
+                else:
+                    which_menu = "main menu"
 
         if not delete_account:
             mouse_form = context.screen.blit(mouse_picture, pygame.mouse.get_pos())
