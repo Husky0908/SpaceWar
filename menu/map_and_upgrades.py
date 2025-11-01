@@ -40,7 +40,7 @@ class Map_and_Upgrades:
         self.y = 545
         self.move = False
 
-    def map(self, context: PygameContext, mouse_form, mouse_click, mouse_click_time, options_save: OptionsSave, ship):
+    def map(self, context: PygameContext, mouse_form, mouse_button_state, options_save: OptionsSave, ship):
         first_mission = pygame.draw.rect(context.screen, (255, 255, 255), (55, 545, 80, 80))
         second_mission = pygame.draw.rect(context.screen, (255, 255, 255), (200, 370, 80, 80))
         context.screen.blit(self.map_background, (0, 0))
@@ -65,8 +65,8 @@ class Map_and_Upgrades:
             print_text((options_save.languages[options_save.select_language])["coming"], 60, (255, 255, 255), (220, 300), context)
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
-        start_button = pygame.draw.rect(context.screen, (255, 255, 255), ((context.width / 4 * 2 + 110), 625, 200, 80))
-        print_text((options_save.languages[options_save.select_language])["start"], 45, (0, 0, 0), ((context.width / 4 * 2 + 210), 665), context)
+        start_button = context.screen.blit(self.button_plate, ((context.width / 4 * 2 + 110), 590))
+        print_text((options_save.languages[options_save.select_language])["start"], 45, (255, 255, 255), ((context.width / 4 * 2 + 225), 670), context)
         go_upgrade = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
         print_text((options_save.languages[options_save.select_language])["upgrades"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 130), context)
         back_main_menu = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 590))
@@ -79,14 +79,17 @@ class Map_and_Upgrades:
             context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 50))
             print_text((options_save.languages[options_save.select_language])["upgrades"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 135), context)
         if start_button.colliderect(mouse_form):
-            context.screen.blit(ship, ((1280 / 4 * 2 + 45), 625))
+            context.screen.blit(self.button_plate_on, ((context.width / 4 * 2 + 110), 590))
+            print_text((options_save.languages[options_save.select_language])["start"], 45, (255, 255, 255), ((context.width / 4 * 2 + 230), 675), context)
 
         keys = pygame.key.get_pressed()
-        if ((first_mission.colliderect(mouse_form) and mouse_click) or keys[options_save.left_control]) and not self.how_many_map == 1 and not self.how_many_map_now == 1.5:
+        if ((first_mission.colliderect(mouse_form) and mouse_button_state == 1) or keys[options_save.left_control]) and not self.how_many_map == 1 and not self.how_many_map_now == 1.5:
+            mouse_button_state = 2
             self.how_many_map = 1
             self.move = True
             self.get_direction_map()
-        if ((second_mission.colliderect(mouse_form) and mouse_click) or keys[options_save.right_control]) and not self.how_many_map == 2 and self.hmmu >= 2 and not self.how_many_map_now == 1.5:
+        if ((second_mission.colliderect(mouse_form) and mouse_button_state == 1) or keys[options_save.right_control]) and not self.how_many_map == 2 and self.hmmu >= 2 and not self.how_many_map_now == 1.5:
+            mouse_button_state = 2
             self.how_many_map = 2
             self.move = True
             self.get_direction_map()
@@ -110,17 +113,19 @@ class Map_and_Upgrades:
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1) or (first_mission.colliderect(mouse_form) and mouse_click and self.how_many_map_now == 1) or (enter and self.how_many_map_now == 1):
-            return "play the game", mouse_click_time
-        if go_upgrade.colliderect(mouse_form) and mouse_click and mouse_click_time >= 15:
-            mouse_click_time = 0
-            return "upgrade", mouse_click_time
-        if back_main_menu.colliderect(mouse_form) and mouse_click:
-            return "main menu", mouse_click_time
+        if (start_button.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (enter and self.how_many_map_now == 1):
+            mouse_button_state = 2
+            return "play the game", mouse_button_state
+        if go_upgrade.colliderect(mouse_form) and mouse_button_state == 1:
+            mouse_button_state = 2
+            return "upgrade", mouse_button_state
+        if back_main_menu.colliderect(mouse_form) and mouse_button_state == 1:
+            mouse_button_state = 2
+            return "main menu", mouse_button_state
         else:
-            return "map", mouse_click_time
+            return "map", mouse_button_state
         
-    def upgrade(self, context: PygameContext, mouse_form, mouse_click, mouse_press_time, options_save: OptionsSave, ship):
+    def upgrade(self, context: PygameContext, mouse_form, mouse_button_state, options_save: OptionsSave, ship):
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         go_map = context.screen.blit(self.button_plate, (context.width / 4 * 3 + 60, 50))
         print_text((options_save.languages[options_save.select_language])["map"], 45, (255, 255, 255), ((1280 / 4 * 3 + 175), 130), context)
@@ -141,7 +146,8 @@ class Map_and_Upgrades:
         if self.mas_gun == 2:
             print_text("Max", 45, (0, 0, 0), (context.width / 4, context.height / 4 * 3 + 80), context)
 
-        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_click and self.mas_gun == 1 and self.coin >= 200:
+        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.mas_gun == 1 and self.coin >= 200:
+            mouse_button_state = 2
             self.mas_gun = 2
             self.coin = self.coin - 200
             self.write_file()
@@ -153,13 +159,14 @@ class Map_and_Upgrades:
             context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 50))
             print_text((options_save.languages[options_save.select_language])["map"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 135), context)
 
-        if back_main_menu.colliderect(mouse_form) and mouse_click:
-            return "main menu", mouse_press_time
-        if go_map.colliderect(mouse_form) and mouse_click and mouse_press_time >= 15:
-            mouse_press_time = 0
-            return "map", mouse_press_time
+        if back_main_menu.colliderect(mouse_form) and mouse_button_state == 1:
+            mouse_button_state = 2
+            return "main menu", mouse_button_state
+        if go_map.colliderect(mouse_form) and mouse_button_state == 1:
+            mouse_button_state = 2
+            return "map", mouse_button_state
         else:
-            return "upgrade", mouse_press_time
+            return "upgrade", mouse_button_state
         
     def write_file(self):
         with open(f"texts/players/{self.ship_name}", "w") as f:
