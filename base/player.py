@@ -7,7 +7,7 @@ from texts.text_print import print_text
 
 
 class Player:
-    def __init__(self, x: int, y: int, name: str):
+    def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.health = 5
@@ -21,7 +21,6 @@ class Player:
             "Pictures/players_pictures/player_ship_4_hp_j.png").convert_alpha(), pygame.image.load(
             "Pictures/players_pictures/player_ship_5_hp_j.png").convert_alpha()]
         self.r = None
-        self.name = name
         self.coins = 0
         self.coin_pictures = pygame.image.load("Pictures/other_pictures/coin_big.png")
         self.upgrader_pictures = pygame.image.load("Pictures/other_pictures/upgrader_box_big.png")
@@ -34,7 +33,7 @@ class Player:
         self.bomb_power = 0
         self.rocket_power = 0
         self.skins = 0
-        self.read_player_text()
+        # self.read_player_text()
 
     def read_player_text(self):
         with open(f"texts/players/{self.name}", "r") as f:
@@ -100,10 +99,10 @@ class Player:
                 self.health = self.health - 1
                 bullet.sharp = False
 
-        for coin in coins.elements:
-            if coin.form.colliderect(self.form):
-                self.coins = self.coins + coin.value
-                coin.delete = True
+        # for coin in coins.elements:
+        #     if coin.form.colliderect(self.form):
+        #         self.coins = self.coins + coin.value
+        #         coin.delete = True
 
         for plus_h in plus_hp.elements:
             if plus_h.form.colliderect(self.form) and self.health < 5:
@@ -112,10 +111,10 @@ class Player:
                     self.health = 5
                 plus_h.delete = True
 
-        for upgrade in upgrades.elements:
-            if upgrade.form.colliderect(self.form):
-                self.upgrades_box = self.upgrades_box + upgrade.value
-                upgrade.delete = True
+        # for upgrade in upgrades.elements:
+        #     if upgrade.form.colliderect(self.form):
+        #         self.upgrades_box = self.upgrades_box + upgrade.value
+        #         upgrade.delete = True
 
     def control(self, context: PygameContext, running, options_save: OptionsSave, bullets: Bullets):
         keys = pygame.key.get_pressed()
@@ -142,7 +141,7 @@ class Player:
             self.mashingun_shoot(True, bullets, context)
             
         if self.health <= 0:
-            self.write_player_text()
+            # self.write_player_text()
             running = True
 
         return running
@@ -150,8 +149,8 @@ class Player:
     def mashingun_shoot(self, running, bullets: Bullets, context: PygameContext):
         if running:
             shoot_time = 30
-            if self.gun_power == 2:
-                shoot_time = 25
+            # if self.gun_power == 2:
+            #     shoot_time = 25
             if bullets.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))

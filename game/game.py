@@ -59,8 +59,8 @@ class Game:
         context.screen.fill((0, 0, 0))
 
         plus_hp.draw(context)
-        coins.draw(context)
-        upgrades.draw(context)
+        # coins.draw(context)
+        # upgrades.draw(context)
 
         bullet_shooters.draw(context)
         runners.draw(context)
@@ -85,11 +85,11 @@ class Game:
             return event.key
         return None
 
-    def game(self, context: PygameContext, options_saving: OptionsSave, name):
-        player = Player(context.width // 2, context.height // 2, name)
-        first_boss = FirstBoss(0, -350, player.dif)
+    def game(self, context: PygameContext, options_saving: OptionsSave):
+        player = Player(context.width // 2, context.height // 2)
+        first_boss = FirstBoss(0, -350, 0)
 
-        game_logic_parameters = GameLogic(player.dif, player.level)
+        game_logic_parameters = GameLogic(0, 1)
 
         bullets = Bullets(context)
         rockets = Rockets()
@@ -133,7 +133,7 @@ class Game:
                 show_menu = False
                 if game_next:
                     player.health = 0
-                    player.write_player_text()
+                    # player.write_player_text()
                     self.end = True
                     self.end_text = ""
 
@@ -154,7 +154,7 @@ class Game:
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
                             if player.level == player.unlock_levels:
                                 player.unlock_levels = player.unlock_levels + 1
-                            player.write_player_text()
+                            # player.write_player_text()
                             player.health = 0
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades)
                     self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades)
@@ -210,6 +210,4 @@ class Game:
                     cheat_mode = False
 
             context.delta_time = context.clock.tick(60) / 1000
-
-        return player.name
             

@@ -16,16 +16,10 @@ def _get_key_code() -> int | None:
                     return event.key
 
 
-def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_game: bool, player_name: str) -> bool:
+def menu(context: PygameContext, options_save: OptionsSave, escape: bool) -> bool:
     options_save.saving_reading()
-    if after_game:
-        mau = Map_and_Upgrades(player_name)
-        which_menu = "map"
-        unlock_player_name = player_name
-    else:
-        which_menu = "main menu"
-        unlock_player_name = ""
-
+    which_menu = "main menu"
+    
     pygame.mouse.set_visible(False)
     pygame.display.set_caption("Space War")
 
@@ -80,64 +74,124 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
 
         if which_menu == "main menu":
 
-            print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
-            print_text("Alpha 0.2.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
-            play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
-            if not escape:
-                print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
-            else:
-                print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
-            credits = context.screen.blit(button_plate, ((1280 / 2 - 100), 305))
-            print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 15), 385), context)
-            options = context.screen.blit(button_plate, ((1280 / 2 - 100), 450))
-            print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 15), 530), context)
-            game_quit = context.screen.blit(button_plate, ((1280 / 2 - 100), 595))
-            if not escape:
-                print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
-            else:
-                print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
+            print_text("SpaceWar Szent Márton verzió", 90, (0, 0, 255), ((1280 / 2), 100), context)
+            print_text("<Kezdéshez nyomd le a bal egérgombot!>", 45, (255, 255, 255), ((1280 / 2), 500), context)
+            # print_text("Alpha 0.2.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
+            # play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
+            # if not escape:
+            #     print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
+            # else:
+            #     print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
+            # credits = context.screen.blit(button_plate, ((1280 / 2 - 100), 305))
+            # print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 15), 385), context)
+            # options = context.screen.blit(button_plate, ((1280 / 2 - 100), 450))
+            # print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 15), 530), context)
+            # game_quit = context.screen.blit(button_plate, ((1280 / 2 - 100), 595))
+            # if not escape:
+            #     print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
+            # else:
+            #     print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 15), 675), context)
 
-            if play_game.colliderect(mouse_form):
-                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 160))
-                if not escape:
-                    print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
-                else:
-                    print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
-            if credits.colliderect(mouse_form):
-                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 305))
-                print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 20), 390), context)
-            if options.colliderect(mouse_form):
-                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 450))
-                print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 20), 535), context)
-            if game_quit.colliderect(mouse_form):
-                context.screen.blit(button_plate_on, ((1280 / 2 - 100), 595))
-                if not escape:
-                    print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
-                else:
-                    print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
-            if (play_game.colliderect(mouse_form) and mouse_button_state == 1) or keys[pygame.K_ESCAPE]:
-                mouse_button_state = 2
-                if not escape and not keys[pygame.K_ESCAPE]:
-                    which_menu = "players"
-                    delete_account = False
-                    mouse_click = False
-                    ic2 = False
-                if escape:
-                    return False
-            if credits.colliderect(mouse_form) and mouse_button_state == 1:
-                mouse_button_state = 2
-                which_menu = "credits"
-                credits_y = 720
-            if options.colliderect(mouse_form) and mouse_button_state == 1:
-                mouse_button_state = 2
-                which_menu = "options"
-            if game_quit.colliderect(mouse_form) and mouse_button_state == 1:
-                mouse_button_state = 2
-                if not escape:
-                    which_menu = "sure quit"
-                else:
-                    return True, None
+            # if play_game.colliderect(mouse_form):
+            #     context.screen.blit(button_plate_on, ((1280 / 2 - 100), 160))
+            #     if not escape:
+            #         print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
+            #     else:
+            #         print_text((options_save.languages[options_save.select_language])["continue"], 45, (255, 255, 255), ((1280 / 2 + 20), 245), context)
+            # if credits.colliderect(mouse_form):
+            #     context.screen.blit(button_plate_on, ((1280 / 2 - 100), 305))
+            #     print_text((options_save.languages[options_save.select_language])["credits"], 45, (255, 255, 255), ((1280 / 2 + 20), 390), context)
+            # if options.colliderect(mouse_form):
+            #     context.screen.blit(button_plate_on, ((1280 / 2 - 100), 450))
+            #     print_text((options_save.languages[options_save.select_language])["options"], 45, (255, 255, 255), ((1280 / 2 + 20), 535), context)
+            # if game_quit.colliderect(mouse_form):
+            #     context.screen.blit(button_plate_on, ((1280 / 2 - 100), 595))
+            #     if not escape:
+            #         print_text((options_save.languages[options_save.select_language])["quit"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
+            #     else:
+            #         print_text((options_save.languages[options_save.select_language])["finish"], 45, (255, 255, 255), ((1280 / 2 + 20), 680), context)
+            # if (play_game.colliderect(mouse_form) and mouse_button_state == 1) or keys[pygame.K_ESCAPE]:
+            #     mouse_button_state = 2
+            #     if not escape and not keys[pygame.K_ESCAPE]:
+            #         which_menu = "players"
+            #         delete_account = False
+            #         mouse_click = False
+            #         ic2 = False
+            #     if escape:
+            #         return False
+            # if credits.colliderect(mouse_form) and mouse_button_state == 1:
+            #     mouse_button_state = 2
+            #     which_menu = "credits"
+            #     credits_y = 720
+            # if options.colliderect(mouse_form) and mouse_button_state == 1:
+            #     mouse_button_state = 2
+            #     which_menu = "options"
+            # if game_quit.colliderect(mouse_form) and mouse_button_state == 1:
+            #     mouse_button_state = 2
+            #     if not escape:
+            #         which_menu = "sure quit"
+            #     else:
+            #         return True, None
 
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                which_menu = "tutorial 1"
+
+        if which_menu == "tutorial 1":
+            print_text("Tutoriál 5/1", 50, (255, 255, 255), ((1280 / 2), 100), context)
+            print_text("Nyomd meg a bal egérgombot a folytatáshoz.", 30, (255, 255, 255), ((1280 / 4 * 3), 600), context)
+            print_text("Mozgás", 45, (255, 255, 255), ((1280 / 4 * 3), 150), context)
+            print_text("W: fel", 30, (255, 255, 255), ((1280 / 4 * 3), 250), context)
+            print_text("a: balra", 30, (255, 255, 255), ((1280 / 4 * 3), 275), context)
+            print_text("s: lefele", 30, (255, 255, 255), ((1280 / 4 * 3), 300), context)
+            print_text("d: jobbra", 30, (255, 255, 255), ((1280 / 4 * 3), 325), context)
+            
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                which_menu = "tutorial 2"
+
+        if which_menu == "tutorial 2":
+            print_text("Tutoriál 5/2", 50, (255, 255, 255), ((1280 / 2), 100), context)
+            print_text("Nyomd meg a bal egérgombot a folytatáshoz.", 30, (255, 255, 255), ((1280 / 4 * 3), 600), context)
+            print_text("Egér mozgatása", 45, (255, 255, 255), ((1280 / 4 * 3), 150), context)
+
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                which_menu = "tutorial 3"
+
+        if which_menu == "tutorial 3":
+            print_text("Tutoriál 5/3", 50, (255, 255, 255), ((1280 / 2), 100), context)
+            print_text("Nyomd meg a bal egérgombot a folytatáshoz.", 30, (255, 255, 255), ((1280 / 4 * 3), 600), context)
+            print_text("Lövés", 45, (255, 255, 255), ((1280 / 4 * 3), 150), context)
+            print_text("Egér irányába megy a lövedéked.", 30, (255, 255, 255), ((1280 / 4 * 3), 250), context)
+
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                which_menu = "tutorial 4"
+
+        if which_menu == "tutorial 4":
+            print_text("Tutoriál 5/4", 50, (255, 255, 255), ((1280 / 2), 100), context)
+            print_text("Nyomd meg a bal egérgombot a folytatáshoz.", 30, (255, 255, 255), ((1280 / 4 * 3), 600), context)
+            print_text("Szedd le az ellenséges hajókat!", 45, (255, 255, 255), ((1280 / 4 * 3), 150), context)
+            print_text("8 round van.", 30, (255, 255, 255), ((1280 / 4 * 3), 250), context)
+            print_text("A legutolsó round egy boss.", 30, (255, 255, 255), ((1280 / 4 * 3), 275), context)
+
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                which_menu = "tutorial 5"
+
+        if which_menu == "tutorial 5":
+            print_text("Tutoriál 5/5", 50, (255, 255, 255), ((1280 / 2), 100), context)
+            print_text("Kezdéshez nyomd meg a bal egérgombot.", 30, (255, 255, 255), ((1280 / 4 * 3), 600), context)
+            print_text("Életek", 45, (255, 255, 255), ((1280 / 4 * 3), 150), context)
+            print_text("Életedet bal alul látod. (max 5 élet)", 30, (255, 255, 255), ((1280 / 4 * 3), 250), context)
+            print_text("Néha az ellenséges hajók dobnak életet.", 30, (255, 255, 255), ((1280 / 4 * 3), 275), context)
+            print_text("Ha felveszed felmegy egy életed. (5 életnél nem lehet több)", 30, (255, 255, 255), ((1280 / 4 * 3), 300), context)
+
+            if mouse_button_state == 1:
+                mouse_button_state = 2
+                return False
+            
         if which_menu == "options":
 
             print_text((options_save.languages[options_save.select_language])["options"], 70, (255, 255, 255), ((1280 / 2), 60), context)
