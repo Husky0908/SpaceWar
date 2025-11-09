@@ -66,8 +66,6 @@ class Map_and_Upgrades:
                                     context.screen.blit(self.lock_picture, (210, 385))
         if self.hmmu > 1:
             context.screen.blit(self.complete_picture, (70, 450))
-        if self.how_many_map_now == 2:
-            print_text((options_save.languages[options_save.select_language])["coming"], 60, (255, 255, 255), (220, 300), context)
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         if self.difficulty == -1:
@@ -124,8 +122,13 @@ class Map_and_Upgrades:
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (enter and self.how_many_map_now == 1):
+        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1) or enter:
             mouse_button_state = 2
+            if self.how_many_map_now == 1:
+                self.hmm = 1
+            if self.how_many_map_now == 2:
+                self.hmm = 2
+            self.write_file()
             return "play the game", mouse_button_state
         if go_upgrade.colliderect(mouse_form) and mouse_button_state == 1:
             mouse_button_state = 2
