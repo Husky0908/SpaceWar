@@ -1,9 +1,10 @@
 import pygame
+import random
 from base.context import PygameContext
 from base.player import Player
 from enemies.bullet_shooters import BulletShooters
 from base.directions import get_direction
-from base.bullets import Bullets
+from base.bullets import Bullet, Bullets
 
 
 class Supermacy:
@@ -21,11 +22,13 @@ class Supermacy:
         self.dir_x = 0
         self.dir_y = 0
         self.speed = 2.5
+        self.shoot_time = 0
+        self.shoot_time_end = random.randint(240, 360)
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (255, 0, 0), (self.x, self.y, 50, 75))
 
-    def control(self, player: Player, bullet_shooters: BulletShooters):
+    def control(self, player: Player, bullet_shooters: BulletShooters, bullets: Bullets):
         for bullet_shooter in bullet_shooters._elements:
             self.team_x = bullet_shooter._x
             self.team_y = bullet_shooter._y
@@ -44,6 +47,7 @@ class Supermacy:
             self.dest_y = ((self.team_y - self.enemy_y) // 2) + self.enemy_y
 
         self.move()
+        self.shoot(bullets, player)
 
     def move(self):
         self.dir_x, self.dir_y = get_direction(self.x, self.y, self.dest_x, self.dest_y)
@@ -55,6 +59,13 @@ class Supermacy:
             if self.form.colliderect(bullet.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 self.health = self.health - 1
+
+    def shoot(self, bullets: Bullets, player: Player):
+        if self.shoot_time - self.shoot_time_end >= 0:
+            bullets.elements.append(Bullet(self.x, self.y, player.x, player.y, "enemy"))
+            self.shoot_time = 0
+            self.shoot_time_end = random.randint(240, 360)
+        self.shoot_time = self.shoot_time + 1
 
 
 class Supermacys:
@@ -71,9 +82,9 @@ class Supermacys:
         for supermacy in self.elements:
             supermacy.draw(context)
 
-    def control(self, player: Player, bullet_shooters: BulletShooters):
+    def control(self, player: Player, bullet_shooters: BulletShooters, bullets: Bullets):
         for supermacy in self.elements:
-            supermacy.control(player, bullet_shooters)
+            supermacy.control(player, bullet_shooters, bullets)
 
     def contacts(self, bullets: Bullets):
         for supermacy in self.elements:

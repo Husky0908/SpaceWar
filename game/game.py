@@ -26,7 +26,7 @@ class Game:
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
-        supermacys.control(player, bullet_shooters)
+        supermacys.control(player, bullet_shooters, bullets)
         first_boss.control(context, player, bullets, upgrades)
         bullets.control(context)
         rockets.control(player)
