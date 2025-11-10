@@ -92,8 +92,12 @@ class GameLogic:
         if self.level == 2:
 
             if self.wave_time == 0:
-                supermacys.spawn()
                 bullet_shooters.spawn(context)
+                bullet_shooters.spawn(context)
+                bullet_shooters.spawn(context)
+                supermacys.spawn()
+                supermacys.spawn()
+                supermacys.spawn()
             # if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and self.wave == 1:
             #     self.wave_time = 1200
 
