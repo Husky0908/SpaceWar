@@ -4,6 +4,7 @@ from enemies.runners import Runners
 from enemies.rocket_launchers import RocketLaunchers
 from enemies.first_boss import FirstBoss
 from enemies.supermacy import Supermacys
+from enemies.heavy_gunner import HeavyGunners
 
 
 class GameLogic:
@@ -13,7 +14,7 @@ class GameLogic:
         self.wave = 1
         self.difficulty = game_difficulty
 
-    def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, supermacys: Supermacys):
+    def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, supermacys: Supermacys, heavy_gunners: HeavyGunners):
 
         if self.level == 1:
 
@@ -92,12 +93,7 @@ class GameLogic:
         if self.level == 2:
 
             if self.wave_time == 0:
-                bullet_shooters.spawn(context)
-                bullet_shooters.spawn(context)
-                bullet_shooters.spawn(context)
-                supermacys.spawn()
-                supermacys.spawn()
-                supermacys.spawn()
+                heavy_gunners.spawn()
             # if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and self.wave == 1:
             #     self.wave_time = 1200
 
