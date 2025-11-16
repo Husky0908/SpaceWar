@@ -8,3 +8,7 @@ def length(x: int, x_2: int, y: int, y_2: int) -> float:
     e_y = y_2 - y
     leng = (e_x ** 2 + e_y ** 2) ** 0.5
     return leng
+
+
+def get_delta_vector(x1: float, y1: float, x2: float, y2: float) -> tuple[float, float]:
+    return (x2 - x1), (y2 - y1)

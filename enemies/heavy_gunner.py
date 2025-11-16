@@ -1,7 +1,10 @@
 import pygame
 import random
+import math
 from base.context import PygameContext
-from base.directions import get_direction
+from base.directions import get_direction, get_delta_vector
+from base.bullets import Bullets, Bullet
+from base.player import Player
 
 
 class HeavyGunner:
@@ -25,16 +28,18 @@ class HeavyGunner:
         self.dir_y = 0
         self.time = 0
         self.speed = 160
+        self.player_x = 0
+        self.player_y = 0
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (0, 0, 255), (self.x, self.y, 75, 75))
 
-    def control(self, context: PygameContext):
+    def control(self, context: PygameContext, bullets: Bullets, player: Player):
         if self.state == HeavyGunner.STATE_INIT:
             self.y = self.y + 2
             if self.y >= 25:
                 self.state = HeavyGunner.STATE_WHERE_MOVE
-                self.moving = random.randint(3, 4)
+                self.moving = random.randint(2, 3)
         if self.state == HeavyGunner.STATE_WHERE_MOVE:
             self.dest_x = random.randint(75, context.width - 75)
             self.dest_y = random.randint(0 + 75, context.height - 75)
@@ -49,7 +54,34 @@ class HeavyGunner:
                 self.x = self.x_0 + self.dir_x * d_t * self.speed
                 self.y = self.y_0 + self.dir_y * d_t * self.speed
             else:
-                self.state = HeavyGunner.STATE_WHERE_MOVE
+                self.moving = self.moving - 1
+                if not self.moving == 0:
+                    self.state = HeavyGunner.STATE_WHERE_MOVE
+                else:
+                    self.state = HeavyGunner.STATE_SHOOT
+                    self.player_x = player.x
+                    self.player_y = player.y
+        if self.state == HeavyGunner.STATE_SHOOT:
+            bullets.elements.append(Bullet(self.x, self.y, self.player_x, self.player_y, "enemy"))
+            delta_x, delta_y = get_delta_vector(self.x, self.y, self.player_x, self.player_y)
+            # delta_x = abs(self.x - self.player_x)
+            # delta_y = abs(self.y - self.player_y)
+            # print(dir_x, dir_y)
+            # print(math.atan2(dir_x, dir_y))
+            # print(math.degrees(math.atan(dir_y)))
+            negative = (delta_y < 0)
+            yf1 = self.y + ((delta_y + 0.5773 * delta_x)/(1 - (delta_y / delta_x) * 0.5773))
+            xf1 = self.player_x
+            if (negative and yf1 > 0) or (not negative and yf1 < 0):
+                yf1 = -1 * yf1
+                xf1 = -1 * xf1
+            bullets.elements.append(Bullet(self.x, self.y, xf1, yf1, "enemy"))
+            yf2 = self.y + ((delta_y - 0.5773 * delta_x)/(1 + (delta_y / delta_x) * 0.5773))
+            xf2 = self.player_x
+            if (negative and yf2 > 0) or (not negative and yf2 < 0):
+                yf2 = -1 * yf2
+                xf2 = -1 * xf2
+            bullets.elements.append(Bullet(self.x, self.y, xf2, yf2, "enemy"))
 
 
 class HeavyGunners:
@@ -63,6 +95,6 @@ class HeavyGunners:
         for heavy_gunner in self.elements:
             heavy_gunner.draw(context)
 
-    def control(self, context: PygameContext):
+    def control(self, context: PygameContext, bullets: Bullets, player: Player):
         for heavy_gunner in self.elements:
-            heavy_gunner.control(context)
+            heavy_gunner.control(context, bullets, player)

@@ -28,7 +28,7 @@ class Game:
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
         supermacys.control(player, bullet_shooters, bullets, plus_hp)
-        heavy_gunners.control(context)
+        heavy_gunners.control(context, bullets, player)
         first_boss.control(context, player, bullets, upgrades)
         bullets.control(context)
         rockets.control(player)
@@ -175,6 +175,7 @@ class Game:
                     bullet_shooters._elements.clear()
                     rocket_launchers.elements.clear()
                     supermacys.elements.clear()
+                    heavy_gunners.elements.clear()
                     coins.elements = []
                     plus_hp.elements = []
                     upgrades.elements = []
