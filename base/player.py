@@ -1,4 +1,5 @@
 import pygame
+import random
 from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
@@ -97,6 +98,10 @@ class Player:
     def contacts(self, bullets: Bullets, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
+                if self.ship_power == 2:
+                    shield = random.randint(0, 100)
+                    if shield <= 5:
+                        self.health = self.health + 1
                 self.health = self.health - 1
                 bullet.sharp = False
 
@@ -140,7 +145,7 @@ class Player:
         mouse_button = pygame.mouse.get_pressed()
         if mouse_button[0]:
             self.mashingun_shoot(True, bullets, context)
-            
+
         if self.health <= 0:
             self.write_player_text()
             running = True
@@ -152,6 +157,8 @@ class Player:
             shoot_time = 30
             if self.gun_power == 2:
                 shoot_time = 25
+            if self.gun_power == 3:
+                shoot_time = 20
             if bullets.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))

@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 from base.context import PygameContext
 from base.player import Player
 from base.directions import get_direction
@@ -40,6 +41,10 @@ class Rocket:
 
     def contacts(self, player: Player):
         if self.form.colliderect(player.r):
+            if player.ship_power == 2:
+                shield = random.randint(0, 100)
+                if shield <= 5:
+                    player.health = player.health + 1
             self.state = Rocket.STATE_DESTROY
             player.health = player.health - 1
 

@@ -157,16 +157,46 @@ class Map_and_Upgrades:
             mas_gun_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
             context.screen.blit(self.coin_picture, (context.width / 4 - 60, context.height / 4 * 3 + 55))
             print_text("200", 45, (255, 255, 255), (context.width / 4 + 20, context.height / 4 * 3 + 80), context)
-        else:
+        if self.mas_gun == 2:
+            if self.hmmu >= 2:
+                mas_gun_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
+                context.screen.blit(self.coin_picture, (context.width / 4 - 60, context.height / 4 * 3 + 55))
+                print_text("500", 45, (255, 255, 255), (context.width / 4 + 20, context.height / 4 * 3 + 80), context)
+            else:
+                mas_gun_upgrade_button = context.screen.blit(self.upgrade_max_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
+                print_text("Max", 45, (255, 255, 255), (context.width / 4, context.height / 4 * 3 + 80), context)
+        if self.mas_gun == 3:
             mas_gun_upgrade_button = context.screen.blit(self.upgrade_max_picture, (context.width / 4 - 100, context.height / 4 * 3 + 25))
             print_text("Max", 45, (255, 255, 255), (context.width / 4, context.height / 4 * 3 + 80), context)
 
-        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.mas_gun == 1 and self.coin >= 200:
-            mouse_button_state = 2
-            self.mas_gun = 2
-            self.coin = self.coin - 200
+        if self.hmmu >= 2:
+            print_text((options_save.languages[options_save.select_language])["ship shield"], 45, (255, 255, 255), (context.width / 4, context.height / 4 - 50), context)
+            print_text((options_save.languages[options_save.select_language])["level"] + " " + str(self.ship_def), 45, (255, 255, 255), (context.width / 4, context.height / 4), context)
+            if self.ship_def == 1:
+                ship_def_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 + 25))
+                context.screen.blit(self.upgrader_box_picture, (context.width / 4 - 60, context.height / 4 + 55))
+                print_text("1", 45, (255, 255, 255), (context.width / 4 + 40, context.height / 4 + 80), context)
+            if self.ship_def == 2:
+                ship_def_upgrade_button = context.screen.blit(self.upgrade_max_picture, (context.width / 4 - 100, context.height / 4 + 25))
+                print_text("Max", 45, (255, 255, 255), (context.width / 4, context.height / 4 + 80), context)
+
+        if mas_gun_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1:
+            if self.mas_gun == 1 and self.coin >= 200:
+                mouse_button_state = 2
+                self.mas_gun = 2
+                self.coin = self.coin - 200
+            if self.mas_gun == 2 and self.coin >= 500 and self.hmmu >= 2:
+                mouse_button_state = 2
+                self.mas_gun = 3
+                self.coin = self.coin - 500
             self.write_file()
-            
+
+        if self.hmmu >= 2:
+            if ship_def_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.upgrade_box >= 1 and self.ship_def == 1:
+                mouse_button_state = 1
+                self.ship_def = self.ship_def + 1
+                self.upgrade_box = self.upgrade_box - 1
+
         if back_main_menu.colliderect(mouse_form):
             context.screen.blit(self.button_plate_on, (context.width / 4 * 3 + 60, 590))
             print_text((options_save.languages[options_save.select_language])["back"], 45, (255, 255, 255), ((1280 / 4 * 3 + 180), 675), context)

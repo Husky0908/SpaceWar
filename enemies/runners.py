@@ -99,6 +99,10 @@ class Runner:
 
     def contacts(self, player: Player, bullets: Bullets):
         if self.r.colliderect(player.r) and not self.wounded:
+            if player.ship_power == 2:
+                shield = random.randint(0, 100)
+                if shield <= 5:
+                    player.health = player.health + 1
             player.health = player.health - 1
             self.wounded = True
         for bullet in bullets.elements:

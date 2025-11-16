@@ -199,6 +199,10 @@ class FirstBoss:
                         self.shooter_live = False
                         self.state = FirstBoss.STATE_SECOND_MOVE
             if self.form.colliderect(player.r) and self.attack >= 60:
+                if player.ship_power == 2:
+                    shield = random.randint(0, 100)
+                    if shield <= 5:
+                        player.health = player.health + 1
                 player.health = player.health - 1
                 self.attack = 0
             self.attack = self.attack + 1
