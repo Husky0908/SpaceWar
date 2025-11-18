@@ -34,6 +34,7 @@ class Supermacy:
         self.speed = 2.5
         self.shoot_time = 0
         self.shoot_time_end = random.randint(240, 360)
+        self.asteroid = False
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (255, 0, 0), (self.x, self.y, 50, 75))

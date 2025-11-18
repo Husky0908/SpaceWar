@@ -34,6 +34,7 @@ class RocketLauncher:
         self.r = None
         self.start_time = 0
         self.speed = 75
+        self.asteroid = False
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2,

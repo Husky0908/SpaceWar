@@ -30,6 +30,7 @@ class HeavyGunner:
         self.speed = 160
         self.player_x = 0
         self.player_y = 0
+        self.asteroid = False
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (0, 0, 255), (self.x, self.y, 75, 75))

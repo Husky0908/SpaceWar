@@ -36,6 +36,7 @@ class Runner:
         self.wounded = False
         self.r = None
         self.run_time = 0
+        self.asteroid = False
 
     def control(self, context: PygameContext, player: Player, coins: Coins, plus_hp: PlusHealths):
         if self.state == Runner.STATE_INIT:
