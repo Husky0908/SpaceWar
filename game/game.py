@@ -15,6 +15,7 @@ from base.boxes import Coins, PlusHealths, Upgraders
 from enemies.supermacy import Supermacys
 from enemies.heavy_gunner import HeavyGunners
 from base.asteroids import Asteroids
+from enemies.big_runner import BigRunner
 
 
 class Game:
@@ -24,13 +25,14 @@ class Game:
         self.end_text = None
         self.end_time = 0
 
-    def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids):
+    def control(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids, big_runner: BigRunner):
         runners.control(context, player, coins, plus_hp)
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
         supermacys.control(player, bullet_shooters, bullets, plus_hp)
         heavy_gunners.control(context, bullets, player)
         first_boss.control(context, player, bullets, upgrades)
+        big_runner.control(context, bullets, runners)
         bullets.control(context)
         rockets.control(player)
         asteroids.control(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners)
@@ -39,12 +41,13 @@ class Game:
         plus_hp.control(context)
         upgrades.control(context)
 
-    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, asteroids: Asteroids, heavy_gunners: HeavyGunners):
+    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, asteroids: Asteroids, heavy_gunners: HeavyGunners, big_runner: BigRunner):
 
         runners.contacts(player, bullets)
         bullet_shooters.contacts(context, bullets)
         player.contacts(bullets, coins, plus_hp, upgrades)
         first_boss.contacts(bullets, player)
+        big_runner.contacts(player, bullets)
         rocket_launchers.contacts(bullets)
         supermacys.contacts(bullets)
         asteroids.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners, bullets, rockets)
@@ -63,7 +66,7 @@ class Game:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         context.screen.blit(player.crosshair_form, (mouse_x, mouse_y))
 
-    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, options_saving: OptionsSave, coins: Coins, plus_hp: PlusHealths, game_logic_parameters: GameLogic, upgrades: Upgraders, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids):
+    def draw(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rocket_launchers: RocketLaunchers, rockets: Rockets, first_boss: FirstBoss, options_saving: OptionsSave, coins: Coins, plus_hp: PlusHealths, game_logic_parameters: GameLogic, upgrades: Upgraders, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids, big_runner: BigRunner):
         context.screen.fill((0, 0, 0))
 
         plus_hp.draw(context)
@@ -76,6 +79,7 @@ class Game:
         supermacys.draw(context)
         heavy_gunners.draw(context)
         first_boss.draw(context, player.dif)
+        big_runner.draw(context)
         player.draw(context)
         bullets.draw(context)
         rockets.draw(context)
@@ -99,6 +103,7 @@ class Game:
     def game(self, context: PygameContext, options_saving: OptionsSave, name):
         player = Player(context.width // 2, context.height // 2, name)
         first_boss = FirstBoss(0, -350, player.dif)
+        big_runner = BigRunner(context, player.dif)
 
         game_logic_parameters = GameLogic(player.dif, player.level)
 
@@ -161,8 +166,8 @@ class Game:
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
                         first_boss.live = False
                     if not self.end:
-                        self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp, upgrades, supermacys, heavy_gunners, asteroids)
-                        self.end = game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss, supermacys, heavy_gunners, asteroids, player)
+                        self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp, upgrades, supermacys, heavy_gunners, asteroids, big_runner)
+                        self.end = game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss, supermacys, heavy_gunners, asteroids, player, big_runner)
                         if self.end:
                             self.end_time = context.time
                             self.end_text = (options_saving.languages[options_saving.select_language])["victory"]
@@ -170,10 +175,10 @@ class Game:
                                 player.unlock_levels = player.unlock_levels + 1
                             player.write_player_text()
                             player.health = 0
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids)
-                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades, supermacys, asteroids, heavy_gunners)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids, big_runner)
+                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades, supermacys, asteroids, heavy_gunners, big_runner)
                 else:
-                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids)
+                    self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids, big_runner)
                     bullets.elements.clear()
                     rockets.elements.clear()
                     runners.elements.clear()
