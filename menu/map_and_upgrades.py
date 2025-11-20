@@ -66,6 +66,8 @@ class Map_and_Upgrades:
                                     context.screen.blit(self.lock_picture, (210, 385))
         if self.hmmu > 1:
             context.screen.blit(self.complete_picture, (70, 450))
+        if self.hmmu > 2:
+            context.screen.blit(self.complete_picture, (220, 280))
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         if self.difficulty == -1:

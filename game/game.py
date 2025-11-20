@@ -88,9 +88,12 @@ class Game:
 
         if self.end:
             if self.end_text == "Victory" or self.end_text == "Győzelem":
-                print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
+                if player.level == 1:
+                    print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
+                if player.level == 2:
+                    print_text("09", 20, (255, 0, 0), ((context.width / 4), (context.height / 4)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
-        elif game_logic_parameters.wave == 10:
+        elif game_logic_parameters.wave == 100:
             print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
 
         pygame.display.flip()
@@ -165,6 +168,7 @@ class Game:
                         self.end_time = context.time
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
                         first_boss.live = False
+                        big_runner.live = False
                     if not self.end:
                         self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp, upgrades, supermacys, heavy_gunners, asteroids, big_runner)
                         self.end = game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss, supermacys, heavy_gunners, asteroids, player, big_runner)

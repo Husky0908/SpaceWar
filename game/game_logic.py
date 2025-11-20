@@ -88,15 +88,23 @@ class GameLogic:
 
             if self.wave == 9 and not first_boss.live:
                 self.wave_time = 0
-                self.wave = self.wave + 1
+                self.wave = 100
 
-            if self.wave == 10 and self.wave_time >= 600:
+            if self.wave == 100 and self.wave_time >= 600:
                 return True
 
         if self.level == 2:
 
             if self.wave_time == 0:
                 big_runner.spawn()
+                self.wave = 1
+
+            if self.wave == 1 and not big_runner.live and len(runners.elements) == 0:
+                self.wave = 100
+                self.wave_time = 0
+
+            if self.wave == 100 and self.wave_time >= 600:
+                return True
                 # if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and self.wave == 1:
             #     self.wave_time = 1200
 
