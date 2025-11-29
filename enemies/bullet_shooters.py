@@ -4,6 +4,7 @@ from base.context import PygameContext
 from base.bullets import Bullets, Bullet
 from base.player import Player
 from base.boxes import Coins, Coin
+from base.bombs import Bombs, Bomb
 
 
 class BulletShooter:
@@ -62,11 +63,15 @@ class BulletShooter:
                     coins.elements.append(Coin(self._x, self._y, (1 * 5)))
             self._STATE = BulletShooter.STATE_KILLED
 
-    def contacts(self, context: PygameContext, bullets: Bullets):
+    def contacts(self, context: PygameContext, bullets: Bullets, bombs: Bombs):
         for bullet in bullets.elements:
             if self._form.colliderect(bullet.form) and bullet.attacker == "friend":
                 self._health = self._health - 1
                 bullet.sharp = False
+
+        for bomb in bombs.elements:
+            if self._form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
     def draw(self, context: PygameContext):
         self._r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
@@ -138,9 +143,9 @@ class BulletShooters:
         for bullet_shooter in self._elements:
             bullet_shooter.control(context, player, bullets, coins)
 
-    def contacts(self, context: PygameContext, bullets: Bullets):
+    def contacts(self, context: PygameContext, bullets: Bullets, bombs: Bombs):
         for bullet_shooter in self._elements:
-            bullet_shooter.contacts(context, bullets)
+            bullet_shooter.contacts(context, bullets, bombs)
 
         tmp_list = []
         for x in self._elements:

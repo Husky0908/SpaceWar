@@ -5,6 +5,7 @@ from base.directions import get_direction
 from base.bullets import Bullet, Bullets
 from base.player import Player
 from enemies.runners import Runners
+from base.boxes import Upgraders, Upgrader
 
 
 class BigRunner:
@@ -42,7 +43,7 @@ class BigRunner:
     def spawn(self):
         self.live = True
 
-    def control(self, context: PygameContext, bullets: Bullets, runners: Runners):
+    def control(self, context: PygameContext, bullets: Bullets, runners: Runners, upgrades: Upgraders):
         if self.live:
             if self.state == BigRunner.STATE_INIT:
                 self.control_init()
@@ -56,6 +57,11 @@ class BigRunner:
                 self.last_point = self.last_point - self.damage_status
                 self.status = self.status + 1
             if self.health <= 0:
+                chance = random.randint(1, 10)
+                if chance >= 4:
+                    upgrades.elements.append(Upgrader(self.x + 150, self.y, 3))
+                else:
+                    upgrades.elements.append(Upgrader(self.x + 150, self.y, 2))
                 self.live = False
 
     def control_init(self):

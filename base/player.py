@@ -5,6 +5,7 @@ from base.bullets import Bullets, Bullet
 from texts.options_save import OptionsSave
 from base.boxes import Coins, PlusHealths, Upgraders
 from texts.text_print import print_text
+from base.bombs import Bombs, Bomb
 
 
 class Player:
@@ -122,7 +123,7 @@ class Player:
                 self.upgrades_box = self.upgrades_box + upgrade.value
                 upgrade.delete = True
 
-    def control(self, context: PygameContext, running, options_save: OptionsSave, bullets: Bullets):
+    def control(self, context: PygameContext, running, options_save: OptionsSave, bullets: Bullets, bombs: Bombs):
         keys = pygame.key.get_pressed()
         if keys[options_save.up_control]:
             self.y -= 300 * context.delta_time
@@ -145,6 +146,9 @@ class Player:
         mouse_button = pygame.mouse.get_pressed()
         if mouse_button[0]:
             self.mashingun_shoot(True, bullets, context)
+        if mouse_button[2]:
+            if self.bomb_power >= 1:
+                self.bomb_shoot(True, context, bombs)
 
         if self.health <= 0:
             self.write_player_text()
@@ -159,10 +163,20 @@ class Player:
                 shoot_time = 25
             if self.gun_power == 3:
                 shoot_time = 20
+            if self.gun_power == 4:
+                shoot_time = 15
             if bullets.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))
                 bullets.last_spawn = context.time
+
+    def bomb_shoot(self, running, context: PygameContext, bombs: Bombs):
+        if running:
+            shoot_time = 60
+            if bombs.last_spawn - context.time >= shoot_time:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                bombs.elements.append(Bomb(self.x, self.y, mouse_x, mouse_y, "friend"))
+                bombs.last_spawn = context.time
 
     def get_rectangle_around_player(self, width: int, height: int) -> pygame.Rect:
         return pygame.Rect(self.x - width // 2, self.y - height // 2, width, height)
