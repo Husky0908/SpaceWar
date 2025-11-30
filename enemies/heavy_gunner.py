@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 from base.context import PygameContext
 from base.directions import get_direction, get_delta_vector
 from base.bullets import Bullets, Bullet
@@ -31,6 +30,7 @@ class HeavyGunner:
         self.player_x = 0
         self.player_y = 0
         self.asteroid = False
+        self.shoot = 0
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (0, 0, 255), (self.x, self.y, 75, 75))
@@ -62,27 +62,62 @@ class HeavyGunner:
                     self.state = HeavyGunner.STATE_SHOOT
                     self.player_x = player.x
                     self.player_y = player.y
+                    self.shoot = 1
         if self.state == HeavyGunner.STATE_SHOOT:
-            bullets.elements.append(Bullet(self.x, self.y, self.player_x, self.player_y, "enemy"))
             delta_x, delta_y = get_delta_vector(self.x, self.y, self.player_x, self.player_y)
-            # delta_x = abs(self.x - self.player_x)
-            # delta_y = abs(self.y - self.player_y)
-            # print(dir_x, dir_y)
-            # print(math.atan2(dir_x, dir_y))
-            # print(math.degrees(math.atan(dir_y)))
-            negative = (delta_y < 0)
-            yf1 = self.y + ((delta_y + 0.5773 * delta_x)/(1 - (delta_y / delta_x) * 0.5773))
-            xf1 = self.player_x
-            if (negative and yf1 > 0) or (not negative and yf1 < 0):
-                yf1 = -1 * yf1
-                xf1 = -1 * xf1
-            bullets.elements.append(Bullet(self.x, self.y, xf1, yf1, "enemy"))
-            yf2 = self.y + ((delta_y - 0.5773 * delta_x)/(1 + (delta_y / delta_x) * 0.5773))
-            xf2 = self.player_x
-            if (negative and yf2 > 0) or (not negative and yf2 < 0):
-                yf2 = -1 * yf2
-                xf2 = -1 * xf2
-            bullets.elements.append(Bullet(self.x, self.y, xf2, yf2, "enemy"))
+
+            if delta_x == 0:
+                delta_x = delta_x + 0.1
+
+            tg_alfa = delta_y / delta_x
+
+            if self.shoot == 1 or self.shoot == 5:
+                plus_sign = 1
+                if tg_alfa < -1.73205:
+                    plus_sign = -1
+
+                minus_sign = 1
+                if tg_alfa > 1.73205:
+                    minus_sign = -1
+
+                new_1_x = self.x + minus_sign * delta_x
+                new_1_y = self.y + minus_sign * (delta_y + 0.5773 * delta_x) / (1 - (delta_y/delta_x * 0.5773))
+                new_2_x = self.x + plus_sign * delta_x
+                new_2_y = self.y + plus_sign * (delta_y - 0.5773 * delta_x) / (1 + (delta_y/delta_x * 0.5773))
+
+                bullets.elements.append(Bullet(self.x, self.y, self.player_x, self.player_y, "enemy"))
+                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy"))
+                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy"))
+
+                self.shoot = self.shoot + 1
+                self.start_time = context.time
+
+            if self.shoot == 3:
+                plus_sign = 1
+                if tg_alfa < -3.73205:
+                    plus_sign = -1
+
+                minus_sign = 1
+                if tg_alfa > 3.73205:
+                    minus_sign = -1
+
+                new_1_x = self.x + minus_sign * delta_x
+                new_1_y = self.y + minus_sign * (delta_y + 0.2679 * delta_x) / (1 - (delta_y/delta_x * 0.2679))
+                new_2_x = self.x + plus_sign * delta_x
+                new_2_y = self.y + plus_sign * (delta_y - 0.2679 * delta_x) / (1 + (delta_y/delta_x * 0.2679))
+
+                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy"))
+                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy"))
+
+                self.shoot = self.shoot + 1
+                self.start_time = context.time
+
+            if (self.shoot == 2 or self.shoot == 4) and context.time - self.start_time >= 0.5:
+                self.shoot = self.shoot + 1
+
+            if self.shoot == 6:
+                self.state = HeavyGunner.STATE_WHERE_MOVE
+                self.moving = random.randint(2, 3)
 
 
 class HeavyGunners:

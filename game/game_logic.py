@@ -96,10 +96,10 @@ class GameLogic:
         if self.level == 2:
 
             if self.wave_time == 0:
-                big_runner.spawn()
+                heavy_gunners.spawn()
                 self.wave = 1
 
-            if self.wave == 1 and not big_runner.live and len(runners.elements) == 0:
+            if self.wave == 3 and not big_runner.live and len(runners.elements) == 0:
                 self.wave = 100
                 self.wave_time = 0
 

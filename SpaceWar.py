@@ -1,10 +1,11 @@
 import os
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame
 from base.context import PygameContext
 from menu.menu import menu
 from game.game import Game
 from texts.options_save import OptionsSave
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
 options_saving = OptionsSave()
 context = PygameContext(1280, 720, options_saving.fullscreen)
