@@ -4,6 +4,7 @@ from base.context import PygameContext
 from base.directions import get_direction, get_delta_vector
 from base.bullets import Bullets, Bullet
 from base.player import Player
+from base.boxes import Coin, Coins, PlusHealth, PlusHealths
 
 
 class HeavyGunner:
@@ -11,6 +12,7 @@ class HeavyGunner:
     STATE_WHERE_MOVE = 1
     STATE_MOVE = 2
     STATE_SHOOT = 3
+    STATE_KILL = 4
 
     def __init__(self):
         self.x = random.randint(100, 1000)
@@ -31,11 +33,12 @@ class HeavyGunner:
         self.player_y = 0
         self.asteroid = False
         self.shoot = 0
+        self.health = 5
 
     def draw(self, context: PygameContext):
         self.form = pygame.draw.rect(context.screen, (0, 0, 255), (self.x, self.y, 75, 75))
 
-    def control(self, context: PygameContext, bullets: Bullets, player: Player):
+    def control(self, context: PygameContext, bullets: Bullets, player: Player, plus_hp: PlusHealths, coins: Coins):
         if self.state == HeavyGunner.STATE_INIT:
             self.y = self.y + 2
             if self.y >= 25:
@@ -118,6 +121,22 @@ class HeavyGunner:
             if self.shoot == 6:
                 self.state = HeavyGunner.STATE_WHERE_MOVE
                 self.moving = random.randint(2, 3)
+        if self.health <= 0:
+            chance = random.randint(1, 10)
+            if chance > 3:
+                if chance > 6:
+                    coins.elements.append(Coin(self.x, self.y, 50))
+                else:
+                    coins.elements.append(Coin(self.x, self.y, 40))
+            else:
+                plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
+            self.state = HeavyGunner.STATE_KILL
+
+    def contacts(self, bullets: Bullets):
+        for bullet in bullets.elements:
+            if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
+                self.health = self.health - 1
+                bullet.sharp = False
 
 
 class HeavyGunners:
@@ -131,6 +150,16 @@ class HeavyGunners:
         for heavy_gunner in self.elements:
             heavy_gunner.draw(context)
 
-    def control(self, context: PygameContext, bullets: Bullets, player: Player):
+    def control(self, context: PygameContext, bullets: Bullets, player: Player, coins: Coins, plus_hp: PlusHealth):
         for heavy_gunner in self.elements:
-            heavy_gunner.control(context, bullets, player)
+            heavy_gunner.control(context, bullets, player, plus_hp, coins)
+
+    def contacts(self, bullets: Bullets):
+        for heavy_gunner in self.elements:
+            heavy_gunner.contacts(bullets)
+
+        tmp_list = []
+        for x in self.elements:
+            if not x.state == HeavyGunner.STATE_KILL:
+                tmp_list.append(x)
+        self.elements = tmp_list

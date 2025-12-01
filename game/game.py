@@ -31,7 +31,7 @@ class Game:
         bullet_shooters.control(context, player, bullets, coins)
         rocket_launchers.control(context, player, rockets, plus_hp, coins)
         supermacys.control(player, bullet_shooters, bullets, plus_hp)
-        heavy_gunners.control(context, bullets, player)
+        heavy_gunners.control(context, bullets, player, coins, plus_hp)
         first_boss.control(context, player, bullets, upgrades)
         big_runner.control(context, bullets, runners, upgrades)
         bullets.control(context)
@@ -52,6 +52,7 @@ class Game:
         big_runner.contacts(player, bullets)
         rocket_launchers.contacts(bullets)
         supermacys.contacts(bullets)
+        heavy_gunners.contacts(bullets)
         asteroids.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners, bullets, rockets)
 
         for bullet in bullets.elements:

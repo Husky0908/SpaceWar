@@ -96,17 +96,61 @@ class GameLogic:
         if self.level == 2:
 
             if self.wave_time == 0:
-                heavy_gunners.spawn()
+                for i in range(2 + self.difficulty):
+                    bullet_shooters.spawn(context)
+                    runners.spawn(context)
+                    rocket_launchers.spawn(context)
                 self.wave = 1
+            if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(runners.elements) == 0 and self.wave == 1:
+                self.wave_time = 1500
 
-            if self.wave == 3 and not big_runner.live and len(runners.elements) == 0:
+            if self.wave_time == 1500:
+                self.wave = 2
+                for i in range(5 + self.difficulty):
+                    bullet_shooters.spawn(context)
+                for i in range(3 + self.difficulty):
+                    supermacys.spawn()
+            if bullet_shooters.empty() and len(supermacys.elements) == 0 and self.wave == 2:
+                self.wave_time = 4000
+
+            if self.wave_time == 4000:
+                self.wave = 3
+                for i in range(2 + self.difficulty):
+                    bullet_shooters.spawn(context)
+                    rocket_launchers.spawn(context)
+                heavy_gunners.spawn()
+            if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and len(heavy_gunners.elements) == 0 and self.wave == 3:
+                self.wave_time = 5500
+
+            if self.wave_time == 5500:
+                self.wave = 4
+                for i in range(3 + self.difficulty):
+                    heavy_gunners.spawn()
+                for i in range(2 + self.difficulty):
+                    rocket_launchers.spawn(context)
+            if len(rocket_launchers.elements) == 0 and len(heavy_gunners.elements) == 0 and self.wave == 4:
+                self.wave_time = 7500
+
+            if self.wave_time == 7500:
+                self.wave = 5
+                for i in range(2 + self.difficulty):
+                    heavy_gunners.spawn()
+                for i in range(3 + self.difficulty):
+                    bullet_shooters.spawn(context)
+                    supermacys.spawn()
+            if len(supermacys.elements) == 0 and len(heavy_gunners.elements) == 0 and bullet_shooters.empty() and self.wave == 5:
+                self.wave_time = 9500
+
+            if self.wave_time == 9500:
+                big_runner.spawn()
+                self.wave = 6
+
+            if self.wave == 6 and not big_runner.live and len(runners.elements) == 0:
                 self.wave = 100
                 self.wave_time = 0
 
             if self.wave == 100 and self.wave_time >= 600:
                 return True
-                # if bullet_shooters.empty() and len(rocket_launchers.elements) == 0 and self.wave == 1:
-            #     self.wave_time = 1200
 
         self.wave_time = self.wave_time + 1
 
