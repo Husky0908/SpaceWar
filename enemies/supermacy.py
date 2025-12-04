@@ -88,7 +88,9 @@ class Supermacy:
         self.shoot(bullets, player)
 
         if self.health <= 0:
-            plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
+            chance = random.randint(1, 2)
+            if chance == 2:
+                plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
             self.state = Supermacy.STATE_KILLED
 
     def move(self):

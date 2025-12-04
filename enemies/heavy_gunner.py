@@ -54,6 +54,8 @@ class HeavyGunner:
             self.state = HeavyGunner.STATE_MOVE
         if self.state == HeavyGunner.STATE_MOVE:
             d_t = context.time - self.start_time
+#            if self.x > context.width - 75 / 2 or self.x < 75 / 2 or self.y > context.height - 75 / 2 or self.y < 75 / 2:
+#                d_t = self.time
             if d_t < self.time:
                 self.x = self.x_0 + self.dir_x * d_t * self.speed
                 self.y = self.y_0 + self.dir_y * d_t * self.speed

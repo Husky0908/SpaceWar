@@ -79,13 +79,13 @@ class Asteroid:
 
         for heavy_gunner in heavy_gunners.elements:
             if self.form.colliderect(heavy_gunner.form) and not heavy_gunner.asteroid:
-                # heavy_gunner.health = heavy_gunner.health - 1
+                heavy_gunner.health = heavy_gunner.health - 1
                 heavy_gunner.asteroid = True
 
-        # for runner in runners.elements:
-        #     if self.form.colliderect(runner.form) and not runner.asteroid:
-        #         runner.health = runner.health - 1
-        #         runner.asteroid = True
+        for runner in runners.elements:
+            if self.form.colliderect(runner.r) and not runner.asteroid:
+                runner.health = runner.health - 1
+                runner.asteroid = True
 
         for supermacy in supermacys.elements:
             if self.form.colliderect(supermacy.form) and not supermacy.asteroid:
@@ -97,9 +97,9 @@ class Asteroid:
                 rocket_launcher.health = rocket_launcher.health - 1
                 rocket_launcher.asteroid = True
 
-        # for bullet in bullets.elements:
-        #     if self.form.colliderect(bullet.form):
-        #         bullet.sharp = False
+        for bullet in bullets.elements:
+            if self.form.colliderect(bullet.form):
+                bullet.sharp = False
 
         for rocket in rockets.elements:
             if self.form.colliderect(rocket.form):

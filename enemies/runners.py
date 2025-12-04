@@ -2,7 +2,7 @@ import pygame
 import random
 from base.context import PygameContext
 from base.player import Player
-from base.bullets import Bullets, Bullet
+from base.bullets import Bullets
 from base.directions import get_direction
 from base.boxes import Coins, PlusHealths, Coin, PlusHealth
 
@@ -55,15 +55,18 @@ class Runner:
                 self.state = Runner.STATE_FIRST_STOP
                 self.start_time = context.time
         if self.state == Runner.STATE_FIRST_STOP:
-            if context.time - self.start_time >= 3:
-                self.state = Runner.STATE_FAST_MOVE
-                self.wounded = False
-                dest_x, dest_y = self.destination(player, 0, 0)
-                dest_x = dest_x
-                dest_y = dest_y
-                self.dir_x, self.dir_y = get_direction(self.x, self.y, dest_x, dest_y)
-                self.start_time = context.time
-                self.x_0, self.y_0 = self.x, self.y
+            if not (self.x > context.width - self.width / 2 or self.x < self.width / 2 or self.y > context.height - self.height / 2 or self.y < self.height / 2):
+                if context.time - self.start_time >= 3:
+                    self.state = Runner.STATE_FAST_MOVE
+                    self.wounded = False
+                    dest_x, dest_y = self.destination(player, 0, 0)
+                    dest_x = dest_x
+                    dest_y = dest_y
+                    self.dir_x, self.dir_y = get_direction(self.x, self.y, dest_x, dest_y)
+                    self.start_time = context.time
+                    self.x_0, self.y_0 = self.x, self.y
+            else:
+                self.state = Runner.STATE_INIT
         if self.state == Runner.STATE_FAST_MOVE:
             d_t = context.time - self.start_time
             self.x = self.x_0 + self.dir_x * d_t * Runner.FAST_SPEED
@@ -116,16 +119,13 @@ class Runners:
     def __init__(self):
         self.elements = []
 
-
     def control(self, context: PygameContext, player: Player, coins: Coins, plus_hp: PlusHealths):
         for runner in self.elements:
             runner.control(context, player, coins, plus_hp)
 
-
     def draw(self, context: PygameContext):
         for runner in self.elements:
             runner.draw(context)
-
 
     def spawn(self, context: PygameContext):
         p_o_n = random.randint(1, 2)
@@ -135,7 +135,6 @@ class Runners:
             x = context.width + Runner.width
         y = random.randint((0 - Runner.height), (context.height + Runner.height))
         self.elements.append(Runner(x, y))
-
 
     def contacts(self, player: Player, bullets: Bullets):
         for runner in self.elements:

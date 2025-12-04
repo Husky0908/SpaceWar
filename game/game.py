@@ -113,7 +113,10 @@ class Game:
         first_boss = FirstBoss(0, -350, player.dif)
         big_runner = BigRunner(context, player.dif)
 
-        game_logic_parameters = GameLogic(player.dif, player.level)
+        asteroids_time = 0
+        if player.level == 2:
+            asteroids_time = 600
+        game_logic_parameters = GameLogic(player.dif, player.level, asteroids_time)
 
         bullets = Bullets(context)
         bombs = Bombs(context)

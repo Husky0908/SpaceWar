@@ -11,11 +11,13 @@ from enemies.big_runner import BigRunner
 
 
 class GameLogic:
-    def __init__(self, game_difficulty: int, level: int):
+    def __init__(self, game_difficulty: int, level: int, asteroids_time: int):
         self.level = level
         self.wave_time = 0
         self.wave = 1
         self.difficulty = game_difficulty
+        self.asteroids_time = asteroids_time
+        self.asteroids_shoot_time = 0
 
     def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids, player: Player, big_runner: BigRunner):
 
@@ -151,6 +153,11 @@ class GameLogic:
 
             if self.wave == 100 and self.wave_time >= 600:
                 return True
+
+        self.asteroids_shoot_time = self.asteroids_shoot_time + 1
+        if self.asteroids_shoot_time == self.asteroids_time:
+            asteroids.spawn(player)
+            self.asteroids_shoot_time = 0
 
         self.wave_time = self.wave_time + 1
 

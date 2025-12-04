@@ -35,14 +35,13 @@ class RocketLauncher:
         self.start_time = 0
         self.speed = 75
         self.asteroid = False
+        self.wall = False
 
     def draw(self, context: PygameContext):
-        self.r = pygame.Rect(self.x - self.width / 2,
-                        self.y - self.height / 2, self.width,
-                        self.height)
+        self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
         if self.health > 0:
+            # pygame.draw.rect(context.screen, (255, 255, 255), (self.x, self.y, self.width, self.height))
             self.form = context.screen.blit(self.forms[self.health - 1], (self.x, self.y))
-
 
     def control(self, context: PygameContext, player: Player, rockets: Rockets, plus_hp: PlusHealths, coins: Coins):
         if self.STATE == RocketLauncher.STATE_INIT:
@@ -51,10 +50,8 @@ class RocketLauncher:
                 self.STATE = RocketLauncher.STATE_MOVE
                 trying = True
                 while trying:
-                    self.dest_x = random.randint((0 + RocketLauncher.width // 2),
-                                                            context.width - RocketLauncher.width // 2)
-                    self.dest_y = random.randint(0 + RocketLauncher.height // 2,
-                                                            context.height - RocketLauncher.height // 2)
+                    self.dest_x = random.randint((0 + RocketLauncher.width // 2), context.width - RocketLauncher.width // 2)
+                    self.dest_y = random.randint(0 + RocketLauncher.height // 2, context.height - RocketLauncher.height // 2)
                     leng = length(player.x, self.dest_x, player.y, self.dest_y)
                     if leng >= 600:
                         trying = False
@@ -64,13 +61,19 @@ class RocketLauncher:
                         self.time = random.randint(1, 4)
         if self.STATE == RocketLauncher.STATE_MOVE:
             d_t = context.time - self.start_time
-            if d_t < self.time:
+            if d_t < self.time and not self.wall:
                 self.x = self.x_0 + self.dir_x * d_t * self.speed
                 self.y = self.y_0 + self.dir_y * d_t * self.speed
+                # if self.x > context.width - RocketLauncher.width / 2 or self.x < RocketLauncher.width / 2 or self.y > context.height - RocketLauncher.height / 2 or self.y < RocketLauncher.height / 2:
+                    # self.wall = True
+                    # d_t = context.time - self.start_time - context.delta_time * 2
+                    # self.x = self.x_0 + self.dir_x * d_t * self.speed
+                    # self.y = self.y_0 + self.dir_y * d_t * self.speed
             else:
                 self.STATE = RocketLauncher.STATE_WAIT
                 self.start_time = context.time
                 self.time = random.randint(1, 4)
+                self.wall = False
         if self.STATE == RocketLauncher.STATE_WAIT:
             if context.time - self.start_time >= self.time:
                 self.STATE = RocketLauncher.STATE_SHOOT
