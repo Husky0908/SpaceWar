@@ -78,7 +78,10 @@ class BulletShooter:
 
     def draw(self, context: PygameContext):
         self._r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
-        self._form = context.screen.blit(self._forms[self._health - 1], self._r)
+        if self._health == 2:
+            self._form = context.screen.blit(self._forms[1], self._r)
+        else:
+            self._form = context.screen.blit(self._forms[0], self._r)
 
     def is_killed(self) -> bool:
         return self._STATE == BulletShooter.STATE_KILLED
