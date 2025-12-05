@@ -5,6 +5,7 @@ from base.directions import get_direction, get_delta_vector
 from base.bullets import Bullets, Bullet
 from base.player import Player
 from base.boxes import Coin, Coins, PlusHealth, PlusHealths
+from base.bombs import Bomb, Bombs
 
 
 class HeavyGunner:
@@ -134,11 +135,18 @@ class HeavyGunner:
                 plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
             self.state = HeavyGunner.STATE_KILL
 
-    def contacts(self, bullets: Bullets):
+    def contacts(self, bullets: Bullets, bombs: Bombs):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
                 self.health = self.health - 1
                 bullet.sharp = False
+
+        for bomb in bombs.elements:
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+                self.health = self.health - 2
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
 
 class HeavyGunners:
@@ -156,9 +164,9 @@ class HeavyGunners:
         for heavy_gunner in self.elements:
             heavy_gunner.control(context, bullets, player, plus_hp, coins)
 
-    def contacts(self, bullets: Bullets):
+    def contacts(self, bullets: Bullets, bombs: Bombs):
         for heavy_gunner in self.elements:
-            heavy_gunner.contacts(bullets)
+            heavy_gunner.contacts(bullets, bombs)
 
         tmp_list = []
         for x in self.elements:

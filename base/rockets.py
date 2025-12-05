@@ -4,6 +4,7 @@ import random
 from base.context import PygameContext
 from base.player import Player
 from base.directions import get_direction
+from base.bombs import Bomb, Bombs
 
 
 class Rocket:
@@ -39,7 +40,7 @@ class Rocket:
         if self.health <= 0:
             self.state = Rocket.STATE_DESTROY
 
-    def contacts(self, player: Player):
+    def contacts(self, player: Player, bombs: Bombs):
         if self.form.colliderect(player.r):
             if player.ship_power == 2:
                 shield = random.randint(0, 100)
@@ -47,6 +48,13 @@ class Rocket:
                     player.health = player.health + 1
             self.state = Rocket.STATE_DESTROY
             player.health = player.health - 1
+
+        for bomb in bombs.elements:
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+                self.state = Rocket.STATE_DESTROY
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
     def draw(self, context: PygameContext):
         r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
@@ -68,9 +76,9 @@ class Rockets:
         for rocket in self.elements:
             rocket.control(player)
 
-    def contacts(self, player: Player):
+    def contacts(self, player: Player, bombs: Bombs):
         for rocket in self.elements:
-            rocket.contacts(player)
+            rocket.contacts(player, bombs)
 
         for rocket in self.elements:
             tmp_list = []

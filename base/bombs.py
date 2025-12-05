@@ -25,7 +25,11 @@ class Bomb:
         self.state = Bomb.STATE_MOVE
 
     def draw(self, context: PygameContext):
-        self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), self.r)
+        if self.state == Bomb.STATE_MOVE:
+            self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), self.r)
+        else:
+            self.r = 60
+            self.form = pygame.draw.circle(context.screen, (255, 0, 0), (self.x, self.y), self.r)
 
     def control(self, context: PygameContext):
         if self.state == Bomb.STATE_MOVE:

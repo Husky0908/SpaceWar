@@ -6,6 +6,7 @@ from enemies.bullet_shooters import BulletShooters
 from base.directions import get_direction
 from base.bullets import Bullet, Bullets
 from base.boxes import PlusHealths, PlusHealth
+from base.bombs import Bomb, Bombs
 
 
 class Supermacy:
@@ -98,11 +99,18 @@ class Supermacy:
         self.x = self.x + self.dir_x * self.speed
         self.y = self.y + self.dir_y * self.speed
 
-    def contacts(self, bullets: Bullets):
+    def contacts(self, bullets: Bullets, bombs: Bombs):
         for bullet in bullets.elements:
             if self.form.colliderect(bullet.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 self.health = self.health - 1
+
+        for bomb in bombs.elements:
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+                self.health = self.health - 2
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
     def shoot(self, bullets: Bullets, player: Player):
         if self.shoot_time - self.shoot_time_end >= 0:
@@ -141,9 +149,9 @@ class Supermacys:
             if b_n <= 0:
                 b_n = -1
 
-    def contacts(self, bullets: Bullets):
+    def contacts(self, bullets: Bullets, bombs: Bombs):
         for supermacy in self.elements:
-            supermacy.contacts(bullets)
+            supermacy.contacts(bullets, bombs)
 
         tmp_list = []
         for x in self.elements:

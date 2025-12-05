@@ -6,6 +6,7 @@ from base.bullets import Bullet, Bullets
 from base.directions import get_direction, length
 from base.rockets import Rockets
 from base.boxes import Coins, PlusHealths, Coin, PlusHealth
+from base.bombs import Bombs, Bomb
 
 
 class RocketLauncher:
@@ -91,11 +92,18 @@ class RocketLauncher:
                 plus_hp.elements.append(PlusHealth(self.x, self.y, 1))
             self.STATE = RocketLauncher.STATE_KILL
 
-    def contacts(self, bullets: Bullets):
-         for bullet in bullets.elements:
+    def contacts(self, bullets: Bullets, bombs: Bombs):
+        for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
                 bullet.sharp = False
                 self.health = self.health - 1
+
+        for bomb in bombs.elements:
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+                self.health = self.health - 2
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
 
 class RocketLaunchers:
@@ -115,9 +123,9 @@ class RocketLaunchers:
         for rocket_launcher in self.elements:
             rocket_launcher.control(context, player, rockets, plus_hp, coins)
 
-    def contacts(self, bullet: Bullet):
+    def contacts(self, bullet: Bullet, bombs: Bombs):
         for rocket_launcher in self.elements:
-            rocket_launcher.contacts(bullet)
+            rocket_launcher.contacts(bullet, bombs)
 
         tmp_list = []
         for x in self.elements:

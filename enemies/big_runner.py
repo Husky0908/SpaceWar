@@ -6,6 +6,7 @@ from base.bullets import Bullet, Bullets
 from base.player import Player
 from enemies.runners import Runners
 from base.boxes import Upgraders, Upgrader
+from base.bombs import Bomb, Bombs
 
 
 class BigRunner:
@@ -109,7 +110,7 @@ class BigRunner:
             bullets.elements.append(Bullet(self.x, self.y + 105, self.x - 1, self.y + 105, "enemy"))
             bullets.elements.append(Bullet(self.x + 150, self.y + 105, self.x + 151, self.y + 105, "enemy"))
 
-    def contacts(self, player: Player, bullets: Bullets):
+    def contacts(self, player: Player, bullets: Bullets, bombs: Bombs):
         if self.live:
             if self.form.colliderect(player.form) and self.attack >= 60:
                 if player.ship_power == 2:
@@ -124,6 +125,13 @@ class BigRunner:
                 if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
                     self.health = self.health - 1
                     bullet.sharp = False
+
+            for bomb in bombs.elements:
+                if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                    bomb.sharp = False
+                    self.health = self.health - 2
+                if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                    bomb.state = Bomb.STATE_EXPLOSION
 
     def control_pause(self, context: PygameContext, runners: Runners):
         if context.time - self.start_time >= 3:

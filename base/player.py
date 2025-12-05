@@ -172,7 +172,7 @@ class Player:
 
     def bomb_shoot(self, running, context: PygameContext, bombs: Bombs):
         if running:
-            shoot_time = 60
+            shoot_time = 300
             if bombs.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 bombs.elements.append(Bomb(self.x, self.y, mouse_x, mouse_y, "friend"))

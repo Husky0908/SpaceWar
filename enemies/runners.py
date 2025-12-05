@@ -5,6 +5,7 @@ from base.player import Player
 from base.bullets import Bullets
 from base.directions import get_direction
 from base.boxes import Coins, PlusHealths, Coin, PlusHealth
+from base.bombs import Bomb, Bombs
 
 
 class Runner:
@@ -101,7 +102,7 @@ class Runner:
         dest_y = random.randint(rect.top, rect.bottom)
         return dest_x, dest_y
 
-    def contacts(self, player: Player, bullets: Bullets):
+    def contacts(self, player: Player, bullets: Bullets, bombs: Bombs):
         if self.r.colliderect(player.r) and not self.wounded:
             if player.ship_power == 2:
                 shield = random.randint(0, 100)
@@ -109,10 +110,18 @@ class Runner:
                     player.health = player.health + 1
             player.health = player.health - 1
             self.wounded = True
+
         for bullet in bullets.elements:
             if self.r.colliderect(bullet.form) and bullet.attacker == "friend":
                 self.health = self.health - 1
                 bullet.sharp = False
+
+        for bomb in bombs.elements:
+            if self.r.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+                self.health = self.health - 2
+            if self.r.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
 
 
 class Runners:
@@ -136,9 +145,9 @@ class Runners:
         y = random.randint((0 - Runner.height), (context.height + Runner.height))
         self.elements.append(Runner(x, y))
 
-    def contacts(self, player: Player, bullets: Bullets):
+    def contacts(self, player: Player, bullets: Bullets, bombs: Bombs):
         for runner in self.elements:
-            runner.contacts(player, bullets)
+            runner.contacts(player, bullets, bombs)
 
         tmp_list = []
         for x in self.elements:

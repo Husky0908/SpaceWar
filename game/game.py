@@ -45,15 +45,15 @@ class Game:
 
     def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, asteroids: Asteroids, heavy_gunners: HeavyGunners, big_runner: BigRunner, bombs: Bombs):
 
-        runners.contacts(player, bullets)
+        runners.contacts(player, bullets, bombs)
         bullet_shooters.contacts(context, bullets, bombs)
         player.contacts(bullets, coins, plus_hp, upgrades)
-        first_boss.contacts(bullets, player)
-        big_runner.contacts(player, bullets)
-        rocket_launchers.contacts(bullets)
-        supermacys.contacts(bullets)
-        heavy_gunners.contacts(bullets)
-        asteroids.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners, bullets, rockets)
+        first_boss.contacts(bullets, player, bombs)
+        big_runner.contacts(player, bullets, bombs)
+        rocket_launchers.contacts(bullets, bombs)
+        supermacys.contacts(bullets, bombs)
+        heavy_gunners.contacts(bullets, bombs)
+        asteroids.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners, bullets, rockets, bombs)
 
         for bullet in bullets.elements:
 
@@ -62,7 +62,7 @@ class Game:
                     bullet.sharp = False
                     rocket.health = rocket.health - 1
 
-        rockets.contacts(player)
+        rockets.contacts(player, bombs)
         bombs.contacts()
         bullets.contacts()
 

@@ -5,6 +5,7 @@ from base.directions import get_direction
 from base.bullets import Bullets, Bullet
 from base.player import Player
 from base.boxes import Upgraders, Upgrader
+from base.bombs import Bomb, Bombs
 
 
 class FirstBoss:
@@ -186,7 +187,7 @@ class FirstBoss:
         self.start_time = context.time
         self.x_0, self.y_0 = self.x, self.y
 
-    def contacts(self, bullets: Bullets, player: Player):
+    def contacts(self, bullets: Bullets, player: Player, bombs: Bombs):
         if self.live:
             for bullet in bullets.elements:
                 if bullet.form.colliderect(self.form) and bullet.attacker == "friend":
@@ -206,6 +207,22 @@ class FirstBoss:
                 player.health = player.health - 1
                 self.attack = 0
             self.attack = self.attack + 1
+
+            for bomb in bombs.elements:
+                if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                    bomb.sharp = False
+                    self.health = self.health - 2
+                if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                    bomb.state = Bomb.STATE_EXPLOSION
+                if self.shooter_live:
+                    if self.shooter_form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                        bomb.sharp = False
+                        self.health = self.health - 10
+                        self.shooter_live = False
+                        self.state = FirstBoss.STATE_SECOND_MOVE
+                    if self.shooter_form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                        bomb.state = Bomb.STATE_EXPLOSION
+
 
         if self.state == FirstBoss.STATE_KILL:
             self.live = False

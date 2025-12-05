@@ -9,13 +9,14 @@ from enemies.supermacy import Supermacys
 from enemies.heavy_gunner import HeavyGunners
 from base.bullets import Bullets
 from base.rockets import Rockets, Rocket
+from base.bombs import Bomb, Bombs
 
 
 class Asteroid:
     STATE_INIT = 0
     STATE_MOVE = 1
     STATE_DESTROY = 2
-    
+
     def __init__(self, x: int, y: int, dir: int):
         self.x = x
         self.y = y
@@ -62,7 +63,7 @@ class Asteroid:
             for rocket_launcher in rocket_launchers.elements:
                 rocket_launcher.asteroid = False
 
-    def contacts(self, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, supermacys: Supermacys, heavy_gunners: HeavyGunners, bullets: Bullets, rockets: Rockets):
+    def contacts(self, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, supermacys: Supermacys, heavy_gunners: HeavyGunners, bullets: Bullets, rockets: Rockets, bombs: Bombs):
 
         if self.form.colliderect(player.form) and not self.damage:
             if player.ship_power == 2:
@@ -105,6 +106,12 @@ class Asteroid:
             if self.form.colliderect(rocket.form):
                 rocket.state = Rocket.STATE_DESTROY
 
+        for bomb in bombs.elements:
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
+                bomb.sharp = False
+            if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
+                bomb.state = Bomb.STATE_EXPLOSION
+
 
 class Asteroids():
     def __init__(self):
@@ -128,9 +135,9 @@ class Asteroids():
         for asteroid in self.elements:
             asteroid.control(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunners)
 
-    def contacts(self, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, supermacys: Supermacys, heavy_gunner: HeavyGunners, bullets: Bullets, rockets: Rockets):
+    def contacts(self, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, supermacys: Supermacys, heavy_gunner: HeavyGunners, bullets: Bullets, rockets: Rockets, bombs: Bombs):
         for asteroid in self.elements:
-            asteroid.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunner, bullets, rockets)
+            asteroid.contacts(context, player, bullet_shooters, runners, rocket_launchers, supermacys, heavy_gunner, bullets, rockets, bombs)
 
         tmp_list = []
         for x in self.elements:
