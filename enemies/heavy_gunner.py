@@ -91,9 +91,9 @@ class HeavyGunner:
                 new_2_x = self.x + plus_sign * delta_x
                 new_2_y = self.y + plus_sign * (delta_y - 0.5773 * delta_x) / (1 + (delta_y/delta_x * 0.5773))
 
-                bullets.elements.append(Bullet(self.x, self.y, self.player_x, self.player_y, "enemy"))
-                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy"))
-                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy"))
+                bullets.elements.append(Bullet(self.x, self.y, self.player_x, self.player_y, "enemy", 400))
+                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy", 400))
+                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy", 400))
 
                 self.shoot = self.shoot + 1
                 self.start_time = context.time
@@ -112,8 +112,8 @@ class HeavyGunner:
                 new_2_x = self.x + plus_sign * delta_x
                 new_2_y = self.y + plus_sign * (delta_y - 0.2679 * delta_x) / (1 + (delta_y/delta_x * 0.2679))
 
-                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy"))
-                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy"))
+                bullets.elements.append(Bullet(self.x, self.y, new_1_x, new_1_y, "enemy", 400))
+                bullets.elements.append(Bullet(self.x, self.y, new_2_x, new_2_y, "enemy", 400))
 
                 self.shoot = self.shoot + 1
                 self.start_time = context.time

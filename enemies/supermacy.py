@@ -114,7 +114,7 @@ class Supermacy:
 
     def shoot(self, bullets: Bullets, player: Player):
         if self.shoot_time - self.shoot_time_end >= 0:
-            bullets.elements.append(Bullet(self.x, self.y, player.x, player.y, "enemy"))
+            bullets.elements.append(Bullet(self.x, self.y, player.x, player.y, "enemy", 400))
             self.shoot_time = 0
             self.shoot_time_end = random.randint(240, 360)
         self.shoot_time = self.shoot_time + 1

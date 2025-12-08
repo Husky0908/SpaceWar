@@ -5,7 +5,7 @@ from base.directions import get_direction
 
 
 class Bullet:
-    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float, attacker: str):
+    def __init__(self, x_0: int, y_0: int, destination_x: float, destination_y: float, attacker: str, speed: int):
         self.x_0 = x_0
         self.y_0 = y_0
         self.x = x_0
@@ -14,7 +14,7 @@ class Bullet:
         self.dest_y = destination_y
         self.dir_x = None
         self.dir_y = None
-        self.speed = 400
+        self.speed = speed
         self.start_time = 0
         self.sharp = False
         self.form = None

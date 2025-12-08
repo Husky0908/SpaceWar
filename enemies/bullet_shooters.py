@@ -128,7 +128,7 @@ class BulletShooter:
     def _handle_shoot(self, player: Player, bullets: Bullets):
         self._shoot_time = self._shoot_time + 1
         if self._shoot_time == self._shoot_time_end:
-            bullets.elements.append(Bullet(self._x, self._y, player.x, player.y, "enemy"))
+            bullets.elements.append(Bullet(self._x, self._y, player.x, player.y, "enemy", 400))
             self._shoot_time = 0
             self._shoot_time_end = random.randint(80, 150)
 

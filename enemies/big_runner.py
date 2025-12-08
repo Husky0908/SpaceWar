@@ -107,8 +107,8 @@ class BigRunner:
         self.shoot_time = self.shoot_time + 1
         if self.shoot_time >= self.shoot_time_end:
             self.shoot_time = 0
-            bullets.elements.append(Bullet(self.x, self.y + 105, self.x - 1, self.y + 105, "enemy"))
-            bullets.elements.append(Bullet(self.x + 150, self.y + 105, self.x + 151, self.y + 105, "enemy"))
+            bullets.elements.append(Bullet(self.x, self.y + 105, self.x - 1, self.y + 105, "enemy", 400))
+            bullets.elements.append(Bullet(self.x + 150, self.y + 105, self.x + 151, self.y + 105, "enemy", 400))
 
     def contacts(self, player: Player, bullets: Bullets, bombs: Bombs):
         if self.live:

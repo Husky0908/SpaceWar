@@ -159,15 +159,16 @@ class Player:
     def mashingun_shoot(self, running, bullets: Bullets, context: PygameContext):
         if running:
             shoot_time = 30
+            speed = 400
             if self.gun_power == 2:
                 shoot_time = 25
             if self.gun_power == 3:
                 shoot_time = 20
             if self.gun_power == 4:
-                shoot_time = 15
+                speed = 475
             if bullets.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend"))
+                bullets.elements.append(Bullet(self.x, self.y, mouse_x, mouse_y, "friend", speed))
                 bullets.last_spawn = context.time
 
     def bomb_shoot(self, running, context: PygameContext, bombs: Bombs):
