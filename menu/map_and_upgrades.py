@@ -125,12 +125,14 @@ class Map_and_Upgrades:
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1) or enter:
+        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1) or enter or (third_mission.colliderect(mouse_form) and mouse_button_state == 1):
             mouse_button_state = 2
             if self.how_many_map_now == 1:
                 self.hmm = 1
             if self.how_many_map_now == 2:
                 self.hmm = 2
+            if third_mission.colliderect(mouse_form):
+                self.hmm = 3
             self.write_file()
             return "play the game", mouse_button_state
         if go_upgrade.colliderect(mouse_form) and mouse_button_state == 1:
