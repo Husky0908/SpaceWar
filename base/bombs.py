@@ -50,7 +50,7 @@ class Bomb:
 
 class Bombs:
     def __init__(self, context: PygameContext):
-        self.last_spawn = context.time
+        self.last_spawn = context.time + 300
         self.elements = []
 
     def draw(self, context: PygameContext):
