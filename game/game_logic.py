@@ -9,7 +9,7 @@ from base.asteroids import Asteroids
 from base.player import Player
 from enemies.big_runner import BigRunner
 from enemies.tower import Towers
-
+from enemies.super_tower import SuperTower
 
 class GameLogic:
     def __init__(self, game_difficulty: int, level: int, asteroids_time: int):
@@ -20,7 +20,7 @@ class GameLogic:
         self.asteroids_time = asteroids_time
         self.asteroids_shoot_time = 0
 
-    def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids, player: Player, big_runner: BigRunner, towers: Towers):
+    def wave_logic(self, context: PygameContext, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, supermacys: Supermacys, heavy_gunners: HeavyGunners, asteroids: Asteroids, player: Player, big_runner: BigRunner, towers: Towers, super_tower: SuperTower):
 
         if self.level == 1:
 
@@ -158,9 +158,7 @@ class GameLogic:
         if self.level == 3:
 
             if self.wave_time == 0:
-                towers.spawn(context)
-                towers.spawn(context)
-                towers.spawn(context)
+                super_tower.spawn()
 
         self.asteroids_shoot_time = self.asteroids_shoot_time + 1
         if self.asteroids_shoot_time == self.asteroids_time:

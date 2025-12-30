@@ -66,9 +66,11 @@ class Player:
 
     def picture(self, context: PygameContext):
         if self.health < 6:
-            self.form = context.screen.blit(self.pictures[self.health - 1], self.r)
+            context.screen.blit(self.pictures[self.health - 1], self.r)
         else:
-            self.form = context.screen.blit(self.pictures[4], self.r)
+            context.screen.blit(self.pictures[4], self.r)
+
+        self.form = pygame.Rect(self.x, self.y, 50, 50)
 
     def draw(self, context: PygameContext):
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
