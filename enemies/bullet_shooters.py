@@ -8,8 +8,8 @@ from base.bombs import Bombs, Bomb
 
 
 class BulletShooter:
-    height = 45
-    width = 30
+    height = 75
+    width = 50
     STATE_INIT = 0
     STATE_MOVE_RIGHT = 1
     STATE_MOVE_LEFT = 2
@@ -77,11 +77,11 @@ class BulletShooter:
                 bomb.state = Bomb.STATE_EXPLOSION
 
     def draw(self, context: PygameContext):
-        self._r = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
+        self._form = pygame.Rect(self._x - BulletShooter.width / 2, self._y - BulletShooter.height / 2, BulletShooter.width, BulletShooter.height)
         if self._health == 2:
-            self._form = context.screen.blit(self._forms[1], self._r)
+            context.screen.blit(self._forms[1], self._form)
         else:
-            self._form = context.screen.blit(self._forms[0], self._r)
+            context.screen.blit(self._forms[0], self._form)
 
     def is_killed(self) -> bool:
         return self._STATE == BulletShooter.STATE_KILLED

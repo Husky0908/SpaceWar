@@ -10,7 +10,7 @@ from base.bombs import Bomb, Bombs
 
 class Runner:
 
-    height = 110
+    height = 100
     width = 50
     STATE_INIT = 0
     STATE_SLOW_MOVE = 1
@@ -94,7 +94,7 @@ class Runner:
         self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
         if self.health > 0:
             self.form = self.forms[self.health - 1]
-        context.screen.blit(self.form, self.r)
+        context.screen.blit(self.form, (self.x - 25, self.y - 55))
 
     def destination(self, player: Player, width, height):
         rect = player.get_rectangle_around_player(width, height)

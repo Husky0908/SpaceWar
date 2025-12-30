@@ -36,13 +36,15 @@ class Bullet:
 
     def draw(self, context: PygameContext):
         if self.attacker == "friend":
-            self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+            context.screen.blit(self.forms[0], (self.x, self.y))
         else:
             value = math.atan((self.dest_y - self.y_0) / (self.x_0 - self.dest_x)) * 180 / math.pi - 90
             if self.x_0 > self.dest_x:
                 value = value - 180
 
-            self.form = context.screen.blit(pygame.transform.rotate(self.forms[1], value), (self.x, self.y))
+            context.screen.blit(pygame.transform.rotate(self.forms[1], value), (self.x, self.y))
+
+        self.form = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
 
 
 class Bullets:

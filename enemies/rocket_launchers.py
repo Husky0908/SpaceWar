@@ -11,8 +11,8 @@ from base.bombs import Bombs, Bomb
 
 class RocketLauncher:
 
-    height = 50
-    width = 50
+    height = 65
+    width = 60
     STATE_INIT = 0
     STATE_MOVE = 1
     STATE_WAIT = 2
@@ -39,10 +39,10 @@ class RocketLauncher:
         self.wall = False
 
     def draw(self, context: PygameContext):
-        self.r = pygame.Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
+        self.r = pygame.Rect(self.x, self.y, self.width, self.height)
         if self.health > 0:
-            # pygame.draw.rect(context.screen, (255, 255, 255), (self.x, self.y, self.width, self.height))
-            self.form = context.screen.blit(self.forms[self.health - 1], (self.x, self.y))
+            context.screen.blit(self.forms[self.health - 1], (self.x, self.y))
+        self.form = pygame.Rect(self.r)
 
     def control(self, context: PygameContext, player: Player, rockets: Rockets, plus_hp: PlusHealths, coins: Coins):
         if self.STATE == RocketLauncher.STATE_INIT:

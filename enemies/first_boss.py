@@ -41,8 +41,8 @@ class FirstBoss:
         self.bullet_shooter_dest = []
         self.live = False
         self.state = FirstBoss.STATE_INIT
-        self.width = 370
-        self.height = 320
+        self.width = 350
+        self.height = 350
 
     def spawn(self):
         self.live = True
@@ -50,29 +50,33 @@ class FirstBoss:
     def draw(self, context: PygameContext, dif: int):
         if self.live:
             r = pygame.Rect(self.x, self.y, self.width, self.height)
+            self.form = pygame.Rect(r)
             if dif >= 0:
                 if self.health > 25:
-                    self.form = context.screen.blit(self.forms[1], (self.x, self.y))
+                    context.screen.blit(self.forms[1], (self.x, self.y))
                 else:
-                    self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+                    context.screen.blit(self.forms[0], (self.x, self.y))
                 if self.health > 50:
-                    self.form = context.screen.blit(self.forms[2], (self.x, self.y))
+                    context.screen.blit(self.forms[2], (self.x, self.y))
             else:
                 if self.health > 15:
-                    self.form = context.screen.blit(self.forms[1], (self.x, self.y))
+                    context.screen.blit(self.forms[1], (self.x, self.y))
                 else:
-                    self.form = context.screen.blit(self.forms[0], (self.x, self.y))
+                    context.screen.blit(self.forms[0], (self.x, self.y))
                 if self.health > 30:
-                    self.form = context.screen.blit(self.forms[2], (self.x, self.y))
+                    context.screen.blit(self.forms[2], (self.x, self.y))
             if self.shooter_live:
                 rotate = 0
                 if self.side == 2:
-                    r = pygame.Rect((self.x - 40), (self.y + (self.height / 2) - 5), 60, 60)
+                    r_1 = pygame.Rect((self.x - 40), (self.y + (self.height / 2) - 30), 60, 60)
+                    r_2 = pygame.Rect((self.x - 40), (self.y + (self.height / 2) - 20), 60, 60)
                     rotate = 90
                 else:
-                    r = pygame.Rect((self.x + self.width - 75), (self.y + (self.height / 2)), 60, 60)
+                    r_1 = pygame.Rect((self.x + self.width - 30), (self.y + (self.height / 2 - 30)), 60, 60)
+                    r_2 = pygame.Rect((self.x + self.width - 65), (self.y + (self.height / 2 - 20)), 60, 60)
                     rotate = -90
-                self.shooter_form = context.screen.blit(pygame.transform.rotate(self.cannon_form, rotate), r)
+                self.shooter_form = pygame.Rect(r_1)
+                context.screen.blit(pygame.transform.rotate(self.cannon_form, rotate), r_2)
 
     def control(self, context: PygameContext, player: Player, bullets: Bullets, upgrades: Upgraders):
         if self.live:
