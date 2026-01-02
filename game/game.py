@@ -37,7 +37,7 @@ class Game:
         towers.control(bullets, player)
         first_boss.control(context, player, bullets, upgrades)
         big_runner.control(context, bullets, runners, upgrades)
-        super_tower.control(bullets, context)
+        super_tower.control(bullets, context, upgrades)
         bullets.control(context)
         rockets.control(player)
         bombs.control(context)
@@ -47,13 +47,14 @@ class Game:
         plus_hp.control(context)
         upgrades.control(context)
 
-    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, asteroids: Asteroids, heavy_gunners: HeavyGunners, big_runner: BigRunner, bombs: Bombs, towers: Towers):
+    def contacts(self, context: PygameContext, player: Player, runners: Runners, bullets: Bullets, bullet_shooters: BulletShooters, rockets: Rockets, rocket_launchers: RocketLaunchers, first_boss: FirstBoss, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders, supermacys: Supermacys, asteroids: Asteroids, heavy_gunners: HeavyGunners, big_runner: BigRunner, bombs: Bombs, towers: Towers, super_tower: SuperTower):
 
         runners.contacts(player, bullets, bombs)
         bullet_shooters.contacts(context, bullets, bombs)
         player.contacts(bullets, coins, plus_hp, upgrades)
         first_boss.contacts(bullets, player, bombs)
         big_runner.contacts(player, bullets, bombs)
+        super_tower.contacts(bullets, player, bombs)
         rocket_launchers.contacts(bullets, bombs)
         supermacys.contacts(bullets, bombs)
         heavy_gunners.contacts(bullets, bombs)
@@ -104,6 +105,8 @@ class Game:
                     print_text("23", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4 * 3)), context)
                 if player.level == 2:
                     print_text("09", 20, (255, 0, 0), ((context.width / 4), (context.height / 4)), context)
+                if player.level == 3:
+                    print_text("31", 20, (255, 0, 0), ((context.width / 4 * 3), (context.height / 4)), context)
             print_text(self.end_text, 100, (255, 255, 255), ((context.width / 2), (context.height / 2)), context)
         elif game_logic_parameters.wave == 100:
             print_text(f"{(options_saving.languages[options_saving.select_language])["end"]} {str(10 - game_logic_parameters.wave_time // 60)}", 50, (255, 255, 255), (context.width / 2, 50), context)
@@ -119,7 +122,7 @@ class Game:
         player = Player(context.width // 2, context.height // 2, name)
         first_boss = FirstBoss(0, -350, player.dif)
         big_runner = BigRunner(context, player.dif)
-        super_tower = SuperTower(player.dif)
+        super_tower = SuperTower(context, player.dif)
 
         asteroids_time = 0
         if player.level == 2:
@@ -199,7 +202,7 @@ class Game:
                             player.write_player_text()
                             player.health = 0
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids, big_runner, bombs, towers, super_tower)
-                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades, supermacys, asteroids, heavy_gunners, big_runner, bombs, towers)
+                    self.contacts(context, player, runners, bullets, bullet_shooters, rockets, rocket_launchers, first_boss, coins, plus_hp, upgrades, supermacys, asteroids, heavy_gunners, big_runner, bombs, towers, super_tower)
                 else:
                     self.draw(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, options_saving, coins, plus_hp, game_logic_parameters, upgrades, supermacys, heavy_gunners, asteroids, big_runner, bombs, towers, super_tower)
                     bullets.elements.clear()

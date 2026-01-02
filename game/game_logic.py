@@ -159,6 +159,14 @@ class GameLogic:
 
             if self.wave_time == 0:
                 super_tower.spawn()
+                self.wave = 2
+
+            if self.wave == 2 and not super_tower.live:
+                self.wave = 100
+                self.wave_time = 0
+
+            if self.wave == 100 and self.wave_time >= 600:
+                return True
 
         self.asteroids_shoot_time = self.asteroids_shoot_time + 1
         if self.asteroids_shoot_time == self.asteroids_time:
