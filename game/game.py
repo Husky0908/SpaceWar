@@ -37,7 +37,7 @@ class Game:
         towers.control(bullets, player)
         first_boss.control(context, player, bullets, upgrades)
         big_runner.control(context, bullets, runners, upgrades)
-        super_tower.control(bullets)
+        super_tower.control(bullets, context)
         bullets.control(context)
         rockets.control(player)
         bombs.control(context)
@@ -187,6 +187,7 @@ class Game:
                         self.end_text = (options_saving.languages[options_saving.select_language])["game over"]
                         first_boss.live = False
                         big_runner.live = False
+                        super_tower.live = False
                     if not self.end:
                         self.control(context, player, runners, bullets, bullet_shooters, rocket_launchers, rockets, first_boss, coins, plus_hp, upgrades, supermacys, heavy_gunners, asteroids, big_runner, bombs, towers, super_tower)
                         self.end = game_logic_parameters.wave_logic(context, bullet_shooters, runners, rocket_launchers, first_boss, supermacys, heavy_gunners, asteroids, player, big_runner, towers, super_tower)
