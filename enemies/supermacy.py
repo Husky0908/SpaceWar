@@ -21,6 +21,7 @@ class Supermacy:
         self.y = random.randint(100, 500)
         self.health = 4
         self.form = None
+        self.forms = [pygame.image.load("Pictures/enemies_pictures/supermacys/supermacy_1_hp.png"), pygame.image.load("Pictures/enemies_pictures/supermacys/supermacy_2_hp.png"), pygame.image.load("Pictures/enemies_pictures/supermacys/supermacy_3_hp.png"), pygame.image.load("Pictures/enemies_pictures/supermacys/supermacy_4_hp.png")]
         self.state = Supermacy.STATE_DEFEND
         self.state_survive = None
         self.move_px = 0
@@ -38,7 +39,11 @@ class Supermacy:
         self.asteroid = False
 
     def draw(self, context: PygameContext):
-        self.form = pygame.draw.rect(context.screen, (255, 0, 0), (self.x, self.y, 50, 75))
+        self.form = pygame.Rect(self.x, self.y, 90, 65)
+        if self.health > 1:
+            context.screen.blit(self.forms[self.health - 1], (self.x - 20, self.y))
+        else:
+            context.screen.blit(self.forms[0], (self.x - 20, self.y))
 
     def control(self, player: Player, bullet_shooters: BulletShooters, bullets: Bullets, b_n: int, plus_hp: PlusHealths):
         if not b_n == -1:
