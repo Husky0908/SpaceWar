@@ -44,11 +44,14 @@ class Map_and_Upgrades:
         self.x = 55
         self.y = 545
         self.move = False
+        self.map_move_coordinate = [(55, 545), (199, 375), (410, 355), (575, 470)]
+        self.dest_x = 0
 
     def map(self, context: PygameContext, mouse_form, mouse_button_state, options_save: OptionsSave, ship):
         first_mission = pygame.draw.rect(context.screen, (255, 255, 255), (55, 545, 80, 80))
         second_mission = pygame.draw.rect(context.screen, (255, 255, 255), (200, 370, 80, 80))
         third_mission = pygame.draw.rect(context.screen, (255, 255, 255), (410, 355, 80, 80))
+        fourth_mission = pygame.draw.rect(context.screen, (255, 255, 255), (575, 470, 80, 80))
         context.screen.blit(self.map_background, (0, 0))
         context.screen.blit(self.map_picture, (-10, 0))
         if self.hmmu < 8:
@@ -95,16 +98,27 @@ class Map_and_Upgrades:
             print_text((options_save.languages[options_save.select_language])["start"], 45, (255, 255, 255), ((context.width / 4 * 2 + 230), 675), context)
 
         keys = pygame.key.get_pressed()
-        if ((first_mission.colliderect(mouse_form) and mouse_button_state == 1) or keys[options_save.left_control]) and not self.how_many_map == 1 and not self.how_many_map_now == 1.5:
+        if (first_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 1:
             mouse_button_state = 2
             self.how_many_map = 1
             self.move = True
             self.get_direction_map()
-        if ((second_mission.colliderect(mouse_form) and mouse_button_state == 1) or keys[options_save.right_control]) and not self.how_many_map == 2 and self.hmmu >= 2 and not self.how_many_map_now == 1.5:
+        if (second_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 2:
             mouse_button_state = 2
             self.how_many_map = 2
             self.move = True
             self.get_direction_map()
+        if (third_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 3:
+            mouse_button_state = 2
+            self.how_many_map = 3
+            self.move = True
+            self.get_direction_map()
+        if (fourth_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 4:
+            mouse_button_state = 2
+            self.how_many_map = 4
+            self.move = True
+            self.get_direction_map()
+
         if keys[pygame.K_RETURN]:
             enter = True
         else:
@@ -112,26 +126,27 @@ class Map_and_Upgrades:
 
         if self.move:
             d_t = self.time - self.start_time
-            if d_t < 47:
+            if (not self.x >= self.dest_x and self.how_many_map > self.how_many_map_now) or (not self.x <= self.dest_x and self.how_many_map < self.how_many_map_now):
                 self.x = self.x_0 + self.dir_x * d_t * 5
                 self.y = self.y_0 + self.dir_y * d_t * 5
             else:
-                if self.how_many_map == 2:
-                    self.how_many_map_now = 2
+                if self.how_many_map > self.how_many_map_now:
+                    self.how_many_map_now = self.how_many_map_now + 0.5
                 else:
-                    self.how_many_map_now = 1
-                self.move = False
+                    self.how_many_map_now = self.how_many_map_now - 0.5
+                self.how_many_map_now = int(self.how_many_map_now)
+                self.get_direction_map()
                 self.start_time = self.time
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1) or enter or (third_mission.colliderect(mouse_form) and mouse_button_state == 1):
+        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 2) or enter or (third_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 3):
             mouse_button_state = 2
             if self.how_many_map_now == 1:
                 self.hmm = 1
             if self.how_many_map_now == 2:
                 self.hmm = 2
-            if third_mission.colliderect(mouse_form):
+            if self.how_many_map_now == 3:
                 self.hmm = 3
             self.write_file()
             return "play the game", mouse_button_state
@@ -261,14 +276,19 @@ class Map_and_Upgrades:
             f.write(f"{self.bomb}\n")
             f.write(f"{self.rocket}\n")
             f.write(f"{self.skins}\n")
-        
+
     def get_direction_map(self):
-        if self.how_many_map == 2:
-            self.dir_x, self.dir_y = get_direction(55, 545, 200, 370)
-            self.x_0, self.y_0 = 55, 545
+        if self.how_many_map > self.how_many_map_now:
+            self.dir_x, self.dir_y = get_direction(self.map_move_coordinate[self.how_many_map_now - 1][0], self.map_move_coordinate[self.how_many_map_now - 1][1], self.map_move_coordinate[self.how_many_map_now][0], self.map_move_coordinate[self.how_many_map_now][1])
+            self.dest_x = self.map_move_coordinate[self.how_many_map_now][0]
+            self.x_0, self.y_0 = self.map_move_coordinate[self.how_many_map_now - 1]
+            self.how_many_map_now = self.how_many_map_now + 0.5
+        elif self.how_many_map < self.how_many_map_now:
+            self.dir_x, self.dir_y = get_direction(self.map_move_coordinate[self.how_many_map_now - 1][0], self.map_move_coordinate[self.how_many_map_now - 1][1], self.map_move_coordinate[self.how_many_map_now - 2][0], self.map_move_coordinate[self.how_many_map_now - 2][1])
+            self.dest_x = self.map_move_coordinate[self.how_many_map_now - 2][0]
+            self.x_0, self.y_0 = self.map_move_coordinate[self.how_many_map_now - 1]
+            self.how_many_map_now = self.how_many_map_now - 0.5
         else:
-            self.dir_x, self.dir_y = get_direction(201, 367, 55, 545)
-            self.x_0, self.y_0 = 201, 367
-        self.how_many_map_now = 1.5
+            self.move = False
+
         self.start_time = self.time
-            
