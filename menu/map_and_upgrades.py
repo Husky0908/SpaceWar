@@ -72,6 +72,8 @@ class Map_and_Upgrades:
             context.screen.blit(self.complete_picture, (70, 450))
         if self.hmmu > 2:
             context.screen.blit(self.complete_picture, (220, 280))
+        if self.hmmu > 3:
+            context.screen.blit(self.complete_picture, (427, 275))
         context.screen.blit(ship, (self.x, self.y))
         print_text(self.ship_name, 60, (255, 255, 255), (175, 70), context)
         if self.difficulty == -1:
@@ -98,22 +100,22 @@ class Map_and_Upgrades:
             print_text((options_save.languages[options_save.select_language])["start"], 45, (255, 255, 255), ((context.width / 4 * 2 + 230), 675), context)
 
         keys = pygame.key.get_pressed()
-        if (first_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 1:
+        if (first_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 1 and self.how_many_map_now % 1 == 0:
             mouse_button_state = 2
             self.how_many_map = 1
             self.move = True
             self.get_direction_map()
-        if (second_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 2:
+        if (second_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 2 and self.how_many_map_now % 1 == 0 and self.hmmu >= 2:
             mouse_button_state = 2
             self.how_many_map = 2
             self.move = True
             self.get_direction_map()
-        if (third_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 3:
+        if (third_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 3 and self.how_many_map_now % 1 == 0 and self.hmmu >= 3:
             mouse_button_state = 2
             self.how_many_map = 3
             self.move = True
             self.get_direction_map()
-        if (fourth_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 4:
+        if (fourth_mission.colliderect(mouse_form) and mouse_button_state == 1) and not self.how_many_map_now == 4 and self.how_many_map_now % 1 == 0 and self.hmmu >= 4:
             mouse_button_state = 2
             self.how_many_map = 4
             self.move = True
@@ -140,7 +142,7 @@ class Map_and_Upgrades:
 
         self.time = self.time + 1
 
-        if (start_button.colliderect(mouse_form) and mouse_button_state == 1) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 2) or enter or (third_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 3):
+        if (start_button.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now % 1 == 0) or (first_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 1) or (second_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 2) or enter or (third_mission.colliderect(mouse_form) and mouse_button_state == 1 and self.how_many_map_now == 3):
             mouse_button_state = 2
             if self.how_many_map_now == 1:
                 self.hmm = 1
