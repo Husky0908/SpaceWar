@@ -37,6 +37,11 @@ class Player:
         self.rocket_power = 0
         self.skins = 0
         self.read_player_text()
+        self.ship_power_chance = 0
+        if self.ship_power == 2:
+            self.ship_power_chance = 5
+        if self.ship_power == 3:
+            self.ship_power_chance = 10
 
     def read_player_text(self):
         with open(f"texts/players/{self.name}", "r") as f:
@@ -101,9 +106,9 @@ class Player:
     def contacts(self, bullets: Bullets, coins: Coins, plus_hp: PlusHealths, upgrades: Upgraders):
         for bullet in bullets.elements:
             if bullet.form.colliderect(self.form) and bullet.attacker == "enemy":
-                if self.ship_power == 2:
+                if self.ship_power >= 2:
                     shield = random.randint(0, 100)
-                    if shield <= 5:
+                    if shield <= self.ship_power_chance:
                         self.health = self.health + 1
                 self.health = self.health - 1
                 bullet.sharp = False
@@ -178,7 +183,7 @@ class Player:
             shoot_time = 300
             if bombs.last_spawn - context.time >= shoot_time:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                bombs.elements.append(Bomb(self.x, self.y, mouse_x, mouse_y, "friend"))
+                bombs.elements.append(Bomb(self.x, self.y, mouse_x, mouse_y, "friend", self.bomb_power))
                 bombs.last_spawn = context.time
 
     def get_rectangle_around_player(self, width: int, height: int) -> pygame.Rect:

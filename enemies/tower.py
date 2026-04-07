@@ -73,7 +73,7 @@ class Towers:
             for bomb in bombs.elements:
                 if tower.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
                     bomb.sharp = False
-                    tower.health = tower.health - 5
+                    tower.health = tower.health - (3 + bomb.damage)
                 if tower.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
                     bomb.state = Bomb.STATE_EXPLOSION
 

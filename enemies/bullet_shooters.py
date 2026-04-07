@@ -72,7 +72,7 @@ class BulletShooter:
         for bomb in bombs.elements:
             if self._form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
                 bomb.sharp = False
-                self._health = self._health - 2
+                self._health = self._health - bomb.damage
             if self._form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
                 bomb.state = Bomb.STATE_EXPLOSION
 

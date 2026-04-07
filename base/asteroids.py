@@ -66,9 +66,9 @@ class Asteroid:
     def contacts(self, context: PygameContext, player: Player, bullet_shooters: BulletShooters, runners: Runners, rocket_launchers: RocketLaunchers, supermacys: Supermacys, heavy_gunners: HeavyGunners, bullets: Bullets, rockets: Rockets, bombs: Bombs):
 
         if self.form.colliderect(player.form) and not self.damage:
-            if player.ship_power == 2:
+            if player.ship_power >= 2:
                 shield = random.randint(0, 100)
-                if shield <= 5:
+                if shield <= player.ship_power_chance:
                     player.health = player.health + 1
             player.health = player.health - 1
             self.damage = True

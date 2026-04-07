@@ -204,9 +204,9 @@ class FirstBoss:
                         self.shooter_live = False
                         self.state = FirstBoss.STATE_SECOND_MOVE
             if self.form.colliderect(player.r) and self.attack >= 60:
-                if player.ship_power == 2:
+                if player.ship_power >= 2:
                     shield = random.randint(0, 100)
-                    if shield <= 5:
+                    if shield <= player.ship_power_chance:
                         player.health = player.health + 1
                 player.health = player.health - 1
                 self.attack = 0
@@ -215,7 +215,7 @@ class FirstBoss:
             for bomb in bombs.elements:
                 if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
                     bomb.sharp = False
-                    self.health = self.health - 2
+                    self.health = self.health - bomb.damage
                 if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
                     bomb.state = Bomb.STATE_EXPLOSION
                 if self.shooter_live:

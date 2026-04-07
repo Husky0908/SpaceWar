@@ -7,7 +7,7 @@ class Bomb:
     STATE_MOVE = 1
     STATE_EXPLOSION = 2
 
-    def __init__(self, x_0: float, y_0: float, dest_x: float, dest_y: float, attacker: str):
+    def __init__(self, x_0: float, y_0: float, dest_x: float, dest_y: float, attacker: str, power: int):
         self.x_0 = x_0
         self.y_0 = y_0
         self.x = x_0
@@ -23,6 +23,9 @@ class Bomb:
         self.r = 10
         self.attacker = attacker
         self.state = Bomb.STATE_MOVE
+        self.damage = 2
+        if power == 2:
+            self.damage = 4
 
     def draw(self, context: PygameContext):
         if self.state == Bomb.STATE_MOVE:

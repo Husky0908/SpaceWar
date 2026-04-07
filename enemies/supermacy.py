@@ -113,7 +113,7 @@ class Supermacy:
         for bomb in bombs.elements:
             if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_EXPLOSION:
                 bomb.sharp = False
-                self.health = self.health - 2
+                self.health = self.health - bomb.damage
             if self.form.colliderect(bomb.form) and bomb.state == Bomb.STATE_MOVE:
                 bomb.state = Bomb.STATE_EXPLOSION
 

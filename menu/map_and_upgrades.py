@@ -206,7 +206,11 @@ class Map_and_Upgrades:
                 ship_def_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 + 25))
                 context.screen.blit(self.upgrader_box_picture, (context.width / 4 - 60, context.height / 4 + 55))
                 print_text("1", 45, (255, 255, 255), (context.width / 4 + 40, context.height / 4 + 80), context)
-            if self.ship_def == 2:
+            elif self.hmmu >= 4 and self.ship_def == 2:
+                ship_def_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 - 100, context.height / 4 + 25))
+                context.screen.blit(self.coin_picture, (context.width / 4 - 60, context.height / 4 + 55))
+                print_text("700", 45, (255, 255, 255), (context.width / 4 + 25, context.height / 4 + 83), context)
+            else:
                 ship_def_upgrade_button = context.screen.blit(self.upgrade_max_picture, (context.width / 4 - 100, context.height / 4 + 25))
                 print_text("Max", 45, (255, 255, 255), (context.width / 4, context.height / 4 + 80), context)
 
@@ -214,6 +218,10 @@ class Map_and_Upgrades:
             print_text((options_save.languages[options_save.select_language])["bomb"], 45, (255, 255, 255), (context.width / 4 * 3 - 50, context.height / 4 - 50), context)
             print_text((options_save.languages[options_save.select_language])["level"] + " " + str(self.bomb), 45, (255, 255, 255), (context.width / 4 * 3 - 50, context.height / 4), context)
             if self.bomb == 0:
+                bomb_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 * 3 - 150, context.height / 4 + 25))
+                context.screen.blit(self.upgrader_box_picture, (context.width / 4 * 3 - 110, context.height / 4 + 55))
+                print_text("3", 45, (255, 255, 255), (context.width / 4 * 3 - 10, context.height / 4 + 80), context)
+            elif self.bomb == 1 and self.hmmu >= 4:
                 bomb_upgrade_button = context.screen.blit(self.upgrade_picture, (context.width / 4 * 3 - 150, context.height / 4 + 25))
                 context.screen.blit(self.upgrader_box_picture, (context.width / 4 * 3 - 110, context.height / 4 + 55))
                 print_text("3", 45, (255, 255, 255), (context.width / 4 * 3 - 10, context.height / 4 + 80), context)
@@ -242,9 +250,20 @@ class Map_and_Upgrades:
                 self.ship_def = self.ship_def + 1
                 self.upgrade_box = self.upgrade_box - 1
                 self.write_file()
+            if ship_def_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.coin >= 700 and self.ship_def == 2 and self.hmmu >= 4:
+                mouse_button_state = 2
+                self.ship_def = self.ship_def + 1
+                self.coin = self.coin - 700
+                self.write_file()
 
         if self.hmmu >= 3:
             if bomb_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.upgrade_box >= 3 and self.bomb == 0:
+                mouse_button_state = 2
+                self.bomb = self.bomb + 1
+                self.upgrade_box = self.upgrade_box - 3
+                self.write_file()
+        if self.hmmu >= 4:
+            if bomb_upgrade_button.colliderect(mouse_form) and mouse_button_state == 1 and self.upgrade_box >= 3 and self.bomb == 1:
                 mouse_button_state = 2
                 self.bomb = self.bomb + 1
                 self.upgrade_box = self.upgrade_box - 3

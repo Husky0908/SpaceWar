@@ -42,9 +42,9 @@ class Rocket:
 
     def contacts(self, player: Player, bombs: Bombs):
         if self.form.colliderect(player.r):
-            if player.ship_power == 2:
+            if player.ship_power >= 2:
                 shield = random.randint(0, 100)
-                if shield <= 5:
+                if shield <= player.ship_power_chance:
                     player.health = player.health + 1
             self.state = Rocket.STATE_DESTROY
             player.health = player.health - 1
