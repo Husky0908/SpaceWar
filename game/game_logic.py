@@ -158,10 +158,56 @@ class GameLogic:
         if self.level == 3:
 
             if self.wave_time == 0:
-                super_tower.spawn()
-                self.wave = 2
+                for i in range(3 + self.difficulty):
+                    bullet_shooters.spawn(context)
+                heavy_gunners.spawn()
+                runners.spawn(context)
 
-            if self.wave == 2 and not super_tower.live:
+            if self.wave == 1 and bullet_shooters.empty() and len(heavy_gunners.elements) == 0 and len(runners.elements) == 0:
+                self.wave = 2
+                towers.spawn(context)
+                rocket_launchers.spawn(context)
+                for i in range(3 + self.difficulty):
+                    bullet_shooters.spawn(context)
+
+            if self.wave == 2 and bullet_shooters.empty() and len(towers.elements) == 0 and len(rocket_launchers.elements) == 0:
+                self.wave = 3
+                for i in range(2 + self.difficulty):
+                    towers.spawn(context)
+                    bullet_shooters.spawn(context)
+                supermacys.spawn()
+
+            if self.wave == 3 and bullet_shooters.empty() and len(towers.elements) == 0 and len(supermacys.elements) == 0:
+                self.wave = 4
+                for i in range(4 + self.difficulty):
+                    towers.spawn(context)
+
+            if self.wave == 4 and len(towers.elements) == 0:
+                self.wave = 5
+                for i in range(2 + self.difficulty):
+                    towers.spawn(context)
+                    runners.spawn(context)
+                    bullet_shooters.spawn(context)
+
+            if self.wave == 5 and bullet_shooters.empty() and len(towers.elements) == 0 and len(runners.elements) == 0:
+                self.wave = 6
+                for i in range(3 + self.difficulty):
+                    towers.spawn(context)
+                    rocket_launchers.spawn(context)
+                    bullet_shooters.spawn(context)
+
+            if self.wave == 6 and bullet_shooters.empty() and len(towers.elements) == 0 and len(rocket_launchers.elements) == 0:
+                self.wave = 7
+                for i in range(3 + self.difficulty):
+                    towers.spawn(context)
+                for i in range(2 + self.difficulty):
+                    rocket_launchers.spawn(context)
+
+            if self.wave == 7 and len(towers.elements) == 0 and len(rocket_launchers.elements) == 0:
+                super_tower.spawn()
+                self.wave = 8
+
+            if self.wave == 8 and not super_tower.live:
                 self.wave = 100
                 self.wave_time = 0
 

@@ -12,6 +12,7 @@ class Tower:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
+        self.dest_y = y + 720
         self.form = None
         self.state = Tower.STATE_SHOOT
         self.shoot_time = 0
@@ -29,6 +30,9 @@ class Tower:
                 en_y = player.y + random.randint(-100, 100)
                 bullets.elements.append(Bullet(self.x, self.y, en_x, en_y, "enemy", 400))
                 self.shoot_time = 0
+
+        if self.y < self.dest_y:
+            self.y = self.y + 2
 
 
 class Towers:
@@ -53,7 +57,7 @@ class Towers:
                 else:
                     spawn_x = True
                     spawn_y = True
-        self.elements.append(Tower(x, y))
+        self.elements.append(Tower(x, y - 720))
 
     def draw(self, context: PygameContext):
         for tower in self.elements:
