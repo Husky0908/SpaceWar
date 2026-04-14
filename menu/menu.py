@@ -81,7 +81,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
         if which_menu == "main menu":
 
             print_text("SpaceWar", 120, (0, 0, 255), ((1280 / 2), 100), context)
-            print_text("Alpha 0.2.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
+            print_text("Alpha 0.3.", 45, (255, 255, 255), ((1280 / 3 * 2), 150), context)
             play_game = context.screen.blit(button_plate, ((1280 / 2 - 100), 160))
             if not escape:
                 print_text((options_save.languages[options_save.select_language])["play"], 45, (255, 255, 255), ((1280 / 2 + 15), 240), context)
@@ -301,7 +301,7 @@ def menu(context: PygameContext, options_save: OptionsSave, escape: bool, after_
                 context.screen.blit(credits_hun, (0, credits_y))
 
             credits_y = credits_y - 1
-            if keys[pygame.K_ESCAPE] or credits_y <= -1050:
+            if keys[pygame.K_ESCAPE] or credits_y <= -1500:
                 which_menu = "main menu"
 
         if which_menu == "players":
